@@ -1,10 +1,11 @@
 {
   "homepage": "https://minecraft.curseforge.com/projects/tektopia-information",
   "promos": {
-    "1.12.2-latest": "1.0.0",
-    "1.12.2-recommended": "1.0.0"
+    "1.12.2-latest": "1.1.0",
+    "1.12.2-recommended": "1.1.0"
   },
   "1.12.2":{
     "0.1.1": "Initial alpha release.",
-    "1.0.0": "Initial release."
+    "1.0.0": "Initial release.",
+    "1.1.0": "Added Happiness and Hunger Statistics pages to the book.\nFixed Blessed levels.\nTweaked the display of the Resident details."
 }
