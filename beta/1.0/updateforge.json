@@ -7,5 +7,5 @@
   "1.12.2":{
     "0.1.1": "Initial alpha release.",
     "1.0.0": "Initial release.",
-    "1.1.0": "Added Happiness and Hunger Statistics pages to the book.\nFixed Blessed levels.\nTweaked the display of the Resident details."
+    "1.1.0": "Tweaked the layout of the book.\nAdded Statistics section to the book.\nAdded mouse scroll page turning to the book.\nFixed resident Blessed levels."
 }
