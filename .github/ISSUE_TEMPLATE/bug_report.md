@@ -24,8 +24,8 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Mod Information (please complete the following information):**
- - Pixelmon Information Version: [e.g. 0.2.7]
- - Pixelmon Version: [e.g. 7.0.0]
+ - Tektopia Information Version: [e.g. 0.2.7]
+ - Tektopia Version: [e.g. 7.0.0]
  - JEI Version: 
  - Waila Version:
 
