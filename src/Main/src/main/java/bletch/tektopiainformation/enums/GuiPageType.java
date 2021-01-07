@@ -1,0 +1,18 @@
+package bletch.tektopiainformation.enums;
+
+public enum GuiPageType {
+	BLANK,
+	INSIDECOVER,
+	TITLE,
+	SUMMARY,
+	VILLAGE,
+	STRUCTURE,
+	STRUCTURETYPE,
+	HOME,
+	HOMETYPE,
+	PROFESSION,
+	PROFESSIONTYPE,
+	RESIDENT,
+	STATS,
+	ECONOMY;
+}

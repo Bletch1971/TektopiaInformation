@@ -1,0 +1,14 @@
+\.gradle
+\.settings
+\bin
+\build
+\libs
+\run
+\runClient
+\runServer
+\run
+
+\.classpath
+\.gitattributes
+\.gitignore
+\.project
