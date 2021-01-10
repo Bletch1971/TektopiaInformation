@@ -35,7 +35,7 @@ repositories {
     maven {
     	// The repo from which to get hwyla
         name "hwyla"
-    	url "http://tehnut.info/maven"
+    	url "https://maven.tehnut.info"
 	}
     maven {
     	// The repo from which to get the one probe
