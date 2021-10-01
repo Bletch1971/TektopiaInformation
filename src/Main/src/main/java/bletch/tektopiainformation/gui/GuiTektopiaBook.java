@@ -87,10 +87,11 @@ public class GuiTektopiaBook extends GuiScreen {
 	
 	private static final int LINE_SPACE_Y = 5;
 	
-	private static final int LINES_PER_PAGE = 20;
+	private static final int LINES_PER_PAGE = 19;
 	private static final int BEDS_PER_PAGE = 5;
 	private static final int ADDITIONALPROFESSIONS_PER_PAGE = 4;
-	private static final int STATRESIDENTS_PER_PAGE = 16;
+	private static final int RESIDENTLIST_PER_PAGE = 18;
+	private static final int STATRESIDENTS_PER_PAGE = 15;
 	private static final int SALESHISTORY_PER_PAGE = 16;
 	
 	private static final ResourceLocation book = new ResourceLocation(ModDetails.MOD_ID, "textures/gui/gui_book.png");
@@ -613,8 +614,8 @@ public class GuiTektopiaBook extends GuiScreen {
 	    	// resident list
 	    	int count = residentsData.getResidentsCount();
 			if (count > 0) {
-	    		int pages = count / LINES_PER_PAGE;
-	    		if (count % LINES_PER_PAGE > 0) {
+	    		int pages = count / RESIDENTLIST_PER_PAGE;
+	    		if (count % RESIDENTLIST_PER_PAGE > 0) {
 	    			pages++;
 	    		}
 	    		
@@ -1762,7 +1763,7 @@ public class GuiTektopiaBook extends GuiScreen {
             	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y; 
             	
             	for (ResidentData resident : residentsData.getResidents()) {
-            		if (index >= startIndex && index < startIndex + LINES_PER_PAGE) {
+            		if (index >= startIndex && index < startIndex + RESIDENTLIST_PER_PAGE) {
             			String residentBed = "";
                 		String residentName = "";
                 		String residentProfession = "";
