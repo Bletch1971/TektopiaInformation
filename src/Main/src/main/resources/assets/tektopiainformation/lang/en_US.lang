@@ -192,6 +192,18 @@ tektopiaBook.continued=(cont.)
 tektopiaBook.empty=<empty>
 tektopiaBook.missing=<missing>
 tektopiaBook.nobed=No Bed
+tektopiaBook.summary=Summary
+
+tektopiaBook.headers.bed=Bed
+tektopiaBook.headers.count=Count
+tektopiaBook.headers.index=#
+tektopiaBook.headers.level=Level
+tektopiaBook.headers.name=Name
+tektopiaBook.headers.position=Position
+tektopiaBook.headers.profession=Profession
+tektopiaBook.headers.range=Range
+tektopiaBook.headers.resident=Resident
+tektopiaBook.headers.valid=Valid
 
 tektopiaBook.village.name=Village:
 
@@ -215,8 +227,7 @@ tektopiaBook.structures.structuretypes=Structure Types
 
 tektopiaBook.structuretypes.frameposition=Token Positions
 tektopiaBook.structuretypes.total=Total Structures:
-tektopiaBook.structuretypes.floor=Floor Tiles:
-tektopiaBook.structuretypes.valid=Valid:
+tektopiaBook.structuretypes.floor=Floor Tiles
 
 tektopiaBook.homes.frameposition=Token Position:
 tektopiaBook.homes.totalhomes=Total Homes:
@@ -228,14 +239,12 @@ tektopiaBook.homes.children=Children:
 tektopiaBook.homes.males=Males:
 tektopiaBook.homes.females=Females:
 tektopiaBook.homes.hometypes=Home Types
-tektopiaBook.homes.residents=Residents
-tektopiaBook.homes.bed=Bed
+tektopiaBook.homes.beds=Beds
 
 tektopiaBook.hometypes.frameposition=Token Positions
 tektopiaBook.hometypes.totalhomes=Total Homes:
 tektopiaBook.hometypes.totalresidents=Total Residents:
-tektopiaBook.hometypes.residents=Residents:
-tektopiaBook.hometypes.valid=Valid:
+tektopiaBook.hometypes.residents=Residents
 
 tektopiaBook.professions.total=Total Residents:
 tektopiaBook.professions.professiontypes=Profession Types
@@ -258,7 +267,7 @@ tektopiaBook.residents.hunger=Hunger:
 tektopiaBook.residents.happiness=Happiness:
 tektopiaBook.residents.intelligence=Intelligence:
 tektopiaBook.residents.blessed=Blessed:
-tektopiaBook.residents.totalarmorvalue=Total Armor Value:
+tektopiaBook.residents.totalarmorvalue=Total Armor:
 tektopiaBook.residents.home=Home Structure:
 tektopiaBook.residents.bed=Bed Position:
 tektopiaBook.residents.position=Current Position:

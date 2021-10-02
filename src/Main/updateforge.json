@@ -1,8 +1,8 @@
 {
   "homepage": "https://minecraft.curseforge.com/projects/tektopia-information",
   "promos": {
-    "1.12.2-latest": "1.4.0",
-    "1.12.2-recommended": "1.4.0"
+    "1.12.2-latest": "1.5.0",
+    "1.12.2-recommended": "1.5.0"
   },
   "1.12.2":{
     "0.1.1": "Initial alpha release.",
@@ -11,6 +11,7 @@
     "1.2.0": "Can now open the book by right-clicking a Bed or Item Frame.\nUnderlined the Resident or Structure name that was right-clicked on.\nAdded Current Position and Structure to Resident pages.\nAdded floor tile count to Structure Types and Homes.",
     "1.3.0": "New villager images, include female Cleric and Teacher.\nFixed the level display of Captains when blessed.\nFixed duplicate villager entries after converting the villager.",
     "1.3.1": "Fixed the crash opening the book, when running on dedicated server.",
-    "1.4.0": "Added Total Armor Value, Armor Items and Equipment Items to resident pages."
+    "1.4.0": "Added Total Armor Value, Armor Items and Equipment Items to resident pages.",
+    "1.5.0": "Cleaned up the books display." 
   }	
 }
