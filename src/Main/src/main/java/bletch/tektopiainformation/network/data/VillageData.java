@@ -17,6 +17,8 @@ public class VillageData {
 	private static final String NBTTAG_BEDPOSITION = "bedposition";
 	private static final String NBTTAG_FRAMEPOSITION = "frameposition";
 	
+	private static final String NBTTAG_PLAYERPOSITION = "playerposition";
+	
 	private String villageName;
 	private BlockPos villageOrigin;
 	private int villageSize;
@@ -30,12 +32,18 @@ public class VillageData {
 	private BlockPos bedPosition;
 	private BlockPos framePosition;
 	
+	private BlockPos playerPosition;
+	
 	public VillageData() {
 		populateData(null);
+		
+		this.playerPosition = null;
 	}
 	
-	public VillageData(Village village) {
+	public VillageData(Village village, BlockPos playerPosition) {
 		populateData(village);
+		
+		this.playerPosition = playerPosition;
 	}
 	
 	public String getVillageName() {
@@ -66,6 +74,10 @@ public class VillageData {
 		return this.villageOrigin != null ? this.villageOrigin.south(this.villageSize).east(this.villageSize) : null;
 	}
 	
+	public StructureData getTownHall() {
+		return this.structuresData == null ? null : this.structuresData.getTownHall();
+	}
+	
 	public StructuresData getStructuresData() {
 		return this.structuresData == null ? new StructuresData() : this.structuresData;
 	}	
@@ -94,19 +106,38 @@ public class VillageData {
 		return this.framePosition;
 	}
 	
+	public BlockPos getPlayerPosition() {
+		return this.playerPosition;
+	}
+	
 	public VillageData setResident(EntityVillagerTek villager) {
+		ClearAssignments();
 		this.residentId = villager == null ? 0 : villager.getEntityId();
 		return this;
 	}
 	
+	public VillageData setResidentId(int residentId) {
+		ClearAssignments();
+		this.residentId = residentId;
+		return this;
+	}
+	
 	public VillageData setBedPosition(BlockPos bedPosition) {
+		ClearAssignments();
 		this.bedPosition = bedPosition;
 		return this;
 	}
 	
 	public VillageData setFramePosition(BlockPos framePosition) {
+		ClearAssignments();
 		this.framePosition = framePosition;
 		return this;
+	}
+	
+	public void ClearAssignments() {
+		this.residentId = 0;
+		this.bedPosition = null;
+		this.framePosition = null;
 	}
 	
 	private void clearData() {
@@ -114,9 +145,9 @@ public class VillageData {
 		this.villageOrigin = null;
 		this.villageSize = 0;
 		
-		this.residentId = 0;
-		this.bedPosition = null;
-		this.framePosition = null;
+		ClearAssignments();
+		
+		this.playerPosition = null;
 		
 		this.structuresData = new StructuresData();
 		this.homesData = new HomesData();
@@ -163,6 +194,8 @@ public class VillageData {
 		this.residentId = nbtTag.hasKey(NBTTAG_RESIDENTID) ? nbtTag.getInteger(NBTTAG_RESIDENTID) : 0;
 		this.bedPosition = nbtTag.hasKey(NBTTAG_BEDPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_BEDPOSITION)) : null;
 		this.framePosition = nbtTag.hasKey(NBTTAG_FRAMEPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_FRAMEPOSITION)) : null;
+		
+		this.playerPosition = nbtTag.hasKey(NBTTAG_PLAYERPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_PLAYERPOSITION)) : null;
 
 		this.structuresData.readNBT(nbtTag);
 		this.homesData.readNBT(nbtTag);
@@ -197,7 +230,12 @@ public class VillageData {
 		}
 		if (this.framePosition != null) {
 			nbtTag.setLong(NBTTAG_FRAMEPOSITION, this.framePosition.toLong());
+		}
+		
+		if (this.playerPosition != null) {
+			nbtTag.setLong(NBTTAG_PLAYERPOSITION, this.playerPosition.toLong());
 		}		
+		
 		this.structuresData.writeNBT(nbtTag);
 		this.homesData.writeNBT(nbtTag);
 		this.residentsData.writeNBT(nbtTag);

@@ -63,15 +63,17 @@ public class PlayerInteractHandler {
 								event.setCanceled(true);
 					        }
 					        
+							EntityPlayerMP player = (EntityPlayerMP)event.getEntityPlayer();
+							
 							// create the village data
-							VillageData villageData = new VillageData(village);
+							VillageData villageData = new VillageData(village, player.getPosition());
 							villageData.setResident(villager);
 							
 							// create the message to be sent to the client
 							VillageMessageToClient message = new VillageMessageToClient(villageData);
 							
 							// send the message containing the village data to the client player
-							TektopiaInformation.NETWORK.sendTo(message, (EntityPlayerMP)event.getEntityPlayer());
+							TektopiaInformation.NETWORK.sendTo(message, player);
 				        }
 			        }
 		        }
@@ -97,15 +99,17 @@ public class PlayerInteractHandler {
 								event.setCanceled(true);
 					        }
 					        
+							EntityPlayerMP player = (EntityPlayerMP)event.getEntityPlayer();
+					        
 							// create the village data
-							VillageData villageData = new VillageData(village);
+							VillageData villageData = new VillageData(village, player.getPosition());
 							villageData.setFramePosition(event.getPos());
 							
 							// create the message to be sent to the client
 							VillageMessageToClient message = new VillageMessageToClient(villageData);
 							
 							// send the message containing the village data to the client player
-							TektopiaInformation.NETWORK.sendTo(message, (EntityPlayerMP)event.getEntityPlayer());
+							TektopiaInformation.NETWORK.sendTo(message, player);
 				        }
 			        }
 				}
@@ -167,15 +171,17 @@ public class PlayerInteractHandler {
 								event.setCanceled(true);
 					        }
 					        
+							EntityPlayerMP player = (EntityPlayerMP)event.getEntityPlayer();
+					        
 							// create the village data
-							VillageData villageData = new VillageData(village);
+							VillageData villageData = new VillageData(village, player.getPosition());
 							villageData.setBedPosition(event.getPos());
 							
 							// create the message to be sent to the client
 							VillageMessageToClient message = new VillageMessageToClient(villageData);
 							
 							// send the message containing the village data to the client player
-							TektopiaInformation.NETWORK.sendTo(message, (EntityPlayerMP)event.getEntityPlayer());
+							TektopiaInformation.NETWORK.sendTo(message, player);
 				        }
 			        }
 		        }

@@ -39,16 +39,16 @@ public class GuiBookmark extends GuiButton {
 		this.background = texture;
 	}
 	
-	public void setBackground(ResourceLocation texture, int left, int top, int width, int height, int textureLeft, int textureTop, int textureWidth, int textureHeight, float scale) {
-		this.background = new GuiTexture(texture, left, top, width, height, textureLeft, textureTop, textureWidth, textureHeight, scale);
+	public void setBackground(ResourceLocation texture, int left, int top, int width, int height, int textureLeft, int textureTop, int textureWidth, int textureHeight) {
+		this.background = new GuiTexture(texture, left, top, width, height, textureLeft, textureTop, textureWidth, textureHeight);
 	}
 	
-	public boolean withinBackgroundBounds(int x, int y) {
+	public boolean withinBounds(int x, int y, float scale) {
 		if (this.background == null || this.background.getTexture() == null) {
 			return false;
 		}
 			
-		return this.background.withinBounds(x, y);
+		return this.background.withinBounds(x, y, scale);
 	}
 	
 	@Override

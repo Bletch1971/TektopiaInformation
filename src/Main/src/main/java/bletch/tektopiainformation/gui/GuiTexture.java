@@ -1,6 +1,7 @@
 package bletch.tektopiainformation.gui;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 
 public class GuiTexture {
 	
@@ -16,9 +17,7 @@ public class GuiTexture {
 	private int textureWidth = 0;
 	private int textureHeight = 0;
 	
-	private float scale;
-	
-	public GuiTexture(ResourceLocation texture, int left, int top, int width, int height, int textureLeft, int textureTop, int textureWidth, int textureHeight, float scale) {
+	public GuiTexture(ResourceLocation texture, int left, int top, int width, int height, int textureLeft, int textureTop, int textureWidth, int textureHeight) {
 		this.texture = texture;
 		
 		this.left = left;
@@ -30,8 +29,13 @@ public class GuiTexture {
 		this.textureTop = textureTop;
 		this.textureWidth = textureWidth;
 		this.textureHeight = textureHeight;
+	}
+	
+	public GuiTexture addPosition(BlockPos position) {
+		this.left += position.getX();
+		this.top += position.getZ();
 		
-		this.scale = scale;
+		return this;
 	}
 	
 	public ResourceLocation getTexture() {
@@ -86,13 +90,39 @@ public class GuiTexture {
 		return this.textureTop + this.textureHeight;
 	}
 	
-	public float getScale() {
-		return this.scale;
+	public GuiTexture multiplyPosition(int factor) {
+		this.left *= factor;
+		this.top *= factor;
+		
+		return this;
 	}
 	
-	public boolean withinBounds(int x, int y) {
-		int scaledX = (int) (x / this.scale);
-		int scaledY = (int) (y / this.scale);
+	public GuiTexture multiplySize(int factor) {
+		this.width *= factor;
+		this.height *= factor;
+		this.textureWidth *= factor;
+		this.textureHeight *= factor;
+		
+		return this;
+	}
+	
+	public GuiTexture setPosition(int left, int top) {
+		this.left = left;
+		this.top = top;
+		
+		return this;
+	}
+	
+	public GuiTexture setPosition(BlockPos position) {
+		this.left = position.getX();
+		this.top = position.getZ();
+		
+		return this;
+	}
+	
+	public boolean withinBounds(int x, int y, float scale) {
+		int scaledX = (int) (x / scale);
+		int scaledY = (int) (y / scale);
 		
 		if (getLeft() <= scaledX && getTop() <= scaledY && getRight() >= scaledX && getBottom() >= scaledY) {
 			return true;
