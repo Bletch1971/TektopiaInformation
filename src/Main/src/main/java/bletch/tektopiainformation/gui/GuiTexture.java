@@ -17,9 +17,7 @@ public class GuiTexture {
 	private int textureWidth = 0;
 	private int textureHeight = 0;
 	
-	private float scale;
-	
-	public GuiTexture(ResourceLocation texture, int left, int top, int width, int height, int textureLeft, int textureTop, int textureWidth, int textureHeight, float scale) {
+	public GuiTexture(ResourceLocation texture, int left, int top, int width, int height, int textureLeft, int textureTop, int textureWidth, int textureHeight) {
 		this.texture = texture;
 		
 		this.left = left;
@@ -31,8 +29,6 @@ public class GuiTexture {
 		this.textureTop = textureTop;
 		this.textureWidth = textureWidth;
 		this.textureHeight = textureHeight;
-		
-		this.scale = scale;
 	}
 	
 	public GuiTexture addPosition(BlockPos position) {
@@ -94,10 +90,6 @@ public class GuiTexture {
 		return this.textureTop + this.textureHeight;
 	}
 	
-	public float getScale() {
-		return this.scale;
-	}
-	
 	public GuiTexture multiplyPosition(int factor) {
 		this.left *= factor;
 		this.top *= factor;
@@ -128,9 +120,9 @@ public class GuiTexture {
 		return this;
 	}
 	
-	public boolean withinBounds(int x, int y) {
-		int scaledX = (int) (x / this.scale);
-		int scaledY = (int) (y / this.scale);
+	public boolean withinBounds(int x, int y, float scale) {
+		int scaledX = (int) (x / scale);
+		int scaledY = (int) (y / scale);
 		
 		if (getLeft() <= scaledX && getTop() <= scaledY && getRight() >= scaledX && getBottom() >= scaledY) {
 			return true;

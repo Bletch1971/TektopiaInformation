@@ -111,18 +111,33 @@ public class VillageData {
 	}
 	
 	public VillageData setResident(EntityVillagerTek villager) {
+		ClearAssignments();
 		this.residentId = villager == null ? 0 : villager.getEntityId();
 		return this;
 	}
 	
+	public VillageData setResidentId(int residentId) {
+		ClearAssignments();
+		this.residentId = residentId;
+		return this;
+	}
+	
 	public VillageData setBedPosition(BlockPos bedPosition) {
+		ClearAssignments();
 		this.bedPosition = bedPosition;
 		return this;
 	}
 	
 	public VillageData setFramePosition(BlockPos framePosition) {
+		ClearAssignments();
 		this.framePosition = framePosition;
 		return this;
+	}
+	
+	public void ClearAssignments() {
+		this.residentId = 0;
+		this.bedPosition = null;
+		this.framePosition = null;
 	}
 	
 	private void clearData() {
@@ -130,9 +145,7 @@ public class VillageData {
 		this.villageOrigin = null;
 		this.villageSize = 0;
 		
-		this.residentId = 0;
-		this.bedPosition = null;
-		this.framePosition = null;
+		ClearAssignments();
 		
 		this.playerPosition = null;
 		

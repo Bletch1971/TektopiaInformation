@@ -10,7 +10,7 @@ import net.minecraft.util.math.BlockPos;
 public class GuiMapMarker extends GuiButton implements Comparable<GuiMapMarker> {
 
 	private GuiMapMarkerType markerType;
-	private BlockPos offset;
+	private BlockPos position;
 	private GuiTooltip tooltip;
 	private List<GuiMapQuadrant> quadrants;
 	
@@ -18,26 +18,32 @@ public class GuiMapMarker extends GuiButton implements Comparable<GuiMapMarker> 
 		super(key);
 
 		this.markerType = GuiMapMarkerType.UNKNOWN;
-		this.offset = null;
+		this.position = null;
 		this.tooltip = null;
 		setQuadrants();
 	}
 	
-	public GuiMapMarker(String key, GuiMapMarkerType markerType, GuiTexture icon, BlockPos offset, GuiTooltip tooltip) {
+	public GuiMapMarker(String key, GuiMapMarkerType markerType, GuiTexture icon, BlockPos position, GuiTooltip tooltip) {
 		super(key, icon);
 		
 		this.markerType = markerType;
-		this.offset = offset;
+		this.position = position;
 		this.tooltip = tooltip;
 		setQuadrants();
+	}
+	
+	public GuiMapMarker addPosition(BlockPos position) {
+		this.position = this.position.add(position);
+		
+		return this;
 	}
 
 	public GuiMapMarkerType getMarkerType() {
 		return this.markerType;
 	}
 
-	public BlockPos getOffset() {
-		return this.offset;
+	public BlockPos getPosition() {
+		return this.position;
 	}
 
 	public GuiTooltip getTooltip() {
@@ -47,15 +53,27 @@ public class GuiMapMarker extends GuiButton implements Comparable<GuiMapMarker> 
 	public Boolean isInQuadrant(GuiMapQuadrant quadrant) {
 		return this.quadrants.contains(quadrant);
 	}
+	
+	public GuiMapMarker setPosition(int left, int top) {
+		this.position = new BlockPos(left, this.position.getY(), top);
+		
+		return this;
+	}
+	
+	public GuiMapMarker setPosition(BlockPos position) {
+		this.position = position;
+		
+		return this;
+	}
 
 	private void setQuadrants() {
 		this.quadrants = new ArrayList<GuiMapQuadrant>();
 		
-		if (this.offset == null)
+		if (this.position == null)
 			return;
 		
-		int x = this.offset.getX();
-		int z = this.offset.getZ();
+		int x = this.position.getX();
+		int z = this.position.getZ();
 		
 		this.quadrants.add(GuiMapQuadrant.ALL);
 		if (x >= 0 && z >= 0)
@@ -71,13 +89,21 @@ public class GuiMapMarker extends GuiButton implements Comparable<GuiMapMarker> 
     // Override the compareTo method
     public int compareTo(GuiMapMarker marker)
     {
-		if (this.offset.getZ() == marker.offset.getZ()) {
-        	if (this.offset.getX() == marker.offset.getX())
+		if (this.position.getZ() == marker.position.getZ()) {
+        	if (this.position.getX() == marker.position.getX())
         		return 0;
         	
-    		return this.offset.getX() > marker.offset.getX() ? 1 : -1;
+    		return this.position.getX() > marker.position.getX() ? 1 : -1;
     	}
     	
-    	return this.offset.getZ() > marker.offset.getZ() ? 1 : -1;
+    	return this.position.getZ() > marker.position.getZ() ? 1 : -1;
     }
+	
+	public boolean withinBounds(int x, int y, float scale) {
+		if (this.tooltip == null) {
+			return super.withinBounds(x, y, scale);
+		}
+			
+		return this.tooltip.withinBounds(x, y, scale);
+	}
 }

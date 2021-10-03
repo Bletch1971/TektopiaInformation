@@ -107,6 +107,10 @@ public class GuiTektopiaBook extends GuiScreen {
 
 	private static final int MAP_AXIS_LENGTH_X = 120;
 	private static final int MAP_AXIS_LENGTH_Y = 120;
+	private static final int MAP_AXIS_INTERVAL_X = 10;
+	private static final int MAP_AXIS_INTERVAL_Y = 10;
+	private static final int MAP_AXIS_INTERVAL_X_COUNT = MAP_AXIS_LENGTH_X / MAP_AXIS_INTERVAL_X;
+	private static final int MAP_AXIS_INTERVAL_Y_COUNT = MAP_AXIS_LENGTH_Y / MAP_AXIS_INTERVAL_Y;
 	
 	private static final int MAP_HEADER_Y = 45;
 	//private static final int MAP_BODY_Y = 60;
@@ -304,23 +308,26 @@ public class GuiTektopiaBook extends GuiScreen {
     			}
     			
     			// check if we have clicked on one of the bookmarks
-    			if (bookmark != null && bookmark.withinBackgroundBounds(mouseX, mouseY)) {
+    			if (bookmark != null && bookmark.withinBounds(mouseX, mouseY, this.scale)) {
     				actionPerformed(bookmark);
     				break;
     			}
-    			else if (bookmark != null && bookmark.withinIconBounds(mouseX, mouseY)) {
+    			else if (bookmark != null && bookmark.withinBounds(mouseX, mouseY, this.scale)) {
     				actionPerformed(bookmark);
     				break;
     			}
     		}
     		
-    		for (GuiButton button : this.buttons) {
+    		// process the buttons in reverse order as the buttons at the top of the z-order will be the last in the list.
+    		for (int i = this.buttons.size() - 1; i >= 0; i--) {
+    			GuiButton button = this.buttons.get(i);
+    			
     			if (button == null) {
     				continue;
     			}
 
     			// check if we have clicked on one of the buttons
-    			if (button.withinIconBounds(mouseX, mouseY) ) {
+    			if (button.withinBounds(mouseX, mouseY, this.scale) ) {
     				actionPerformed(button);
     				break;
     			}
@@ -381,15 +388,15 @@ public class GuiTektopiaBook extends GuiScreen {
 				}
 				
 	        	if (p.getPageIndex() <= this.getLeftPageIndex()) {
-	        		bookmark.setBackground(bookmarkLeft, tXL[0], tY[0], BOOKMARK_WIDTH, BOOKMARK_HEIGHT, 0, 0, 75, 75, this.scale);
+	        		bookmark.setBackground(bookmarkLeft, tXL[0], tY[0], BOOKMARK_WIDTH, BOOKMARK_HEIGHT, 0, 0, 75, 75);
 	        		if (icon != null) {
-	        			bookmark.setIcon(icon, tXL[0] + 12, tY[0] + 5, 16, 16, 0, 0, 16, 16, this.scale);
+	        			bookmark.setIcon(icon, tXL[0] + 12, tY[0] + 5, 16, 16, 0, 0, 16, 16);
 	        			tXL[0] += 1;
 	        		}
 	        	} else {
-	        		bookmark.setBackground(bookmarkRight, tXR[0], tY[0], BOOKMARK_WIDTH, BOOKMARK_HEIGHT, 0, 0, 75, 75, this.scale);
+	        		bookmark.setBackground(bookmarkRight, tXR[0], tY[0], BOOKMARK_WIDTH, BOOKMARK_HEIGHT, 0, 0, 75, 75);
 	        		if (icon != null) {
-	        			bookmark.setIcon(icon, tXR[0] + 7, tY[0] + 5, 16, 16, 0, 0, 16, 16, this.scale);
+	        			bookmark.setIcon(icon, tXR[0] + 7, tY[0] + 5, 16, 16, 0, 0, 16, 16);
 	        			tXR[0] += 1;
 	        		}
 	        	}
@@ -415,7 +422,7 @@ public class GuiTektopiaBook extends GuiScreen {
     		int tY = this.y + PAGE_FOOTER_Y - 5;
     		
 	    	button = new GuiButton(BUTTON_KEY_STARTBOOK);
-	    	button.setIcon(buttonStartBook, tX, tY, 16, 16, 0, 0, 16, 16, this.scale);
+	    	button.setIcon(buttonStartBook, tX, tY, 16, 16, 0, 0, 16, 16);
 	    	this.buttons.add(button);
 	
 	    	tooltipText = button.getDisplayName();
@@ -426,7 +433,7 @@ public class GuiTektopiaBook extends GuiScreen {
 	    	tX += button.getIcon().getWidth() + 4;
 	    	
 	    	button = new GuiButton(BUTTON_KEY_PREVIOUSPAGE);
-	    	button.setIcon(buttonPreviousPage, tX, tY, 16, 16, 0, 0, 16, 16, this.scale);
+	    	button.setIcon(buttonPreviousPage, tX, tY, 16, 16, 0, 0, 16, 16);
 	    	this.buttons.add(button);
 	
 	    	tooltipText = button.getDisplayName();
@@ -442,7 +449,7 @@ public class GuiTektopiaBook extends GuiScreen {
     		int tY = this.y + PAGE_FOOTER_Y - 5;
 	    	
 	    	button = new GuiButton(BUTTON_KEY_ENDBOOK);
-	    	button.setIcon(buttonEndBook, tX, tY, 16, 16, 0, 0, 16, 16, this.scale);
+	    	button.setIcon(buttonEndBook, tX, tY, 16, 16, 0, 0, 16, 16);
 	    	this.buttons.add(button);
 	
 	    	tooltipText = button.getDisplayName();
@@ -453,7 +460,7 @@ public class GuiTektopiaBook extends GuiScreen {
 	    	tX -= button.getIcon().getWidth() + 4;
 	    	
     		button = new GuiButton(BUTTON_KEY_NEXTPAGE);
-	    	button.setIcon(buttonNextPage, tX, tY, 16, 16, 0, 0, 16, 16, this.scale);
+	    	button.setIcon(buttonNextPage, tX, tY, 16, 16, 0, 0, 16, 16);
 	    	this.buttons.add(button);
 	
 	    	tooltipText = button.getDisplayName();
@@ -607,7 +614,7 @@ public class GuiTektopiaBook extends GuiScreen {
 	        					startPageIndex = pageIndex;
     	        			} 
 
-    	        			this.pages.add(new GuiPage(GuiPageType.HOME, pageIndex++, getPageKey(homeData.getHomeId().toString(), page)));
+    	        			this.pages.add(new GuiPage(GuiPageType.HOME, pageIndex++, getPageKey("" + homeData.getHomeId(), 0)));
 	        			}
             		}
         		}
@@ -1550,41 +1557,101 @@ public class GuiTektopiaBook extends GuiScreen {
     	List<GuiMapMarker> mapMarkers = new ArrayList<GuiMapMarker>();
 		
     	// create all the map markers
-		if (showMapTownHall || showMapStructures || showMapHomes) {
+    	if (showMapTownHall) {
+			
+			BlockPos structurePoint = townHallStructure.getFramePosition();
+			BlockPos villageOffset = structurePoint.subtract(villageOrigin);
+			
+			String name = TextFormatting.DARK_GREEN + getStructureTypeName(townHallStructure.getStructureType());
+			String position = TextUtils.translate("tektopiaBook.homes.frameposition") + " " + formatBlockPos(structurePoint);
+			
+			List<String> tooltips = new ArrayList<String>();
+	    	tooltips.add(name);
+	    	tooltips.add(position);
+	    	
+	    	ResourceLocation texture = mapMarkerTownHall;
+	    	
+	    	GuiTexture icon = new GuiTexture(texture, 
+	    			villageOffset.getX(), villageOffset.getZ(), MAP_MARKER_WIDTH, MAP_MARKER_HEIGHT, 
+	    			0, 0, MAP_MARKER_WIDTH, MAP_MARKER_HEIGHT);
+	    	
+	    	GuiTooltip tooltip = new GuiTooltip(villageOffset.getX(), villageOffset.getZ(), 1, 0, 6, 6, tooltips);
+	    	
+	    	String markerKey = getPageKey(townHallStructure.getStructureType().name(), 0);
+	    	GuiMapMarker mapMarker = new GuiMapMarker(markerKey, 
+	    			GuiMapMarkerType.TOWNHALL,
+					icon,
+					villageOffset,
+					tooltip);
+	    	
+	    	mapMarkers.add(mapMarker);
+    		
+    	}
+    	
+    	if (showMapHomes) {
+    		HomesData homesData = this.villageData.getHomesData();
+    		
+    		for (HomeData home : homesData.getHomes()) {
+    			
+    			BlockPos structurePoint = home.getFramePosition();
+    			BlockPos villageOffset = structurePoint.subtract(villageOrigin);
+    			
+    			String name = TextFormatting.DARK_GREEN + getStructureTypeName(home.getStructureType());
+    			String position = TextUtils.translate("tektopiaBook.homes.frameposition") + " " + formatBlockPos(structurePoint);
+    			
+    			List<String> tooltips = new ArrayList<String>();
+    	    	tooltips.add(name);
+    	    	tooltips.add(position);
+    	    	
+    	    	ResourceLocation texture = mapMarkerHome;
+    	    	
+    	    	GuiTexture icon = new GuiTexture(texture, 
+    	    			villageOffset.getX(), villageOffset.getZ(), MAP_MARKER_WIDTH, MAP_MARKER_HEIGHT, 
+    	    			0, 0, MAP_MARKER_WIDTH, MAP_MARKER_HEIGHT);
+    	    	
+    	    	GuiTooltip tooltip = new GuiTooltip(villageOffset.getX(), villageOffset.getZ(), 1, 0, 6, 6, tooltips);
+    	    	
+    	    	String markerKey = getPageKey("" + home.getHomeId(), 0);
+    	    	GuiMapMarker mapMarker = new GuiMapMarker(markerKey, 
+    	    			GuiMapMarkerType.HOME,
+    					icon,
+    					villageOffset,
+    					tooltip);
+    	    	
+    	    	mapMarkers.add(mapMarker);
+    		}
+    	}
+    	
+		if (showMapStructures) {
     		StructuresData structuresData = this.villageData.getStructuresData();
         	List<VillageStructureType> homeTypes = TektopiaUtils.getHomeStructureTypes();
     		
     		for (StructureData structure : structuresData.getStructures()) {
-    			if (!showMapTownHall && structure.getStructureType() == VillageStructureType.TOWNHALL)
+    			if (structure.getStructureType() == VillageStructureType.TOWNHALL)
     				continue;
-    			if (!showMapHomes && homeTypes.contains(structure.getStructureType())) 
-    				continue;
-    			if (!showMapStructures && !homeTypes.contains(structure.getStructureType()) && structure.getStructureType() != VillageStructureType.TOWNHALL) 
+    			if (homeTypes.contains(structure.getStructureType())) 
     				continue;
     			
     			BlockPos structurePoint = structure.getFramePosition();
     			BlockPos villageOffset = structurePoint.subtract(villageOrigin);
     			
     			String name = TextFormatting.DARK_GREEN + getStructureTypeName(structure.getStructureType());
-    			String position = TextUtils.translate("tektopiaBook.homes.frameposition") + " " + formatBlockPos(structure.getFramePosition());
+    			String position = TextUtils.translate("tektopiaBook.homes.frameposition") + " " + formatBlockPos(structurePoint);
     			
     			List<String> tooltips = new ArrayList<String>();
     	    	tooltips.add(name);
     	    	tooltips.add(position);
     	    	
-    	    	ResourceLocation texture = structure.getStructureType() == VillageStructureType.TOWNHALL 
-    	    			? mapMarkerTownHall 
-    	    			: homeTypes.contains(structure.getStructureType()) 
-    	    				? mapMarkerHome 
-    	    				: mapMarkerStructure;
+    	    	ResourceLocation texture = mapMarkerStructure;
     	    	
     	    	GuiTexture icon = new GuiTexture(texture, 
     	    			villageOffset.getX(), villageOffset.getZ(), MAP_MARKER_WIDTH, MAP_MARKER_HEIGHT, 
-    	    			0, 0, MAP_MARKER_WIDTH, MAP_MARKER_HEIGHT, this.scale);
+    	    			0, 0, MAP_MARKER_WIDTH, MAP_MARKER_HEIGHT);
     	    	
     	    	GuiTooltip tooltip = new GuiTooltip(villageOffset.getX(), villageOffset.getZ(), 1, 0, 6, 6, tooltips);
     	    	
-    	    	GuiMapMarker mapMarker = new GuiMapMarker("" + structure.getStructureId(), 
+    	    	String markerKey = getPageKey("" + structure.getStructureType().name(), 0);
+    	    	GuiMapMarker mapMarker = new GuiMapMarker(markerKey, 
     	    			GuiMapMarkerType.STRUCTURE,
     					icon,
     					villageOffset,
@@ -1628,11 +1695,12 @@ public class GuiTektopiaBook extends GuiScreen {
     	    	
     	    	GuiTexture icon = new GuiTexture(texture, 
     	    			villageOffset.getX(), villageOffset.getZ(), MAP_MARKER_WIDTH, MAP_MARKER_HEIGHT, 
-    	    			0, 0, MAP_MARKER_WIDTH, MAP_MARKER_HEIGHT, this.scale);
+    	    			0, 0, MAP_MARKER_WIDTH, MAP_MARKER_HEIGHT);
     	    	
-    	    	GuiTooltip tooltip = new GuiTooltip(villageOffset.getX(), villageOffset.getZ(), 3, 1, 3, 2, tooltips);
+    	    	GuiTooltip tooltip = new GuiTooltip(villageOffset.getX(), villageOffset.getZ(), 3, 0, 3, 3, tooltips);
     	    	
-    	    	GuiMapMarker mapMarker = new GuiMapMarker("" + resident.getResidentId(), 
+    	    	String markerKey = getPageKey("" + resident.getResidentId(), 0);
+    	    	GuiMapMarker mapMarker = new GuiMapMarker(markerKey, 
     	    			GuiMapMarkerType.RESIDENT,
     					icon,
     					villageOffset,
@@ -1657,11 +1725,12 @@ public class GuiTektopiaBook extends GuiScreen {
 	    	
 	    	GuiTexture icon = new GuiTexture(texture, 
 	    			villageOffset.getX(), villageOffset.getZ(), MAP_MARKER_WIDTH, MAP_MARKER_HEIGHT, 
-	    			0, 0, MAP_MARKER_WIDTH, MAP_MARKER_HEIGHT, this.scale);
+	    			0, 0, MAP_MARKER_WIDTH, MAP_MARKER_HEIGHT);
 	    	
-	    	GuiTooltip tooltip = new GuiTooltip(villageOffset.getX(), villageOffset.getZ(), 3, 1, 3, 2, tooltips);
+	    	GuiTooltip tooltip = new GuiTooltip(villageOffset.getX(), villageOffset.getZ(), 3, 0, 3, 3, tooltips);
 	    	
-	    	GuiMapMarker mapMarker = new GuiMapMarker("player", 
+	    	String markerKey = getPageKey("player", 0);
+	    	GuiMapMarker mapMarker = new GuiMapMarker(markerKey, 
 	    			GuiMapMarkerType.PLAYER,
 					icon,
 					villageOffset,
@@ -1676,70 +1745,228 @@ public class GuiTektopiaBook extends GuiScreen {
 		// display map filters
 		int x = this.x + MAP_PAGE_LEFT_X;
 		int y = this.y + MAP_PAGE_TOP_Y;
+		int indentX = 16;
 		
 		GuiTexture buttonIcon = null;
 		GuiButton button = null;
 		String filterText = "";
 		
-		buttonIcon = new GuiTexture(showMapBoundaries ? mapCheckmarkTick : mapCheckmarkCross, x, y, 10, 10, 0, 0, 10, 10, this.scale);
+		buttonIcon = new GuiTexture(showMapBoundaries ? mapCheckmarkTick : mapCheckmarkCross, x, y, 10, 10, 0, 0, 10, 10);
 		button = new GuiButton(BUTTON_KEY_SHOWMAPBOUNDARIES, buttonIcon);
 		this.buttons.add(button);
 		filterText = TextFormatting.DARK_BLUE + TextUtils.translate("tektopiaBook.map.filter.showboundaries");
-		Font.small.printLeft(filterText, x + 16, y + 1);
+		Font.small.printLeft(filterText, x + indentX, y + 1);
 		y += Font.small.fontRenderer.FONT_HEIGHT;
 		
-		buttonIcon = new GuiTexture(showMapPlayer ? mapCheckmarkTick : mapCheckmarkCross, x, y, 10, 10, 0, 0, 10, 10, this.scale);
+		buttonIcon = new GuiTexture(showMapPlayer ? mapCheckmarkTick : mapCheckmarkCross, x, y, 10, 10, 0, 0, 10, 10);
 		button = new GuiButton(BUTTON_KEY_SHOWMAPPLAYER, buttonIcon);
 		this.buttons.add(button);
 		filterText = TextFormatting.DARK_BLUE + TextUtils.translate("tektopiaBook.map.filter.showplayer");
-		Font.small.printLeft(filterText, x + 16, y + 1);
+		Font.small.printLeft(filterText, x + indentX, y + 1);
 		y += Font.small.fontRenderer.FONT_HEIGHT;
 		
-		buttonIcon = new GuiTexture(showMapResidents ? mapCheckmarkTick : mapCheckmarkCross, x, y, 10, 10, 0, 0, 10, 10, this.scale);
+		buttonIcon = new GuiTexture(showMapResidents ? mapCheckmarkTick : mapCheckmarkCross, x, y, 10, 10, 0, 0, 10, 10);
 		button = new GuiButton(BUTTON_KEY_SHOWMAPRESIDENTS, buttonIcon);
 		this.buttons.add(button);
 		filterText = TextFormatting.DARK_BLUE + TextUtils.translate("tektopiaBook.map.filter.showresidents");
-		Font.small.printLeft(filterText, x + 16, y + 1);
+		Font.small.printLeft(filterText, x + indentX, y + 1);
 		y += Font.small.fontRenderer.FONT_HEIGHT;
 		
-		buttonIcon = new GuiTexture(showMapTownHall ? mapCheckmarkTick : mapCheckmarkCross, x, y, 10, 10, 0, 0, 10, 10, this.scale);
+		buttonIcon = new GuiTexture(showMapTownHall ? mapCheckmarkTick : mapCheckmarkCross, x, y, 10, 10, 0, 0, 10, 10);
 		button = new GuiButton(BUTTON_KEY_SHOWMAPTOWNHALL, buttonIcon);
 		this.buttons.add(button);
 		filterText = TextFormatting.DARK_BLUE + TextUtils.translate("tektopiaBook.map.filter.showtownhall");
-		Font.small.printLeft(filterText, x + 16, y + 1);
+		Font.small.printLeft(filterText, x + indentX, y + 1);
 		y += Font.small.fontRenderer.FONT_HEIGHT;
 		
-		buttonIcon = new GuiTexture(showMapHomes ? mapCheckmarkTick : mapCheckmarkCross, x, y, 10, 10, 0, 0, 10, 10, this.scale);
+		buttonIcon = new GuiTexture(showMapHomes ? mapCheckmarkTick : mapCheckmarkCross, x, y, 10, 10, 0, 0, 10, 10);
 		button = new GuiButton(BUTTON_KEY_SHOWMAPHOMES, buttonIcon);
 		this.buttons.add(button);
 		filterText = TextFormatting.DARK_BLUE + TextUtils.translate("tektopiaBook.map.filter.showhomes");
-		Font.small.printLeft(filterText, x + 16, y + 1);
+		Font.small.printLeft(filterText, x + indentX, y + 1);
 		y += Font.small.fontRenderer.FONT_HEIGHT;
 		
-		buttonIcon = new GuiTexture(showMapStructures ? mapCheckmarkTick : mapCheckmarkCross, x, y, 10, 10, 0, 0, 10, 10, this.scale);
+		buttonIcon = new GuiTexture(showMapStructures ? mapCheckmarkTick : mapCheckmarkCross, x, y, 10, 10, 0, 0, 10, 10);
 		button = new GuiButton(BUTTON_KEY_SHOWMAPSTRUCTURES, buttonIcon);
 		this.buttons.add(button);
 		filterText = TextFormatting.DARK_BLUE + TextUtils.translate("tektopiaBook.map.filter.showstructures");
-		Font.small.printLeft(filterText, x + 16, y + 1);
+		Font.small.printLeft(filterText, x + indentX, y + 1);
 		y += Font.small.fontRenderer.FONT_HEIGHT;
+		
+		// display village details
+		indentX = 120;
+        y += LINE_SPACE_Y * 3;
+		
+        String originLabel = TextUtils.translate("tektopiaBook.village.origin");
+        String originText = "";
+
+        if (originLabel != null && originLabel.trim() != "") {
+        	originText += formatBlockPos(this.villageData.getVillageOrigin());
+        	
+            Font.small.printLeft(originLabel, x, y); 
+            Font.small.printRight(originText, x + indentX, y);
+        	
+        	y += Font.small.fontRenderer.FONT_HEIGHT;
+        }
+        
+        y += LINE_SPACE_Y;
+        
+        String boundaryLabel = TextUtils.translate("tektopiaBook.village.boundarynorthwest");
+        String boundaryText = "";
+
+        if (boundaryLabel != null && boundaryLabel.trim() != "") {
+        	boundaryText += formatBlockPos(this.villageData.getVillageNorthWestCorner());
+
+            Font.small.printLeft(boundaryLabel, x, y); 
+            Font.small.printRight(boundaryText, x + indentX, y); 
+        	
+        	y += Font.small.fontRenderer.FONT_HEIGHT;
+        }
+        
+        boundaryLabel = TextUtils.translate("tektopiaBook.village.boundarynortheast");
+        boundaryText = "";
+        
+        if (boundaryLabel != null &&boundaryLabel.trim() != "") {
+        	boundaryText += formatBlockPos(this.villageData.getVillageNorthEastCorner());
+        	
+            Font.small.printLeft(boundaryLabel, x, y); 
+            Font.small.printRight(boundaryText, x + indentX, y);
+        	
+        	y += Font.small.fontRenderer.FONT_HEIGHT;
+        }
+        
+        boundaryLabel = TextUtils.translate("tektopiaBook.village.boundarysouthwest");
+        boundaryText = "";
+
+        if (boundaryLabel != null && boundaryLabel.trim() != "") {
+        	boundaryText += formatBlockPos(this.villageData.getVillageSouthWestCorner());
+        	
+            Font.small.printLeft(boundaryLabel, x, y); 
+            Font.small.printRight(boundaryText, x + indentX, y); 
+        	
+        	y += Font.small.fontRenderer.FONT_HEIGHT;
+        }
+        
+        boundaryLabel = TextUtils.translate("tektopiaBook.village.boundarysoutheast");
+        boundaryText = "";
+
+        if (boundaryLabel != null && boundaryLabel.trim() != "") {
+        	boundaryText += formatBlockPos(this.villageData.getVillageSouthEastCorner());
+        	
+            Font.small.printLeft(boundaryLabel, x, y); 
+            Font.small.printRight(boundaryText, x + indentX, y); 
+        	
+        	y += Font.small.fontRenderer.FONT_HEIGHT;
+        }
+        
+        y += LINE_SPACE_Y;
+
+        String structuresLabel = TextUtils.translate("tektopiaBook.structuretypes.total");
+        String structuresText = "";
+
+        if (structuresLabel != null && structuresLabel.trim() != "") {
+        	if (this.villageData.getStructuresData() != null)
+        		structuresText += "" + this.villageData.getStructuresData().getStructuresCount();
+        	
+            Font.small.printLeft(structuresLabel, x, y);
+            Font.small.printRight(structuresText, x + indentX, y);
+        	
+        	y += Font.small.fontRenderer.FONT_HEIGHT;
+        }
+
+        String homesLabel = TextUtils.translate("tektopiaBook.hometypes.totalhomes");
+        String homesText = "";
+
+        if (homesLabel != null && homesLabel.trim() != "") {
+        	if (this.villageData.getStructuresData() != null)
+        		homesText += "" + this.villageData.getHomesData().getHomesCount();
+        	
+            Font.small.printLeft(homesLabel, x, y);
+            Font.small.printRight(homesText, x + indentX, y);
+        	
+        	y += Font.small.fontRenderer.FONT_HEIGHT;
+        }
+        
+        String residentsLabel = TextUtils.translate("tektopiaBook.residents.total");
+        String residentsText = "";
+
+        if (residentsLabel != null && residentsLabel.trim() != "") {
+        	if (this.villageData.getResidentsData() != null)
+        		residentsText += "" + this.villageData.getResidentsData().getResidentsCount();
+        	
+            Font.small.printLeft(residentsLabel, x, y);
+            Font.small.printRight(residentsText, x + indentX, y);
+        	
+        	y += Font.small.fontRenderer.FONT_HEIGHT;
+        }
 		
 		if (showMapBoundaries) {
     		// display map boundary lines
-			if (dataKey[0].equals(GuiMapQuadrant.ALL.name()) || dataKey[0].equals(GuiMapQuadrant.SOUTHWEST.name()) || dataKey[0].equals(GuiMapQuadrant.SOUTHEAST.name()))
+			if (dataKey[0].equals(GuiMapQuadrant.ALL.name()) || dataKey[0].equals(GuiMapQuadrant.SOUTHWEST.name()) || dataKey[0].equals(GuiMapQuadrant.SOUTHEAST.name())) {
 				super.drawHorizontalLine(this.x + MAP_PAGE_MIDDLE_X - MAP_AXIS_LENGTH_X, this.x + MAP_PAGE_MIDDLE_X + MAP_AXIS_LENGTH_X, this.y + MAP_PAGE_TOP_Y, Color.GRAY.getRGB());
-			if (dataKey[0].equals(GuiMapQuadrant.ALL.name()) || dataKey[0].equals(GuiMapQuadrant.NORTHWEST.name()) || dataKey[0].equals(GuiMapQuadrant.NORTHEAST.name()))
+				
+				if (!dataKey[0].equals(GuiMapQuadrant.ALL.name())) {
+	    			int iX = this.x + MAP_PAGE_MIDDLE_X - MAP_AXIS_LENGTH_X;
+	    			for (int i = 0; i < MAP_AXIS_INTERVAL_X_COUNT + 1; i++) {
+	        			super.drawVerticalLine(iX, this.y + MAP_PAGE_MIDDLE_Y - MAP_AXIS_LENGTH_X - 2, this.y + MAP_PAGE_MIDDLE_Y - MAP_AXIS_LENGTH_X + 2, Color.GRAY.getRGB()); 
+	        			iX += MAP_AXIS_INTERVAL_X * 2;
+	    			}
+				}
+			}
+			if (dataKey[0].equals(GuiMapQuadrant.ALL.name()) || dataKey[0].equals(GuiMapQuadrant.NORTHWEST.name()) || dataKey[0].equals(GuiMapQuadrant.NORTHEAST.name())) {
 				super.drawHorizontalLine(this.x + MAP_PAGE_MIDDLE_X - MAP_AXIS_LENGTH_X, this.x + MAP_PAGE_MIDDLE_X + MAP_AXIS_LENGTH_X, this.y + MAP_PAGE_BOTTOM_Y, Color.GRAY.getRGB());
+				
+				if (!dataKey[0].equals(GuiMapQuadrant.ALL.name())) {
+	    			int iX = this.x + MAP_PAGE_MIDDLE_X - MAP_AXIS_LENGTH_X;
+	    			for (int i = 0; i < MAP_AXIS_INTERVAL_X_COUNT + 1; i++) {
+	        			super.drawVerticalLine(iX, this.y + MAP_PAGE_MIDDLE_Y + MAP_AXIS_LENGTH_X - 2, this.y + MAP_PAGE_MIDDLE_Y + MAP_AXIS_LENGTH_X + 2, Color.GRAY.getRGB()); 
+	        			iX += MAP_AXIS_INTERVAL_X * 2;
+	    			}
+				}
+			}
     		
-			if (dataKey[0].equals(GuiMapQuadrant.ALL.name()) || dataKey[0].equals(GuiMapQuadrant.NORTHEAST.name()) || dataKey[0].equals(GuiMapQuadrant.SOUTHEAST.name()))
+			if (dataKey[0].equals(GuiMapQuadrant.ALL.name()) || dataKey[0].equals(GuiMapQuadrant.NORTHEAST.name()) || dataKey[0].equals(GuiMapQuadrant.SOUTHEAST.name())) {
 				super.drawVerticalLine(this.x + MAP_PAGE_MIDDLE_X - MAP_AXIS_LENGTH_X, this.y + MAP_PAGE_MIDDLE_Y - MAP_AXIS_LENGTH_Y, this.y + MAP_PAGE_MIDDLE_Y + MAP_AXIS_LENGTH_Y, Color.GRAY.getRGB());    	
-			if (dataKey[0].equals(GuiMapQuadrant.ALL.name()) || dataKey[0].equals(GuiMapQuadrant.NORTHWEST.name()) || dataKey[0].equals(GuiMapQuadrant.SOUTHWEST.name()))
+				
+				if (!dataKey[0].equals(GuiMapQuadrant.ALL.name())) {
+	    			int iY = this.y + MAP_PAGE_MIDDLE_Y - MAP_AXIS_LENGTH_Y;
+	    			for (int i = 0; i < MAP_AXIS_INTERVAL_Y_COUNT + 1; i++) {
+	        			super.drawHorizontalLine(this.x + MAP_PAGE_MIDDLE_X - MAP_AXIS_LENGTH_X - 1, this.x + MAP_PAGE_MIDDLE_X - MAP_AXIS_LENGTH_X + 1, iY, Color.GRAY.getRGB());
+	        			iY += MAP_AXIS_INTERVAL_Y * 2;
+	    			}
+				}
+			}
+			if (dataKey[0].equals(GuiMapQuadrant.ALL.name()) || dataKey[0].equals(GuiMapQuadrant.NORTHWEST.name()) || dataKey[0].equals(GuiMapQuadrant.SOUTHWEST.name())) {
 				super.drawVerticalLine(this.x + MAP_PAGE_MIDDLE_X + MAP_AXIS_LENGTH_X, this.y + MAP_PAGE_MIDDLE_Y - MAP_AXIS_LENGTH_Y, this.y + MAP_PAGE_MIDDLE_Y + MAP_AXIS_LENGTH_Y, Color.GRAY.getRGB());    	
+				
+				if (!dataKey[0].equals(GuiMapQuadrant.ALL.name())) {
+	    			int iY = this.y + MAP_PAGE_MIDDLE_Y - MAP_AXIS_LENGTH_Y;
+	    			for (int i = 0; i < MAP_AXIS_INTERVAL_Y_COUNT + 1; i++) {
+	        			super.drawHorizontalLine(this.x + MAP_PAGE_MIDDLE_X + MAP_AXIS_LENGTH_X - 1, this.x + MAP_PAGE_MIDDLE_X + MAP_AXIS_LENGTH_X + 1, iY, Color.GRAY.getRGB());
+	        			iY += MAP_AXIS_INTERVAL_Y * 2;
+	    			}
+				}
+			}
 
     		// display map internal lines
-    		if (dataKey[0].equals(GuiMapQuadrant.ALL.name()))
+    		if (dataKey[0].equals(GuiMapQuadrant.ALL.name())) {
     			super.drawHorizontalLine(this.x + MAP_PAGE_MIDDLE_X - MAP_AXIS_LENGTH_X, this.x + MAP_PAGE_MIDDLE_X + MAP_AXIS_LENGTH_X, this.y + MAP_PAGE_MIDDLE_Y, Color.GRAY.getRGB());
-    		if (dataKey[0].equals(GuiMapQuadrant.ALL.name()))
+
+    			int iX = this.x + MAP_PAGE_MIDDLE_X - MAP_AXIS_LENGTH_X + MAP_AXIS_INTERVAL_X;
+    			for (int i = 1; i < MAP_AXIS_INTERVAL_X_COUNT * 2; i++) {
+        			super.drawVerticalLine(iX, this.y + MAP_PAGE_MIDDLE_Y - 2, this.y + MAP_PAGE_MIDDLE_Y + 2, Color.GRAY.getRGB()); 
+        			iX += MAP_AXIS_INTERVAL_X;
+    			}
+    		}
+    		if (dataKey[0].equals(GuiMapQuadrant.ALL.name())) {
     			super.drawVerticalLine(this.x + MAP_PAGE_MIDDLE_X, this.y + MAP_PAGE_MIDDLE_Y - MAP_AXIS_LENGTH_Y, this.y + MAP_PAGE_MIDDLE_Y + MAP_AXIS_LENGTH_Y, Color.GRAY.getRGB());    	
+
+    			int iY = this.y + MAP_PAGE_MIDDLE_Y - MAP_AXIS_LENGTH_Y + MAP_AXIS_INTERVAL_Y;
+    			for (int i = 1; i < MAP_AXIS_INTERVAL_Y_COUNT * 2; i++) {
+        			super.drawHorizontalLine(this.x + MAP_PAGE_MIDDLE_X - 1, this.x + MAP_PAGE_MIDDLE_X + 1, iY, Color.GRAY.getRGB());
+        			iY += MAP_AXIS_INTERVAL_Y;
+    			}
+    		}
 		}
 		
 		GuiMapQuadrant quadrant = GuiMapQuadrant.valueOf(dataKey[0]);
@@ -1812,6 +2039,8 @@ public class GuiTektopiaBook extends GuiScreen {
 	    		if (!mapMarker.isInQuadrant(quadrant))
 	    			continue;
 				
+	    		mapMarker.addPosition(townHallStructure.getFramePosition());
+	    		
 	    		mapMarker.getTooltip().multiplySize(factor);
 		        mapMarker.getTooltip().multiplyPosition(factor).multipleOffset(factor).addPosition(mapOrigin);
 	    		
@@ -3882,8 +4111,34 @@ public class GuiTektopiaBook extends GuiScreen {
 			case PLAYER:
 				return;
 			case RESIDENT:
+				String[] keyParts = getPageKeyParts(mapMarker.key);
+				
+				for (GuiPage page : this.pages) {
+					if (page.getGuiPageType() == GuiPageType.RESIDENT && page.getDataKey().equals(mapMarker.key)) {
+						this.villageData.setResidentId(Integer.parseInt(keyParts[0]));
+						setLeftPageIndex(page.getPageIndex());
+			    		this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+					}
+				}
+				return;
+			case HOME:
+				for (GuiPage page : this.pages) {
+					if (page.getGuiPageType() == GuiPageType.HOME && page.getDataKey().equals(mapMarker.key)) {
+						this.villageData.setFramePosition(mapMarker.getPosition());
+						setLeftPageIndex(page.getPageIndex());
+			    		this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+					}
+				}
 				return;
 			case STRUCTURE:
+			case TOWNHALL:
+				for (GuiPage page : this.pages) {
+					if (page.getGuiPageType() == GuiPageType.STRUCTURETYPE && page.getDataKey().equals(mapMarker.key)) {
+						this.villageData.setFramePosition(mapMarker.getPosition());
+						setLeftPageIndex(page.getPageIndex());
+			    		this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+					}
+				}
 				return;
 			default:
 				break;

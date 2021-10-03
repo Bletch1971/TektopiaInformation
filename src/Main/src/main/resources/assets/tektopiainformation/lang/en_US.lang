@@ -286,7 +286,7 @@ tektopiaBook.summary.header=Summary
 tektopiaBook.village.name=Village:
 
 tektopiaBook.village.header=Summary
-tektopiaBook.village.origin=Token Position:
+tektopiaBook.village.origin=Village Origin:
 tektopiaBook.village.boundaries=Boundaries
 tektopiaBook.village.boundarynortheast=North East:
 tektopiaBook.village.boundarynorthwest=North West:
@@ -294,6 +294,7 @@ tektopiaBook.village.boundarysoutheast=South East:
 tektopiaBook.village.boundarysouthwest=South West:
 tektopiaBook.village.totals=Totals
 tektopiaBook.village.structures=Structures:
+tektopiaBook.village.homes=Homes:
 tektopiaBook.village.residents=Residents:
 tektopiaBook.village.professionsales=Profession Sales:
 tektopiaBook.village.merchantsales=Merchant Sales:
