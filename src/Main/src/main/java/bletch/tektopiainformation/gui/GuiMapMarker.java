@@ -71,17 +71,13 @@ public class GuiMapMarker extends GuiButton implements Comparable<GuiMapMarker> 
     // Override the compareTo method
     public int compareTo(GuiMapMarker marker)
     {
-    	//if (this.markerType.ordinal() == marker.markerType.ordinal()) {
-    		if (this.offset.getZ() == marker.offset.getZ()) {
-            	if (this.offset.getX() == marker.offset.getX())
-            		return 0;
-            	
-        		return this.offset.getX() > marker.offset.getX() ? 1 : -1;
-        	}
+		if (this.offset.getZ() == marker.offset.getZ()) {
+        	if (this.offset.getX() == marker.offset.getX())
+        		return 0;
         	
-        	return this.offset.getZ() > marker.offset.getZ() ? 1 : -1;
-    	//}
+    		return this.offset.getX() > marker.offset.getX() ? 1 : -1;
+    	}
     	
-    	//return this.markerType.ordinal() > marker.markerType.ordinal() ? 1 : -1;
+    	return this.offset.getZ() > marker.offset.getZ() ? 1 : -1;
     }
 }

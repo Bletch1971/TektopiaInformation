@@ -1813,7 +1813,7 @@ public class GuiTektopiaBook extends GuiScreen {
 	    			continue;
 				
 	    		mapMarker.getTooltip().multiplySize(factor);
-		        mapMarker.getTooltip().multiplyPosition(factor, true).addPosition(mapOrigin);
+		        mapMarker.getTooltip().multiplyPosition(factor).multipleOffset(factor).addPosition(mapOrigin);
 	    		
 	            this.tooltips.add(0, mapMarker.getTooltip());
 		        

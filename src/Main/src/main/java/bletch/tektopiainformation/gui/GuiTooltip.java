@@ -86,14 +86,16 @@ public class GuiTooltip {
 		return this.tooltip;
 	}
 	
-	public GuiTooltip multiplyPosition(int factor, Boolean multipleOffset) {
+	public GuiTooltip multiplyPosition(int factor) {
 		this.left *= factor;
 		this.top *= factor;
 		
-		if (multipleOffset) {
-			this.leftOffset *= factor;
-			this.topOffset *= factor;
-		}
+		return this;
+	}
+	
+	public GuiTooltip multipleOffset(int factor) {
+		this.leftOffset *= factor;
+		this.topOffset *= factor;
 		
 		return this;
 	}
