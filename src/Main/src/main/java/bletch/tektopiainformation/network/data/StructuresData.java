@@ -74,6 +74,12 @@ public class StructuresData {
 		return structureType != null && this.structureTypeCounts != null && this.structureTypeCounts.containsKey(structureType) ? this.structureTypeCounts.get(structureType) : 0;
 	}
 	
+	public StructureData getTownHall() {
+		return this.structures == null ? null : this.structures.stream()
+				.filter(h -> h.getStructureType() == VillageStructureType.TOWNHALL)
+				.findFirst().orElse(null);
+	}
+	
 	private void clearData() {
 		this.structuresCount = 0;
 		

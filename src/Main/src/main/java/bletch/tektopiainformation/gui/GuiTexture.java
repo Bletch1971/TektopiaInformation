@@ -1,6 +1,7 @@
 package bletch.tektopiainformation.gui;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 
 public class GuiTexture {
 	
@@ -32,6 +33,13 @@ public class GuiTexture {
 		this.textureHeight = textureHeight;
 		
 		this.scale = scale;
+	}
+	
+	public GuiTexture addPosition(BlockPos position) {
+		this.left += position.getX();
+		this.top += position.getZ();
+		
+		return this;
 	}
 	
 	public ResourceLocation getTexture() {
@@ -88,6 +96,36 @@ public class GuiTexture {
 	
 	public float getScale() {
 		return this.scale;
+	}
+	
+	public GuiTexture multiplyPosition(int factor) {
+		this.left *= factor;
+		this.top *= factor;
+		
+		return this;
+	}
+	
+	public GuiTexture multiplySize(int factor) {
+		this.width *= factor;
+		this.height *= factor;
+		this.textureWidth *= factor;
+		this.textureHeight *= factor;
+		
+		return this;
+	}
+	
+	public GuiTexture setPosition(int left, int top) {
+		this.left = left;
+		this.top = top;
+		
+		return this;
+	}
+	
+	public GuiTexture setPosition(BlockPos position) {
+		this.left = position.getX();
+		this.top = position.getZ();
+		
+		return this;
 	}
 	
 	public boolean withinBounds(int x, int y) {

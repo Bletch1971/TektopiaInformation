@@ -174,6 +174,7 @@ button.endbook.name=End of Book
 
 bookmark.economy.name=Economy
 bookmark.homes.name=Homes
+bookmark.map.name=Map
 bookmark.professions.name=Professions
 bookmark.residents.name=Residents
 bookmark.statistics.name=Statistics
@@ -205,22 +206,8 @@ tektopiaBook.headers.range=Range
 tektopiaBook.headers.resident=Resident
 tektopiaBook.headers.valid=Valid
 
-tektopiaBook.village.name=Village:
-
-tektopiaBook.village.header=Summary
-tektopiaBook.village.origin=Token Position:
-tektopiaBook.village.boundaries=Boundaries
-tektopiaBook.village.boundarynorthwest=North West:
-tektopiaBook.village.boundarynortheast=North East:
-tektopiaBook.village.boundarysouthwest=South West:
-tektopiaBook.village.boundarysoutheast=South East:
-tektopiaBook.village.totals=Totals
-tektopiaBook.village.structures=Structures:
-tektopiaBook.village.residents=Residents:
-tektopiaBook.village.professionsales=Profession Sales:
-tektopiaBook.village.merchantsales=Merchant Sales:
-tektopiaBook.village.statistics=Statistics
-tektopiaBook.village.nobed=Residents Without Beds:
+tektopiaBook.economy.merchantsales=Total Merchant Sales:
+tektopiaBook.economy.salesHistory=Sales History
 
 tektopiaBook.structures.total=Total Structures:
 tektopiaBook.structures.structuretypes=Structure Types
@@ -245,6 +232,18 @@ tektopiaBook.hometypes.frameposition=Token Positions
 tektopiaBook.hometypes.totalhomes=Total Homes:
 tektopiaBook.hometypes.totalresidents=Total Residents:
 tektopiaBook.hometypes.residents=Residents
+
+tektopiaBook.map.quadrantnortheast=North East
+tektopiaBook.map.quadrantnorthwest=North West
+tektopiaBook.map.quadrantsoutheast=South East
+tektopiaBook.map.quadrantsouthwest=South West
+
+tektopiaBook.map.filter.showboundaries=Show Boundaries
+tektopiaBook.map.filter.showhomes=Show Homes
+tektopiaBook.map.filter.showplayer=Show Player
+tektopiaBook.map.filter.showresidents=Show Residents
+tektopiaBook.map.filter.showstructures=Show Structures
+tektopiaBook.map.filter.showtownhall=Show Town Hall
 
 tektopiaBook.professions.total=Total Residents:
 tektopiaBook.professions.professiontypes=Profession Types
@@ -282,11 +281,24 @@ tektopiaBook.statistics.residents=Residents
 tektopiaBook.statistics.range=Range:
 tektopiaBook.statistics.total=Total Residents:
 
-tektopiaBook.economy.merchantsales=Total Merchant Sales:
-
-tektopiaBook.economy.salesHistory=Sales History
-
 tektopiaBook.summary.header=Summary
+
+tektopiaBook.village.name=Village:
+
+tektopiaBook.village.header=Summary
+tektopiaBook.village.origin=Token Position:
+tektopiaBook.village.boundaries=Boundaries
+tektopiaBook.village.boundarynortheast=North East:
+tektopiaBook.village.boundarynorthwest=North West:
+tektopiaBook.village.boundarysoutheast=South East:
+tektopiaBook.village.boundarysouthwest=South West:
+tektopiaBook.village.totals=Totals
+tektopiaBook.village.structures=Structures:
+tektopiaBook.village.residents=Residents:
+tektopiaBook.village.professionsales=Profession Sales:
+tektopiaBook.village.merchantsales=Merchant Sales:
+tektopiaBook.village.statistics=Statistics
+tektopiaBook.village.nobed=Residents Without Beds:
 
 #============
 #= Tooltips =

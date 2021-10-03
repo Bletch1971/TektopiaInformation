@@ -14,5 +14,6 @@ public enum GuiPageType {
 	PROFESSIONTYPE,
 	RESIDENT,
 	STATS,
-	ECONOMY;
+	ECONOMY,
+	MAP,
 }
