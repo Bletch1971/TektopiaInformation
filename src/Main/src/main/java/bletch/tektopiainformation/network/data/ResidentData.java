@@ -20,6 +20,7 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.tangotek.tektopia.ProfessionType;
+import net.tangotek.tektopia.VillagerRole;
 import net.tangotek.tektopia.entities.EntityGuard;
 import net.tangotek.tektopia.entities.EntityVillagerTek;
 import net.tangotek.tektopia.storage.VillagerInventory;
@@ -31,6 +32,8 @@ public class ResidentData extends EntityData {
 	private static final String NBTTAG_VILLAGE_RESIDENTMALE = "villageresidentmale";
 	private static final String NBTTAG_VILLAGE_RESIDENTCHILD = "villageresidentchild";
 	private static final String NBTTAG_VILLAGE_RESIDENTCAPTAIN = "villageresidentcaptain";
+	private static final String NBTTAG_VILLAGE_RESIDENTVENDOR = "villageresidentvendor";
+	private static final String NBTTAG_VILLAGE_RESIDENTSLEEPING = "villageresidentsleeping";
 	private static final String NBTTAG_VILLAGE_RESIDENTBASELEVEL = "villageresidentbaselevel";
 	private static final String NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL = "villageresidentblessedlevel";
 	private static final String NBTTAG_VILLAGE_RESIDENTDAYSALIVE = "villageresidentdaysAlive";
@@ -52,6 +55,8 @@ public class ResidentData extends EntityData {
 	private boolean isMale;
 	private boolean isChild;
 	private boolean isCaptain;
+	private boolean isVendor;
+	private boolean isSleeping;
 	private int baseLevel;
 	private int blessedLevel;
 	private int daysAlive;
@@ -92,6 +97,14 @@ public class ResidentData extends EntityData {
 	
 	public boolean isCaptain() {
 		return this.isCaptain;
+	}
+	
+	public boolean isVendor() {
+		return this.isVendor;
+	}
+	
+	public boolean isSleeping() {
+		return this.isSleeping;
 	}
 	
 	public int getBaseLevel() {
@@ -175,6 +188,8 @@ public class ResidentData extends EntityData {
 		this.isMale = true;
 		this.isChild = false;
 		this.isCaptain = false;
+		this.isVendor = false;
+		this.isSleeping = false;
 		this.baseLevel = 0;
 		this.blessedLevel = 0;
 		this.daysAlive = 0;
@@ -204,6 +219,8 @@ public class ResidentData extends EntityData {
 			if (this.professionType != null) {
 				this.isCaptain = this.professionType == ProfessionType.CAPTAIN || villager instanceof EntityGuard && ((EntityGuard)villager).isCaptain();
 			}
+			this.isVendor = villager.isRole(VillagerRole.VENDOR);
+			this.isSleeping = villager.isSleeping();
 			if (this.professionType != null) {
 				this.level = villager.getSkill(this.professionType);
 			}
@@ -269,6 +286,8 @@ public class ResidentData extends EntityData {
 		this.isMale = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTMALE) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTMALE) : true;
 		this.isChild = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCHILD) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCHILD) : false;
 		this.isCaptain = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCAPTAIN) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCAPTAIN) : false;
+		this.isVendor = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTVENDOR) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTVENDOR) : false;
+		this.isSleeping = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTSLEEPING) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTSLEEPING) : false;
 		this.baseLevel = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTBASELEVEL) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTBASELEVEL) : 0;
 		this.blessedLevel = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL) : 0;
 		this.daysAlive = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTDAYSALIVE) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTDAYSALIVE) : 0;
@@ -345,6 +364,8 @@ public class ResidentData extends EntityData {
 		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTMALE, this.isMale);
 		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTCHILD, this.isChild);
 		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTCAPTAIN, this.isCaptain);
+		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTVENDOR, this.isVendor);
+		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTSLEEPING, this.isSleeping);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTBASELEVEL, this.baseLevel);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL, this.blessedLevel);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTDAYSALIVE, this.daysAlive);

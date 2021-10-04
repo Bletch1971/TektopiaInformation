@@ -201,6 +201,7 @@ tektopiaBook.nobed=No Bed
 tektopiaBook.summary=Summary
 
 tektopiaBook.headers.bed=Bed
+tektopiaBook.headers.buy=Buy
 tektopiaBook.headers.count=Count
 tektopiaBook.headers.enemy=Enemy
 tektopiaBook.headers.index=#
@@ -210,6 +211,9 @@ tektopiaBook.headers.position=Position
 tektopiaBook.headers.profession=Profession
 tektopiaBook.headers.range=Range
 tektopiaBook.headers.resident=Resident
+tektopiaBook.headers.sell=Sell
+tektopiaBook.headers.sleep=Sleep
+tektopiaBook.headers.times=Times
 tektopiaBook.headers.type=Type
 tektopiaBook.headers.valid=Valid
 tektopiaBook.headers.visitor=Visitor
@@ -274,6 +278,7 @@ tektopiaBook.residents.hunger=Hunger:
 tektopiaBook.residents.happiness=Happiness:
 tektopiaBook.residents.intelligence=Intelligence:
 tektopiaBook.residents.blessed=Blessed:
+tektopiaBook.residents.sleeping=Sleeping:
 tektopiaBook.residents.totalarmorvalue=Total Armor:
 tektopiaBook.residents.home=Home Structure:
 tektopiaBook.residents.bed=Bed Position:
@@ -323,6 +328,8 @@ tektopiaBook.village.nobed=Residents Without Beds:
 
 tektopiaBook.visitors.total=Total Visitors:
 tektopiaBook.visitors.visitors=Visitors
+tektopiaBook.visitors.vendoritems=Items
+tektopiaBook.visitors.professions=Professions (top 4)
 
 #============
 #= Tooltips =

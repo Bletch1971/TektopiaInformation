@@ -15,7 +15,7 @@ public class TextUtils {
 	public static final String SEPARATOR_COLON = " : ";
 	public static final String SEPARATOR_DASH = " - ";
 	public static final String SEPARATOR_FSLASH = "/";
-	public static final String SEPARATOR_TIMES = "x ";
+	public static final String SEPARATOR_TIMES = " x ";
 	public static final String INDENT = "  ";
 
 	public static final String SYMBOL_BULLET = "\u2022";

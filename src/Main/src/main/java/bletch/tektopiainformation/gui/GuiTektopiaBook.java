@@ -41,6 +41,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.village.MerchantRecipe;
 import net.tangotek.tektopia.ProfessionType;
 import net.tangotek.tektopia.structures.VillageStructureType;
 
@@ -134,8 +135,10 @@ public class GuiTektopiaBook extends GuiScreen {
 	private static final int ENEMYLIST_PER_PAGE = 18;
 	private static final int RESIDENTLIST_PER_PAGE = 18;
 	private static final int STATRESIDENTS_PER_PAGE = 15;
-	private static final int SALESHISTORY_PER_PAGE = 16;
+	private static final int SALESHISTORY_PER_PAGE = 15;
 	private static final int VISITORLIST_PER_PAGE = 18;
+	private static final int VENDORLIST0_PER_PAGE = 8;
+	private static final int VENDORLIST_PER_PAGE = 15;
 	
 	private static final ResourceLocation book = new ResourceLocation(ModDetails.MOD_ID, "textures/gui/gui_book.png");
 	private static final ResourceLocation bookmarkLeft = new ResourceLocation(ModDetails.MOD_ID, "textures/gui/bookmark_left.png");
@@ -740,6 +743,21 @@ public class GuiTektopiaBook extends GuiScreen {
 					}  	        	
 					
 					this.pages.add(new GuiPage(GuiPageType.VISITOR, pageIndex++, getPageKey("" + visitorData.getId(), 0)));
+					
+					// if visitor is a vendor, then make sure to add additional pages for items, if needed.
+					if (visitorData.isVendor()) {
+						count = visitorData.getRecipeList().size() - VENDORLIST0_PER_PAGE;
+						if (count > 0) {
+							pages = count / VENDORLIST_PER_PAGE;
+							if (count % VENDORLIST_PER_PAGE > 0) {
+								pages++;
+							}
+				    		
+				    		for (int page = 0; page < pages; page++) {
+						    	this.pages.add(new GuiPage(GuiPageType.VISITOR, pageIndex++, getPageKey("" + visitorData.getId(), page + 1)));
+				    		}
+						}
+					}
 				}
 			}
 		}
@@ -836,8 +854,8 @@ public class GuiTektopiaBook extends GuiScreen {
 	    	
 	    	// sales history pages
 			int count = economyData.getMerchantSales();
-    		int pages = count / SALESHISTORY_PER_PAGE;
-    		if (count % SALESHISTORY_PER_PAGE > 0) {
+    		int pages = count / (SALESHISTORY_PER_PAGE * 3);
+    		if (count % (SALESHISTORY_PER_PAGE * 3) > 0) {
     			pages++;
     		}
     		pages = Math.max(1, pages);
@@ -998,11 +1016,7 @@ public class GuiTektopiaBook extends GuiScreen {
         	if (economyData != null) {
         		List<ItemStack> salesHistory = economyData.getSalesHistory();
         		
-            	final int[] maxLength = { 0 };
-            	maxLength[0] += Font.small.getStringWidth("" + salesHistory.size());
-            	maxLength[0] += LABEL_TRAILINGSPACE_X;
-            	
-	        	int page = 0;
+            	int page = 0;
 	        	try {
 	        		page = Integer.parseInt(dataKey[1]);
 	        	}
@@ -1010,53 +1024,59 @@ public class GuiTektopiaBook extends GuiScreen {
 	        		page = 0;
 	        	}
 	        	int startIndex = page * SALESHISTORY_PER_PAGE;
-	        	int index = 0;
+	        	int endIndex = Math.min(salesHistory.size(), startIndex + SALESHISTORY_PER_PAGE);
             	
-            	String indexHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.index");
-            	String nameHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.name");
-            	String countHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.count");
+	        	y += LINE_SPACE_Y;
+            	int yTop = y;
             	
-    			if (guiPage.isLeftPage()) {
-                    Font.small.printRight(indexHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y); 
-                    Font.small.printLeft(nameHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + maxLength[0] + 20, y);
-                    Font.small.printRight(countHeader, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y); 
-            	}
-            	
-            	if (guiPage.isRightPage()) {
-                    Font.small.printRight(indexHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y);
-                    Font.small.printLeft(nameHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + maxLength[0] + 20, y);  
-                    Font.small.printRight(countHeader, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y); 
-            	}
+            	for (int i = 0; i < 3; i++) {
+            		if (startIndex >= salesHistory.size())
+            			break;
+            		
+            		int xL = this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX;
+            		if (i == 1)
+            			xL = this.x + PAGE_LEFTPAGE_CENTER_X - 8;
+            		else if (i == 2)
+            			xL = this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X - 16 - indentX;
+            		
+            		int xR = this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX;
+            		if (i == 1)
+            			xR = this.x + PAGE_RIGHTPAGE_CENTER_X - 8;
+            		else if (i == 2)
+            			xR = this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X - 16 - indentX;
+            		
+            		List<ItemStack> sales = salesHistory.subList(startIndex, endIndex);
+            		
+            		for (ItemStack itemStack : sales) {
 
-            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
-            	
-        		for (ItemStack itemStack : salesHistory) {
-        			if (index >= startIndex && index < startIndex + SALESHISTORY_PER_PAGE) {
-        				
-            			String indexName = "" + (index + 1);
-            			String itemName = itemStack.getDisplayName();
-            			String itemCount = "" + (itemStack.getCount() > 1 ? itemStack.getCount() : "0");
+                		List<String> itemStackTooltip = itemStack.getTooltip(null, TooltipFlags.NORMAL);
+                		if (itemStack.isItemEnchanted() && itemStackTooltip != null && itemStackTooltip.size() > 0) {
+                			itemStackTooltip.set(0, TextFormatting.AQUA + itemStackTooltip.get(0));
+                		}
             			
                     	if (guiPage.isLeftPage()) {
-    	                    Font.small.printRight(indexName, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y); 
-                            Font.small.printLeft(itemName, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + maxLength[0] + 20, y); 
-                            Font.small.printRight(itemCount, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y);
-
-    	                    RenderUtils.renderItemIntoGUI(itemStack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 10, y - 5);
+    	                    RenderUtils.renderItemIntoGUI(itemStack, xL, y - 5);
+    	                    RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, itemStack, xL, y - 5);
+                			if (itemStackTooltip != null && itemStackTooltip.size() > 0) {
+                				this.tooltips.add(new GuiTooltip(xL, y - 5, 16, 16, itemStackTooltip));
+                			}
                     	}
                     	
                     	if (guiPage.isRightPage()) {
-                    		Font.small.printRight(indexName, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y); 
-                            Font.small.printLeft(itemName, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + maxLength[0] + 20, y); 
-                            Font.small.printRight(itemCount, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
-
-                    		RenderUtils.renderItemIntoGUI(itemStack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 10, y - 5);
+                    		RenderUtils.renderItemIntoGUI(itemStack, xR, y - 5);
+                    		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, itemStack, xR, y - 5);
+                			if (itemStackTooltip != null && itemStackTooltip.size() > 0) {
+                				this.tooltips.add(new GuiTooltip(xR, y - 5, 16, 16, itemStackTooltip));
+                			}
                     	}                   	
                     	
-    	            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y + 2;           			
-        			}
-        			index++;
-        		}
+    	            	y += Font.normal.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y + 4;
+            		}
+            		
+            		y = yTop;
+            		startIndex += SALESHISTORY_PER_PAGE;
+            		endIndex = Math.min(salesHistory.size(), startIndex + SALESHISTORY_PER_PAGE);
+            	}
         	}
         }
     }
@@ -2164,6 +2184,32 @@ public class GuiTektopiaBook extends GuiScreen {
         	y += Font.small.fontRenderer.FONT_HEIGHT;
         }
         
+        String visitorsLabel = TextUtils.translate("tektopiaBook.visitors.total");
+        String visitorsText = "";
+
+        if (visitorsLabel != null && visitorsLabel.trim() != "") {
+        	if (this.villageData.getResidentsData() != null)
+        		visitorsText += "" + this.villageData.getVisitorsData().getVisitorsCount();
+        	
+            Font.small.printLeft(visitorsLabel, x, y);
+            Font.small.printRight(visitorsText, x + indentX, y);
+        	
+        	y += Font.small.fontRenderer.FONT_HEIGHT;
+        }
+        
+        String enemiesLabel = TextUtils.translate("tektopiaBook.enemies.total");
+        String enemiesText = "";
+
+        if (enemiesLabel != null && enemiesLabel.trim() != "") {
+        	if (this.villageData.getResidentsData() != null)
+        		enemiesText += "" + this.villageData.getEnemiesData().getEnemiesCount();
+        	
+            Font.small.printLeft(enemiesLabel, x, y);
+            Font.small.printRight(enemiesText, x + indentX, y);
+        	
+        	y += Font.small.fontRenderer.FONT_HEIGHT;
+        }
+        
 
 		// display map filters (draw in reverse order from bottom to top)
         y = this.y + MAP_PAGE_BOTTOM_Y - (LINE_SPACE_Y * 3);
@@ -2689,21 +2735,24 @@ public class GuiTektopiaBook extends GuiScreen {
             	int index = 0;
 
             	String bedHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.bed");    
+            	String sleepHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.sleep");    
             	String residentHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.resident");
             	String professionHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.profession");
             	String levelHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.level");
             	
             	if (guiPage.isLeftPage()) {
                 	Font.small.printLeft(bedHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X, y);
-                    Font.small.printLeft(residentHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + maxLength[0], y);
-                    Font.small.printLeft(professionHeader, this.x + PAGE_LEFTPAGE_CENTER_X + indentX + indentX, y);
+                    Font.small.printLeft(sleepHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + maxLength[0] + 5, y);
+                    Font.small.printLeft(residentHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + maxLength[0] + indentX + 7, y);
+                    Font.small.printLeft(professionHeader, this.x + PAGE_LEFTPAGE_CENTER_X + indentX + indentX + 15, y);
     				Font.small.printRight(levelHeader, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y);
             	}
             	
             	if (guiPage.isRightPage()) {
                 	Font.small.printLeft(bedHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X, y);
-                    Font.small.printLeft(residentHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + maxLength[0], y);
-                    Font.small.printLeft(professionHeader, this.x + PAGE_RIGHTPAGE_CENTER_X + indentX + indentX, y);
+                    Font.small.printLeft(sleepHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + maxLength[0] + 5, y);
+                    Font.small.printLeft(residentHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + maxLength[0] + indentX + 7, y);
+                    Font.small.printLeft(professionHeader, this.x + PAGE_RIGHTPAGE_CENTER_X + indentX + indentX + 15, y);
     				Font.small.printRight(levelHeader, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
             	}
             	
@@ -2712,11 +2761,13 @@ public class GuiTektopiaBook extends GuiScreen {
             	for (ResidentData resident : residentsData.getResidents()) {
             		if (index >= startIndex && index < startIndex + RESIDENTLIST_PER_PAGE) {
             			String residentBed = "";
+            			String residentSleep = "";
                 		String residentName = "";
                 		String residentProfession = "";
                 		String residentLevel = "";
 
                 		residentBed += (resident.hasBed() ? TextUtils.SYMBOL_GREENTICK : TextUtils.SYMBOL_REDCROSS);
+                		residentSleep += (resident.isSleeping() ? TextUtils.SYMBOL_GREENTICK : TextUtils.SYMBOL_REDCROSS);
                 		residentName += formatResidentName(resident.isMale(), resident.getName(), true);
         				residentProfession += getProfessionTypeName(resident.getProfessionType());
             			
@@ -2731,15 +2782,17 @@ public class GuiTektopiaBook extends GuiScreen {
 
             			if (guiPage.isLeftPage()) {
 	                    	Font.small.printRight(residentBed, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y);
-	                    	Font.small.printLeft(residentName, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + maxLength[0], y);
-	                    	Font.small.printLeft(residentProfession, this.x + PAGE_LEFTPAGE_CENTER_X + indentX + indentX, y);
+	                        Font.small.printRight(residentSleep, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + maxLength[0] + 7, y);
+	                    	Font.small.printLeft(residentName, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + maxLength[0] + indentX + 7, y);
+	                    	Font.small.printLeft(residentProfession, this.x + PAGE_LEFTPAGE_CENTER_X + indentX + indentX + 15, y);
 	                    	Font.small.printRight(residentLevel, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y);
 	                    }
     	            	
     	            	if (guiPage.isRightPage()) {
 	                    	Font.small.printRight(residentBed, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y);
-	                    	Font.small.printLeft(residentName, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + maxLength[0], y);
-	                    	Font.small.printLeft(residentProfession, this.x + PAGE_RIGHTPAGE_CENTER_X + indentX + indentX, y);
+	                        Font.small.printRight(residentSleep, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + maxLength[0] + 7, y);
+	                    	Font.small.printLeft(residentName, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + maxLength[0] + indentX + 7, y);
+	                    	Font.small.printLeft(residentProfession, this.x + PAGE_RIGHTPAGE_CENTER_X + indentX + indentX + 15, y);
 	                    	Font.small.printRight(residentLevel, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
 	                    }
 
@@ -3042,6 +3095,25 @@ public class GuiTektopiaBook extends GuiScreen {
             	
 	            y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
 	            
+	            String sleepingLabel = TextUtils.translate("tektopiaBook.residents.sleeping");
+	            String sleepingText = "";
+	        	
+	            if (sleepingLabel != null && sleepingLabel.trim() != "") {
+	            	sleepingText += resident.isSleeping() ? TextUtils.SYMBOL_GREENTICK : TextUtils.SYMBOL_REDCROSS;
+	            	
+	            	if (guiPage.isLeftPage()) {
+	                    Font.small.printLeft(sleepingLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y);
+	                    Font.small.printLeft(sleepingText, this.x + PAGE_LEFTPAGE_LEFTCENTER_X + indentX, y); 
+	            	}
+	            	
+	            	if (guiPage.isRightPage()) {
+	                    Font.small.printLeft(sleepingLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y); 
+	                    Font.small.printLeft(sleepingText, this.x + PAGE_RIGHTPAGE_LEFTCENTER_X + indentX, y);
+	            	}
+	            }
+            	
+	            y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+	            
 	            String totalArmorLabel = TextUtils.translate("tektopiaBook.residents.totalarmorvalue");
 	            String totalArmorText = "";
 	        	
@@ -3167,7 +3239,7 @@ public class GuiTektopiaBook extends GuiScreen {
                 	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
 	            }
 	            
-	            y += 10;
+	            y += 5;
 
                 String additionalProfessions = TextUtils.translate("tektopiaBook.residents.additionalprofessions");
             	
@@ -3220,7 +3292,7 @@ public class GuiTektopiaBook extends GuiScreen {
                     	Font.small.printRight(additionalProfessionLevel, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
                     }
 
-	            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+	            	y += Font.small.fontRenderer.FONT_HEIGHT;
 	            	index++;
                 }
             }
@@ -4423,7 +4495,7 @@ public class GuiTektopiaBook extends GuiScreen {
     	VisitorsData visitorsData = this.villageData.getVisitorsData();
     	
         if (dataKey[0].equals("")) {
-        	// resident list
+        	// visitor list
         	
             String pageHeader = TextUtils.translate("tektopiaBook.visitors.visitors");
             
@@ -4534,36 +4606,344 @@ public class GuiTektopiaBook extends GuiScreen {
                 	y += Font.normal.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
                 } 
                 
-        		{
-                	int tXL = this.x + (PAGE_LEFTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
-                	int tXR = this.x + (PAGE_RIGHTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
-                	int tY = y;
-
-	            	GlStateManager.pushMatrix();
-        	        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                // check if displaying the first page
+                if (dataKey[1].equals("0")) {
+                	{
+	                	int tXL = this.x + (PAGE_LEFTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
+	                	int tXR = this.x + (PAGE_RIGHTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
+	                	int tY = y;
 	
-	            	String modId = visitor.getModId();
-	            	if (modId.equals(ModDetails.MOD_ID_TEKTOPIA))
-	            		modId = ModDetails.MOD_ID;
-	            	String className = visitor.getClassName();
-	            	String gender = visitor.isMale() ? "m" : "f";
-	            	
-	            	ResourceLocation visitorResource = new ResourceLocation(modId, "textures/visitors/" + className + "_" + gender + ".png");
-	                
-	                if (visitorResource != null) {
-		    	        mc.getTextureManager().bindTexture(visitorResource);
+		            	GlStateManager.pushMatrix();
+	        	        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		
+		            	String modId = visitor.getModId();
+		            	if (modId.equals(ModDetails.MOD_ID_TEKTOPIA))
+		            		modId = ModDetails.MOD_ID;
+		            	String className = visitor.getClassName();
+		            	String gender = visitor.isMale() ? "m" : "f";
+		            	
+		            	ResourceLocation visitorResource = new ResourceLocation(modId, "textures/visitors/" + className + "_" + gender + ".png");
 		                
-		                if (guiPage.isLeftPage()) {
-		                	super.drawModalRectWithCustomSizedTexture(tXL, tY, 0, 0, PROFESSION_WIDTH, PROFESSION_HEIGHT, 56, 90);
+		                if (visitorResource != null) {
+			    	        mc.getTextureManager().bindTexture(visitorResource);
+			                
+			                if (guiPage.isLeftPage()) {
+			                	super.drawModalRectWithCustomSizedTexture(tXL, tY, 0, 0, PROFESSION_WIDTH, PROFESSION_HEIGHT, 56, 90);
+			                }
+			                
+			                if (guiPage.isRightPage()) {
+			                	super.drawModalRectWithCustomSizedTexture(tXR, tY, 0, 0, PROFESSION_WIDTH, PROFESSION_HEIGHT, 56, 90);
+			                }	                	
 		                }
 		                
-		                if (guiPage.isRightPage()) {
-		                	super.drawModalRectWithCustomSizedTexture(tXR, tY, 0, 0, PROFESSION_WIDTH, PROFESSION_HEIGHT, 56, 90);
-		                }	                	
+		                GlStateManager.popMatrix();
+	        		}
+	        		
+	    			// display visitor statistics
+	    			String healthLabel = TextUtils.translate("tektopiaBook.residents.health");
+		            String healthText = "";
+		        	
+		            if (healthLabel != null && healthLabel.trim() != "") {
+		            	healthText += formatResidentStatistic(visitor.getHealth(), visitor.getMaxHealth(), true);
+		            	
+		            	if (guiPage.isLeftPage()) {
+		                    Font.small.printLeft(healthLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y);
+		                    Font.small.printLeft(healthText, this.x + PAGE_LEFTPAGE_LEFTCENTER_X + indentX, y);  
+		            	}
+		            	
+		            	if (guiPage.isRightPage()) {
+		                    Font.small.printLeft(healthLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y);
+		                    Font.small.printLeft(healthText, this.x + PAGE_RIGHTPAGE_LEFTCENTER_X + indentX, y); 
+		            	}
+	                	
+	                	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+		            }
+		            
+		            String hungerLabel = TextUtils.translate("tektopiaBook.residents.hunger");
+		            String hungerText = "";
+		        	
+		            if (hungerLabel != null && hungerLabel.trim() != "") {
+		            	hungerText += formatResidentStatistic(visitor.getHunger(), visitor.getMaxHunger(), true);
+		            	
+		            	if (guiPage.isLeftPage()) {
+		                    Font.small.printLeft(hungerLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y);
+		                    Font.small.printLeft(hungerText, this.x + PAGE_LEFTPAGE_LEFTCENTER_X + indentX, y); 
+		            	}
+		            	
+		            	if (guiPage.isRightPage()) {
+		                    Font.small.printLeft(hungerLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y);
+		                    Font.small.printLeft(hungerText, this.x + PAGE_RIGHTPAGE_LEFTCENTER_X + indentX, y); 
+		            	}
+	                	
+	                	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+		            }
+		            
+		            String happinessLabel = TextUtils.translate("tektopiaBook.residents.happiness");
+		            String happinessText = "";
+		        	
+		            if (happinessLabel != null && happinessLabel.trim() != "") {
+		            	happinessText += formatResidentStatistic(visitor.getHappy(), visitor.getMaxHappy(), true);
+		            	
+		            	if (guiPage.isLeftPage()) {
+		                    Font.small.printLeft(happinessLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y); 
+		                    Font.small.printLeft(happinessText, this.x + PAGE_LEFTPAGE_LEFTCENTER_X + indentX, y);
+		            	}
+		            	
+		            	if (guiPage.isRightPage()) {
+		                    Font.small.printLeft(happinessLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y);
+		                    Font.small.printLeft(happinessText, this.x + PAGE_RIGHTPAGE_LEFTCENTER_X + indentX, y); 
+		            	}
+	                	
+	                	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+		            }
+		            
+		            String intelligenceLabel = TextUtils.translate("tektopiaBook.residents.intelligence");
+		            String intelligenceText = "";
+		        	
+		            if (intelligenceLabel != null && intelligenceLabel.trim() != "") {
+		            	intelligenceText += formatResidentStatistic(visitor.getIntelligence(), visitor.getMaxIntelligence(), true);
+		            	
+		            	if (guiPage.isLeftPage()) {
+		                    Font.small.printLeft(intelligenceLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y);
+		                    Font.small.printLeft(intelligenceText, this.x + PAGE_LEFTPAGE_LEFTCENTER_X + indentX, y); 
+		            	}
+		            	
+		            	if (guiPage.isRightPage()) {
+		                    Font.small.printLeft(intelligenceLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y);
+		                    Font.small.printLeft(intelligenceText, this.x + PAGE_RIGHTPAGE_LEFTCENTER_X + indentX, y); 
+		            	}
+	                	
+	                	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+		            }
+	            	
+					y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+					y += 5;
+					
+					String currentPositionLabel = TextUtils.translate("tektopiaBook.residents.position");
+		            String currentPositionText = "";
+		        	
+		            if (currentPositionLabel != null && currentPositionLabel.trim() != "") {
+		            	currentPositionText += " " + formatBlockPos(visitor.getCurrentPosition());
+		            
+		            	if (guiPage.isLeftPage()) {
+		                    Font.small.printLeft(currentPositionLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y); 
+		                    Font.small.printLeft(currentPositionText, this.x + PAGE_LEFTPAGE_CENTER_X - indentX, y);
+		            	}
+		            	
+		            	if (guiPage.isRightPage()) {
+		                    Font.small.printLeft(currentPositionLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y); 
+		                    Font.small.printLeft(currentPositionText, this.x + PAGE_RIGHTPAGE_CENTER_X - indentX, y); 
+		            	}
+	                	
+	                	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+		            }
+		            
+		            y += 10;
+                }
+                
+	            if (visitor.isVendor()) {
+	            	
+		        	int page = 0;
+		        	try {
+		        		page = Integer.parseInt(dataKey[1]);
+		        	}
+		        	catch (NumberFormatException e) {
+		        		page = 0;
+		        	}
+		        	int startIndex = 0;
+	            	int linesPerPage = VENDORLIST0_PER_PAGE;
+	            	int index = 0;
+	            	
+	            	if (page > 0) {
+	            		startIndex = VENDORLIST0_PER_PAGE + ((page - 1) * VENDORLIST_PER_PAGE);
+	            		linesPerPage = VENDORLIST_PER_PAGE;
+	            	}
+	            	
+	            	// display vendor items
+	                String vendoritems = TextUtils.translate("tektopiaBook.visitors.vendoritems");
+	                String continued = TextUtils.translate("tektopiaBook.continued");
+	            	if (!dataKey[1].equals("0") && continued != null && continued.trim() != "") {
+	            		vendoritems += " " + continued;
+	            	}
+	            	
+	                if (vendoritems != null && vendoritems.trim() != "") {
+	                	vendoritems = TextFormatting.DARK_BLUE + vendoritems;
+	                	
+	        			if (guiPage.isLeftPage()) {
+	                        Font.small.printLeft(vendoritems, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X, y); 
+	                	}
+	                	
+	                	if (guiPage.isRightPage()) {
+	                        Font.small.printLeft(vendoritems, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X, y); 
+	                	}
+	                	
+	                	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
 	                }
-	                
-	                GlStateManager.popMatrix();
-        		}
+	            	
+	            	String sellHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.sell");
+	            	String buyHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.buy");
+	            	String timesHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.times");
+	            	
+	    			if (guiPage.isLeftPage()) {
+	                    Font.small.printLeft(sellHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y); 
+	                    Font.small.printLeft(buyHeader, this.x + PAGE_LEFTPAGE_CENTER_X, y); 
+	                	Font.small.printRight(timesHeader, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y);
+	            	}
+	            	
+	            	if (guiPage.isRightPage()) {
+	                    Font.small.printLeft(sellHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y); 
+	                    Font.small.printLeft(buyHeader, this.x + PAGE_RIGHTPAGE_CENTER_X, y); 
+	                	Font.small.printRight(timesHeader, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
+	            	}
+
+	            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y + 2;
+	            	
+	            	for (MerchantRecipe recipe : visitor.getRecipeList()) {
+	            		if (index >= startIndex && index < startIndex + linesPerPage) {
+		            		ItemStack buyItem1Stack = recipe.getItemToBuy();
+		            		ItemStack buyItem2Stack = recipe.getSecondItemToBuy();
+		            		ItemStack sellItemStack = recipe.getItemToSell();
+		            		
+		            		String buyTimes = recipe.getToolUses() + TextUtils.SEPARATOR_FSLASH + recipe.getMaxTradeUses();
+		            		if (recipe.getToolUses() >= recipe.getMaxTradeUses())
+		            			buyTimes = TextFormatting.RED + buyTimes;
+
+	                		List<String> buyItem1Tooltip = buyItem1Stack.getTooltip(null, TooltipFlags.NORMAL);
+	                		if (buyItem1Stack.isItemEnchanted() && buyItem1Tooltip != null && buyItem1Tooltip.size() > 0) {
+	                			buyItem1Tooltip.set(0, TextFormatting.AQUA + buyItem1Tooltip.get(0));
+	                		}
+	                		List<String> buyItem2Tooltip = buyItem2Stack.getTooltip(null, TooltipFlags.NORMAL);
+	                		if (buyItem2Stack.isItemEnchanted() && buyItem2Tooltip != null && buyItem2Tooltip.size() > 0) {
+	                			buyItem2Tooltip.set(0, TextFormatting.AQUA + buyItem2Tooltip.get(0));
+	                		}
+	                		List<String> sellTooltip = sellItemStack.getTooltip(null, TooltipFlags.NORMAL);
+	                		if (sellItemStack.isItemEnchanted() && sellTooltip != null && sellTooltip.size() > 0) {
+	                			sellTooltip.set(0, TextFormatting.AQUA + sellTooltip.get(0));
+	                		}
+			            	
+			    			if (guiPage.isLeftPage()) {
+			                	Font.normal.printRight(buyTimes, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y);
+			                	
+			                	if (!buyItem1Stack.isEmpty()) {
+		                    		RenderUtils.renderItemIntoGUI(buyItem1Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5);
+		                    		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem1Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5);
+		                			if (buyItem1Tooltip != null && buyItem1Tooltip.size() > 0) {
+		                				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5, 16, 16, buyItem1Tooltip));
+		                			}
+			                	}
+			                	
+	                			if (!buyItem2Stack.isEmpty()) {
+	                        		RenderUtils.renderItemIntoGUI(buyItem2Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
+	                        		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem2Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
+	                    			if (buyItem2Tooltip != null && buyItem2Tooltip.size() > 0) {
+	                    				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, 16, 16, buyItem2Tooltip));
+	                    			}
+	                			}
+			                	
+	                			if (!sellItemStack.isEmpty()) {
+	        	                    RenderUtils.renderItemIntoGUI(sellItemStack, this.x + PAGE_LEFTPAGE_CENTER_X, y - 5);
+	        	                    RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, sellItemStack, this.x + PAGE_LEFTPAGE_CENTER_X, y - 5);
+	                    			if (sellTooltip != null && sellTooltip.size() > 0) {
+	                    				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_CENTER_X, y - 5, 16, 16, sellTooltip));
+	                    			}
+	                			}
+			            	}
+			            	
+			            	if (guiPage.isRightPage()) {
+			                	Font.normal.printRight(buyTimes, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
+			                	
+			                	if (!buyItem1Stack.isEmpty()) {
+		                    		RenderUtils.renderItemIntoGUI(buyItem1Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5);
+		                    		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem1Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5);
+		                			if (buyItem1Tooltip != null && buyItem1Tooltip.size() > 0) {
+		                				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5, 16, 16, buyItem1Tooltip));
+		                			}
+			                	}
+			                	
+	                			if (!buyItem2Stack.isEmpty()) {
+	                        		RenderUtils.renderItemIntoGUI(buyItem2Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
+	                        		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem2Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
+	                    			if (buyItem2Tooltip != null && buyItem2Tooltip.size() > 0) {
+	                    				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, 16, 16, buyItem2Tooltip));
+	                    			}
+	                			}
+			                	
+	                			if (!sellItemStack.isEmpty()) {
+	        	                    RenderUtils.renderItemIntoGUI(sellItemStack, this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5);
+	        	                    RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, sellItemStack, this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5);
+	                    			if (sellTooltip != null && sellTooltip.size() > 0) {
+	                    				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5, 16, 16, sellTooltip));
+	                    			}
+	                			}
+			            	}
+
+			            	y += Font.normal.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y + 5;
+	            		}
+	            		
+	            		index++;
+	            	}
+	            	
+	            } else {
+	            	
+	            	if (dataKey[1].equals("0")) {
+		            	// display professions (top 4)
+		            	
+		                String additionalProfessions = TextUtils.translate("tektopiaBook.visitors.professions");
+		            	
+		                if (additionalProfessions != null && additionalProfessions.trim() != "") {
+		                	additionalProfessions = TextFormatting.DARK_BLUE + additionalProfessions;
+		                	
+		        			if (guiPage.isLeftPage()) {
+		                        Font.small.printLeft(additionalProfessions, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X, y); 
+		                	}
+		                	
+		                	if (guiPage.isRightPage()) {
+		                        Font.small.printLeft(additionalProfessions, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X, y); 
+		                	}
+		                	
+		                	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+		                }
+		            	
+		            	String nameHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.name");
+		            	String levelHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.level");
+		            	
+		    			if (guiPage.isLeftPage()) {
+		                    Font.small.printLeft(nameHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y); 
+		                	Font.small.printRight(levelHeader, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y);
+		            	}
+		            	
+		            	if (guiPage.isRightPage()) {
+		                    Font.small.printLeft(nameHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y); 
+		                	Font.small.printRight(levelHeader, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
+		            	}
+
+		            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+		                
+		                int index = 1;
+		                for (Entry<ProfessionType, Integer> additionalProfessionType : visitor.getAdditionalProfessions().entrySet()) {
+		                	if (index > ADDITIONALPROFESSIONS_PER_PAGE) {
+		                		// only display the top additional professions
+		                		break;
+		                	}
+		                	
+		                	String additionalProfessionText = getProfessionTypeName(additionalProfessionType.getKey());
+		                	String additionalProfessionLevel = formatResidentLevel(additionalProfessionType.getValue(), additionalProfessionType.getValue(), false, false);
+		                	
+		        			if (guiPage.isLeftPage()) {
+		                    	Font.small.printLeft(additionalProfessionText, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y);
+		                    	Font.small.printRight(additionalProfessionLevel, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y);
+		                    }
+			            	
+			            	if (guiPage.isRightPage()) {
+		                    	Font.small.printLeft(additionalProfessionText, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y);
+		                    	Font.small.printRight(additionalProfessionLevel, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
+		                    }
+
+			            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y; 
+			            	index++;
+		                }
+	            	}
+	            }
         	}
         }
     }
