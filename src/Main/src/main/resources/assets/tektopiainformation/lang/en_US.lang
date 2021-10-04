@@ -56,6 +56,7 @@ gui.villager.intelligence=Intelligence:
 gui.villager.blessedlevels=Blessed Levels:
 gui.villager.villagename=Village:
 gui.villager.hasbed=Has Bed:
+gui.villager.additionalprofessions=Additional Professions
 
 #==========
 #= Config =
@@ -201,6 +202,7 @@ tektopiaBook.summary=Summary
 
 tektopiaBook.headers.bed=Bed
 tektopiaBook.headers.count=Count
+tektopiaBook.headers.enemy=Enemy
 tektopiaBook.headers.index=#
 tektopiaBook.headers.level=Level
 tektopiaBook.headers.name=Name
@@ -208,13 +210,16 @@ tektopiaBook.headers.position=Position
 tektopiaBook.headers.profession=Profession
 tektopiaBook.headers.range=Range
 tektopiaBook.headers.resident=Resident
+tektopiaBook.headers.type=Type
 tektopiaBook.headers.valid=Valid
+tektopiaBook.headers.visitor=Visitor
 
 tektopiaBook.economy.salesHistory=Merchant Sales History
 tektopiaBook.economy.merchantsales=Total Merchant Sales:
 tektopiaBook.economy.professionsales=Total Profession Sales:
 
 tektopiaBook.enemies.total=Total Enemies:
+tektopiaBook.enemies.enemies=Enemies
 
 tektopiaBook.homes.frameposition=Token Position:
 tektopiaBook.homes.totalhomes=Total Homes:
@@ -317,6 +322,7 @@ tektopiaBook.village.professionsales=Profession Sales:
 tektopiaBook.village.nobed=Residents Without Beds:
 
 tektopiaBook.visitors.total=Total Visitors:
+tektopiaBook.visitors.visitors=Visitors
 
 #============
 #= Tooltips =

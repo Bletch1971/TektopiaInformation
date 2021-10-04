@@ -131,9 +131,11 @@ public class GuiTektopiaBook extends GuiScreen {
 	private static final int LINES_PER_PAGE = 19;
 	private static final int BEDS_PER_PAGE = 5;
 	private static final int ADDITIONALPROFESSIONS_PER_PAGE = 4;
+	private static final int ENEMYLIST_PER_PAGE = 18;
 	private static final int RESIDENTLIST_PER_PAGE = 18;
 	private static final int STATRESIDENTS_PER_PAGE = 15;
 	private static final int SALESHISTORY_PER_PAGE = 16;
+	private static final int VISITORLIST_PER_PAGE = 18;
 	
 	private static final ResourceLocation book = new ResourceLocation(ModDetails.MOD_ID, "textures/gui/gui_book.png");
 	private static final ResourceLocation bookmarkLeft = new ResourceLocation(ModDetails.MOD_ID, "textures/gui/bookmark_left.png");
@@ -644,25 +646,24 @@ public class GuiTektopiaBook extends GuiScreen {
 	    	// title page
 	    	this.pages.add(new GuiPage(GuiPageType.SUMMARY, pageIndex++, getPageKey(BOOKMARK_KEY_PROFESSIONS, 0), BOOKMARK_KEY_PROFESSIONS));
 	    	
-	    	// profession type pages
+	    	// profession type list
 			int count = TektopiaUtils.getProfessionTypes().size();
-			if (count > 0) {
-	    		int pages = count / LINES_PER_PAGE;
-	    		if (count % LINES_PER_PAGE > 0) {
-	    			pages++;
-	    		}
-	    		
-	    		for (int page = 0; page < pages; page++) {
-		        	this.pages.add(new GuiPage(GuiPageType.PROFESSION, pageIndex++, getPageKey("", page)));
-	    		}
-			}
+    		int pages = count / LINES_PER_PAGE;
+    		if (count % LINES_PER_PAGE > 0) {
+    			pages++;
+    		}
+    		pages = Math.max(1, pages);
+    		
+    		for (int page = 0; page < pages; page++) {
+	        	this.pages.add(new GuiPage(GuiPageType.PROFESSION, pageIndex++, getPageKey("", page)));
+    		}
 			
 	    	// profession pages
 			if (residentsData != null) {
 				for (ProfessionType professionType : TektopiaUtils.getProfessionTypes()) {
 					count = residentsData.getProfessionTypeCount(professionType);
 					if (count > 0) {
-			    		int pages = count / LINES_PER_PAGE;
+			    		pages = count / LINES_PER_PAGE;
 			    		if (count % LINES_PER_PAGE > 0) {
 			    			pages++;
 			    		}
@@ -684,16 +685,15 @@ public class GuiTektopiaBook extends GuiScreen {
 	    	
 	    	// resident list
 	    	int count = residentsData.getResidentsCount();
-			if (count > 0) {
-	    		int pages = count / RESIDENTLIST_PER_PAGE;
-	    		if (count % RESIDENTLIST_PER_PAGE > 0) {
-	    			pages++;
-	    		}
-	    		
-	    		for (int page = 0; page < pages; page++) {
-    		    	this.pages.add(new GuiPage(GuiPageType.RESIDENT, pageIndex++, getPageKey("", page)));
-	    		}
-			}
+    		int pages = count / RESIDENTLIST_PER_PAGE;
+    		if (count % RESIDENTLIST_PER_PAGE > 0) {
+    			pages++;
+    		}
+    		pages = Math.max(1, pages);
+    		
+    		for (int page = 0; page < pages; page++) {
+		    	this.pages.add(new GuiPage(GuiPageType.RESIDENT, pageIndex++, getPageKey("", page)));
+    		}
     	
 	    	// resident pages
     		if (residentsData.getResidents() != null) {
@@ -718,6 +718,18 @@ public class GuiTektopiaBook extends GuiScreen {
 			
 			// title page
 			this.pages.add(new GuiPage(GuiPageType.SUMMARY, pageIndex++, getPageKey(BOOKMARK_KEY_VISITORS, 0), BOOKMARK_KEY_VISITORS));
+	    	
+	    	// visitor list
+	    	int count = visitorsData.getVisitorsCount();
+    		int pages = count / VISITORLIST_PER_PAGE;
+    		if (count % VISITORLIST_PER_PAGE > 0) {
+    			pages++;
+    		}
+    		pages = Math.max(1, pages);
+    		
+    		for (int page = 0; page < pages; page++) {
+		    	this.pages.add(new GuiPage(GuiPageType.VISITOR, pageIndex++, getPageKey("", page)));
+    		}
 		
 			// visitor pages
 			if (visitorsData.getVisitors() != null) {
@@ -738,6 +750,18 @@ public class GuiTektopiaBook extends GuiScreen {
 			
 			// title page
 			this.pages.add(new GuiPage(GuiPageType.SUMMARY, pageIndex++, getPageKey(BOOKMARK_KEY_ENEMIES, 0), BOOKMARK_KEY_ENEMIES));
+	    	
+	    	// enemy list
+	    	int count = enemiesData.getEnemiesCount();
+    		int pages = count / ENEMYLIST_PER_PAGE;
+    		if (count % ENEMYLIST_PER_PAGE > 0) {
+    			pages++;
+    		}
+    		pages = Math.max(1, pages);
+    		
+    		for (int page = 0; page < pages; page++) {
+		    	this.pages.add(new GuiPage(GuiPageType.ENEMY, pageIndex++, getPageKey("", page)));
+    		}
 		
 			// enemy pages
 //			if (enemiesData.getEnemies() != null) {
@@ -768,18 +792,15 @@ public class GuiTektopiaBook extends GuiScreen {
         	if (happinessMap != null) {
         		for (Entry<Integer, List<ResidentData>> happinessEntry : happinessMap.entrySet()) {
         			int count = happinessEntry.getValue().size();
-        			if (count > 0) {
-        	    		int pages = count / STATRESIDENTS_PER_PAGE;
-        	    		if (count % STATRESIDENTS_PER_PAGE > 0) {
-        	    			pages++;
-        	    		}
-        	    		
-        	    		for (int page = 0; page < pages; page++) {
-                			this.pages.add(new GuiPage(GuiPageType.STATS, pageIndex++, getStatisticsPageKey("happiness", happinessEntry.getKey(), page)));
-        	    		}
-        			} else {
-            			this.pages.add(new GuiPage(GuiPageType.STATS, pageIndex++, getStatisticsPageKey("happiness", happinessEntry.getKey(), 0)));
-        			}
+    	    		int pages = count / STATRESIDENTS_PER_PAGE;
+    	    		if (count % STATRESIDENTS_PER_PAGE > 0) {
+    	    			pages++;
+    	    		}
+    	    		pages = Math.max(1, pages);
+    	    		
+    	    		for (int page = 0; page < pages; page++) {
+            			this.pages.add(new GuiPage(GuiPageType.STATS, pageIndex++, getStatisticsPageKey("happiness", happinessEntry.getKey(), page)));
+    	    		}
         		}        		
         	}
     		
@@ -789,18 +810,15 @@ public class GuiTektopiaBook extends GuiScreen {
     		if (hungerMap != null) {
 	    		for (Entry<Integer, List<ResidentData>> hungerEntry : hungerMap.entrySet()) {
 	    			int count = hungerEntry.getValue().size();
-	    			if (count > 0) {
-	    	    		int pages = count / STATRESIDENTS_PER_PAGE;
-	    	    		if (count % STATRESIDENTS_PER_PAGE > 0) {
-	    	    			pages++;
-	    	    		}
-	    	    		
-	    	    		for (int page = 0; page < pages; page++) {
-	            			this.pages.add(new GuiPage(GuiPageType.STATS, pageIndex++, getStatisticsPageKey("hunger", hungerEntry.getKey(), page)));
-	    	    		}
-	    			} else {
-	        			this.pages.add(new GuiPage(GuiPageType.STATS, pageIndex++, getStatisticsPageKey("hunger", hungerEntry.getKey(), 0)));
-	    			}
+    	    		int pages = count / STATRESIDENTS_PER_PAGE;
+    	    		if (count % STATRESIDENTS_PER_PAGE > 0) {
+    	    			pages++;
+    	    		}
+    	    		pages = Math.max(1, pages);
+    	    		
+    	    		for (int page = 0; page < pages; page++) {
+            			this.pages.add(new GuiPage(GuiPageType.STATS, pageIndex++, getStatisticsPageKey("hunger", hungerEntry.getKey(), page)));
+    	    		}
 	    		}
     		}
     	}
@@ -812,20 +830,21 @@ public class GuiTektopiaBook extends GuiScreen {
 	    	// title page
 	    	this.pages.add(new GuiPage(GuiPageType.SUMMARY, pageIndex++, getPageKey(BOOKMARK_KEY_ECONOMY, 0), BOOKMARK_KEY_ECONOMY));
 	    	
+	    	// Architect Items
+	    	
+	    	// Tradesman Items
+	    	
 	    	// sales history pages
 			int count = economyData.getMerchantSales();
-			if (count > 0) {
-	    		int pages = count / SALESHISTORY_PER_PAGE;
-	    		if (count % SALESHISTORY_PER_PAGE > 0) {
-	    			pages++;
-	    		}
-	    		
-	    		for (int page = 0; page < pages; page++) {
-    		    	this.pages.add(new GuiPage(GuiPageType.ECONOMY, pageIndex++, getPageKey("saleshistory", page)));
-	    		}
-			} else {
-				this.pages.add(new GuiPage(GuiPageType.ECONOMY, pageIndex++, getPageKey("saleshistory", 0)));
-			}
+    		int pages = count / SALESHISTORY_PER_PAGE;
+    		if (count % SALESHISTORY_PER_PAGE > 0) {
+    			pages++;
+    		}
+    		pages = Math.max(1, pages);
+    		
+    		for (int page = 0; page < pages; page++) {
+		    	this.pages.add(new GuiPage(GuiPageType.ECONOMY, pageIndex++, getPageKey("saleshistory", page)));
+    		}
     	}
 
 		if (pageIndex % 2 != 0)
@@ -1045,6 +1064,149 @@ public class GuiTektopiaBook extends GuiScreen {
     private void drawPageEnemy(int mouseX, int mouseY, float partialTicks, GuiPage guiPage) {
         drawHeader(mouseX, mouseY, partialTicks, guiPage);
         drawFooter(mouseX, mouseY, partialTicks, guiPage);
+
+    	int y = this.y + PAGE_BODY_Y;
+    	int indentX = 10;
+
+    	String[] dataKey = getPageKeyParts(guiPage.getDataKey());
+    	EnemiesData enemiesData = this.villageData.getEnemiesData();
+    	
+        if (dataKey[0].equals("")) {
+        	// enemy list
+        	
+            String pageHeader = TextUtils.translate("tektopiaBook.enemies.enemies");
+            
+            if (pageHeader != null && pageHeader.trim() != "") {
+            	pageHeader = TextFormatting.DARK_BLUE + pageHeader;
+
+            	if (guiPage.isLeftPage()) {
+                    Font.normal.printLeft(pageHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X, y); 
+            	}
+            	
+            	if (guiPage.isRightPage()) {
+                    Font.normal.printLeft(pageHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X, y); 
+            	}
+            	
+            	y += Font.normal.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+            } 
+            
+            List<EnemyData> enemies = enemiesData.getEnemies();
+            
+            if (enemies != null) {            	
+            	int page = 0;
+            	try {
+            		page = Integer.parseInt(dataKey[1]);
+            	}
+            	catch (NumberFormatException e) {
+            		page = 0;
+            	}
+            	int startIndex = page * ENEMYLIST_PER_PAGE;
+            	int index = 0;
+
+            	String enemyHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.enemy");
+            	String positionHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.position");
+            	
+            	if (guiPage.isLeftPage()) {
+                	Font.small.printLeft(enemyHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y);
+    				Font.small.printRight(positionHeader, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y);
+            	}
+            	
+            	if (guiPage.isRightPage()) {
+                	Font.small.printLeft(enemyHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y);
+    				Font.small.printRight(positionHeader, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
+            	}
+            	
+            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y; 
+            	
+            	for (EnemyData enemy : enemies) {
+            		if (index >= startIndex && index < startIndex + ENEMYLIST_PER_PAGE) {
+                		String enemyName = "";
+                		String enemyPosition = "";
+
+                		enemyName += enemy.getName();
+                		enemyPosition += formatBlockPos(enemy.getCurrentPosition());
+
+            			if (guiPage.isLeftPage()) {
+	                    	Font.small.printLeft(enemyName, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y);
+	        				Font.small.printRight(enemyPosition, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y);
+	                    }
+    	            	
+    	            	if (guiPage.isRightPage()) {
+	                    	Font.small.printLeft(enemyName, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y);
+	        				Font.small.printRight(enemyPosition, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
+	                    }
+
+    	            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+            		}  
+            		index++;
+            	}
+            }
+        } else {
+        	// enemy
+        	
+        	int enemyId = 0;
+        	try {
+        		enemyId = Integer.parseInt(dataKey[0]);
+        	}
+        	catch (NumberFormatException e) {
+        		enemyId = 0;
+        	}
+
+        	EnemyData enemy = enemyId > 0 ? enemiesData.getEnemyById(enemyId) : null;
+        	
+        	if (enemy != null) {
+ 
+                String header = stripTextFormatting(enemy.getName());
+                
+                if (header != null && header.trim() != "") {
+                	// check if this is the villager we clicked on
+        			if (this.villageData.getEntityId() > 0 && this.villageData.getEntityId() == enemyId) {
+        				header = TextFormatting.UNDERLINE + header;
+        			}
+
+                	if (guiPage.isLeftPage()) {
+                        Font.normal.printLeft(header, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X, y); 
+                	}
+                	
+                	if (guiPage.isRightPage()) {
+                        Font.normal.printLeft(header, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X, y); 
+                	}
+                	
+                	y += Font.normal.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+                } 
+                
+        		{
+                	int tXL = this.x + (PAGE_LEFTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
+                	int tXR = this.x + (PAGE_RIGHTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
+                	int tY = y;
+
+	            	GlStateManager.pushMatrix();
+        	        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+	
+	            	String modId = enemy.getModId();
+	            	if (modId.equals(ModDetails.MOD_ID_TEKTOPIA))
+	            		modId = ModDetails.MOD_ID;
+	            	String className = enemy.getClassName();
+	            	int level = enemy.getLevel();
+	            	
+	            	ResourceLocation visitorResource = new ResourceLocation(modId, "textures/enemies/" + className + "_" + level + ".png");
+	                
+	                if (visitorResource != null) {
+		    	        mc.getTextureManager().bindTexture(visitorResource);
+		                
+		                if (guiPage.isLeftPage()) {
+		                	super.drawModalRectWithCustomSizedTexture(tXL, tY, 0, 0, PROFESSION_WIDTH, PROFESSION_HEIGHT, 56, 90);
+		                }
+		                
+		                if (guiPage.isRightPage()) {
+		                	super.drawModalRectWithCustomSizedTexture(tXR, tY, 0, 0, PROFESSION_WIDTH, PROFESSION_HEIGHT, 56, 90);
+		                }	                	
+	                }
+	                
+	                GlStateManager.popMatrix();
+        		}
+        	}
+        }
     }
     
     private void drawPageHome(int mouseX, int mouseY, float partialTicks, GuiPage guiPage) {
@@ -2523,7 +2685,7 @@ public class GuiTektopiaBook extends GuiScreen {
             	catch (NumberFormatException e) {
             		page = 0;
             	}
-            	int startIndex = page * LINES_PER_PAGE;
+            	int startIndex = page * RESIDENTLIST_PER_PAGE;
             	int index = 0;
 
             	String bedHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.bed");    
@@ -2554,9 +2716,9 @@ public class GuiTektopiaBook extends GuiScreen {
                 		String residentProfession = "";
                 		String residentLevel = "";
 
-                		residentBed = (resident.hasBed() ? TextUtils.SYMBOL_GREENTICK : TextUtils.SYMBOL_REDCROSS);
-                		residentName = formatResidentName(resident.isMale(), resident.getName(), true);
-        				residentProfession += TextUtils.translate("entity." + resident.getProfessionType().name + ".name");
+                		residentBed += (resident.hasBed() ? TextUtils.SYMBOL_GREENTICK : TextUtils.SYMBOL_REDCROSS);
+                		residentName += formatResidentName(resident.isMale(), resident.getName(), true);
+        				residentProfession += getProfessionTypeName(resident.getProfessionType());
             			
             			switch (resident.getProfessionType()) {
             			case CHILD:
@@ -4252,7 +4414,158 @@ public class GuiTektopiaBook extends GuiScreen {
 
     private void drawPageVisitor(int mouseX, int mouseY, float partialTicks, GuiPage guiPage) {
         drawHeader(mouseX, mouseY, partialTicks, guiPage);
-        drawFooter(mouseX, mouseY, partialTicks, guiPage);
+        drawFooter(mouseX, mouseY, partialTicks, guiPage); 
+
+    	int y = this.y + PAGE_BODY_Y;
+    	int indentX = 10;
+
+    	String[] dataKey = getPageKeyParts(guiPage.getDataKey());
+    	VisitorsData visitorsData = this.villageData.getVisitorsData();
+    	
+        if (dataKey[0].equals("")) {
+        	// resident list
+        	
+            String pageHeader = TextUtils.translate("tektopiaBook.visitors.visitors");
+            
+            if (pageHeader != null && pageHeader.trim() != "") {
+            	pageHeader = TextFormatting.DARK_BLUE + pageHeader;
+
+            	if (guiPage.isLeftPage()) {
+                    Font.normal.printLeft(pageHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X, y); 
+            	}
+            	
+            	if (guiPage.isRightPage()) {
+                    Font.normal.printLeft(pageHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X, y); 
+            	}
+            	
+            	y += Font.normal.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+            } 
+            
+            List<VisitorData> visitors = visitorsData.getVisitors();
+            
+            if (visitors != null) {
+            	final int[] maxLength = { 0 };
+            	maxLength[0] += LABEL_TRAILINGSPACE_X;
+            	
+            	int page = 0;
+            	try {
+            		page = Integer.parseInt(dataKey[1]);
+            	}
+            	catch (NumberFormatException e) {
+            		page = 0;
+            	}
+            	int startIndex = page * VISITORLIST_PER_PAGE;
+            	int index = 0;
+
+            	String visitorHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.visitor");
+            	String positionHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.position");
+            	
+            	if (guiPage.isLeftPage()) {
+                	Font.small.printLeft(visitorHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y);
+    				Font.small.printRight(positionHeader, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y);
+            	}
+            	
+            	if (guiPage.isRightPage()) {
+                	Font.small.printLeft(visitorHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y);
+    				Font.small.printRight(positionHeader, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
+            	}
+            	
+            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y; 
+            	
+            	for (VisitorData visitor : visitors) {
+            		if (index >= startIndex && index < startIndex + VISITORLIST_PER_PAGE) {
+                		String visitorName = "";
+                		String visitorPosition = "";
+
+                		visitorName += formatResidentName(visitor.isMale(), visitor.getName(), true);
+                		visitorPosition += formatBlockPos(visitor.getCurrentPosition());
+
+            			if (guiPage.isLeftPage()) {
+	                    	Font.small.printLeft(visitorName, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y);
+	        				Font.small.printRight(visitorPosition, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y);
+	                    }
+    	            	
+    	            	if (guiPage.isRightPage()) {
+	                    	Font.small.printLeft(visitorName, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y);
+	        				Font.small.printRight(visitorPosition, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
+	                    }
+
+    	            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+            		}  
+            		index++;
+            	}
+            }
+        } else {
+        	// visitor
+        	
+        	int visitorId = 0;
+        	try {
+        		visitorId = Integer.parseInt(dataKey[0]);
+        	}
+        	catch (NumberFormatException e) {
+        		visitorId = 0;
+        	}
+
+        	VisitorData visitor = visitorId > 0 ? visitorsData.getVisitorById(visitorId) : null;
+        	
+        	if (visitor != null) {
+ 
+                String header = stripTextFormatting(visitor.getName());
+                
+                if (header != null && header.trim() != "") {
+                	// check if this is the villager we clicked on
+        			if (this.villageData.getEntityId() > 0 && this.villageData.getEntityId() == visitorId) {
+        				header = TextFormatting.UNDERLINE + header;
+        			}
+            		
+        			if (visitor.isMale())
+        				header = TextFormatting.BLUE + header + " " + TextUtils.SYMBOL_MALE;
+        			else
+        				header = TextFormatting.LIGHT_PURPLE + header + " " + TextUtils.SYMBOL_FEMALE;
+
+                	if (guiPage.isLeftPage()) {
+                        Font.normal.printLeft(header, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X, y); 
+                	}
+                	
+                	if (guiPage.isRightPage()) {
+                        Font.normal.printLeft(header, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X, y); 
+                	}
+                	
+                	y += Font.normal.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+                } 
+                
+        		{
+                	int tXL = this.x + (PAGE_LEFTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
+                	int tXR = this.x + (PAGE_RIGHTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
+                	int tY = y;
+
+	            	GlStateManager.pushMatrix();
+        	        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+	
+	            	String modId = visitor.getModId();
+	            	if (modId.equals(ModDetails.MOD_ID_TEKTOPIA))
+	            		modId = ModDetails.MOD_ID;
+	            	String className = visitor.getClassName();
+	            	String gender = visitor.isMale() ? "m" : "f";
+	            	
+	            	ResourceLocation visitorResource = new ResourceLocation(modId, "textures/visitors/" + className + "_" + gender + ".png");
+	                
+	                if (visitorResource != null) {
+		    	        mc.getTextureManager().bindTexture(visitorResource);
+		                
+		                if (guiPage.isLeftPage()) {
+		                	super.drawModalRectWithCustomSizedTexture(tXL, tY, 0, 0, PROFESSION_WIDTH, PROFESSION_HEIGHT, 56, 90);
+		                }
+		                
+		                if (guiPage.isRightPage()) {
+		                	super.drawModalRectWithCustomSizedTexture(tXR, tY, 0, 0, PROFESSION_WIDTH, PROFESSION_HEIGHT, 56, 90);
+		                }	                	
+	                }
+	                
+	                GlStateManager.popMatrix();
+        		}
+        	}
+        }
     }
     
     private void drawPageTitle(int mouseX, int mouseY, float partialTicks, GuiPage guiPage) {
@@ -4391,18 +4704,17 @@ public class GuiTektopiaBook extends GuiScreen {
 			case PLAYER:
 				return;
 			case RESIDENT:
+			case VISITOR:
+			case ENEMY:
 				String[] keyParts = getPageKeyParts(mapMarker.key);
 				
 				for (GuiPage page : this.pages) {
-					if (page.getGuiPageType() == GuiPageType.RESIDENT && page.getDataKey().equals(mapMarker.key)) {
+					if (page.getDataKey().equals(mapMarker.key)) {
 						this.villageData.setEntityId(Integer.parseInt(keyParts[0]));
 						setLeftPageIndex(page.getPageIndex());
 			    		this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
 					}
 				}
-				return;
-			case VISITOR:
-			case ENEMY:
 				return;
 			case HOME:
 				for (GuiPage page : this.pages) {

@@ -31,7 +31,6 @@ public class ResidentData extends EntityData {
 	private static final String NBTTAG_VILLAGE_RESIDENTMALE = "villageresidentmale";
 	private static final String NBTTAG_VILLAGE_RESIDENTCHILD = "villageresidentchild";
 	private static final String NBTTAG_VILLAGE_RESIDENTCAPTAIN = "villageresidentcaptain";
-	private static final String NBTTAG_VILLAGE_RESIDENTLEVEL = "villageresidentlevel";
 	private static final String NBTTAG_VILLAGE_RESIDENTBASELEVEL = "villageresidentbaselevel";
 	private static final String NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL = "villageresidentblessedlevel";
 	private static final String NBTTAG_VILLAGE_RESIDENTDAYSALIVE = "villageresidentdaysAlive";
@@ -53,7 +52,6 @@ public class ResidentData extends EntityData {
 	private boolean isMale;
 	private boolean isChild;
 	private boolean isCaptain;
-	private int level;
 	private int baseLevel;
 	private int blessedLevel;
 	private int daysAlive;
@@ -94,10 +92,6 @@ public class ResidentData extends EntityData {
 	
 	public boolean isCaptain() {
 		return this.isCaptain;
-	}
-	
-	public int getLevel() {
-		return this.level;
 	}
 	
 	public int getBaseLevel() {
@@ -181,7 +175,6 @@ public class ResidentData extends EntityData {
 		this.isMale = true;
 		this.isChild = false;
 		this.isCaptain = false;
-		this.level = 0;
 		this.baseLevel = 0;
 		this.blessedLevel = 0;
 		this.daysAlive = 0;
@@ -276,7 +269,6 @@ public class ResidentData extends EntityData {
 		this.isMale = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTMALE) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTMALE) : true;
 		this.isChild = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCHILD) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCHILD) : false;
 		this.isCaptain = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCAPTAIN) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCAPTAIN) : false;
-		this.level = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTLEVEL) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTLEVEL) : 0;
 		this.baseLevel = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTBASELEVEL) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTBASELEVEL) : 0;
 		this.blessedLevel = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL) : 0;
 		this.daysAlive = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTDAYSALIVE) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTDAYSALIVE) : 0;
@@ -353,7 +345,6 @@ public class ResidentData extends EntityData {
 		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTMALE, this.isMale);
 		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTCHILD, this.isChild);
 		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTCAPTAIN, this.isCaptain);
-		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTLEVEL, this.level);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTBASELEVEL, this.baseLevel);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL, this.blessedLevel);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTDAYSALIVE, this.daysAlive);

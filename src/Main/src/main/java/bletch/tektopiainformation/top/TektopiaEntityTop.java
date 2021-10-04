@@ -3,6 +3,7 @@ package bletch.tektopiainformation.top;
 import bletch.common.utils.TextUtils;
 import bletch.tektopiainformation.core.ModConfig;
 import bletch.tektopiainformation.core.ModDetails;
+import bletch.tektopiainformation.utils.TektopiaUtils;
 import mcjty.theoneprobe.api.IProbeHitEntityData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.IProbeInfoEntityProvider;
@@ -163,6 +164,31 @@ public class TektopiaEntityTop {
 					if (blessed > 0) {
 						output = TextUtils.translate("gui.villager.blessedlevels") + " " + TextFormatting.WHITE + blessed;
 						probeInfo.text(TextFormatting.DARK_AQUA + output);
+					}
+					
+					// Additional Professions
+					Boolean addProfessionCountShown = false;
+	    			
+					for (ProfessionType addProfessionType : TektopiaUtils.getProfessionTypes()) {
+						if (addProfessionType == villager.getProfessionType()) {
+							// do not include the villagers main profession
+							continue;
+						}
+
+						profession = TextUtils.translate("entity." + addProfessionType.name + ".name");
+						professionSkillLevel = villager.getSkill(addProfessionType);
+
+						if (professionSkillLevel > 0) {
+							if (!addProfessionCountShown) {
+								output = TextUtils.translate("gui.villager.additionalprofessions");
+								probeInfo.text(TextFormatting.WHITE + output);
+								
+								addProfessionCountShown = true;
+							}
+							
+							output = TextUtils.SYMBOL_BULLET + " " + profession + TextUtils.SEPARATOR_DASH + TextFormatting.WHITE + professionSkillLevel;
+							probeInfo.text(TextFormatting.DARK_AQUA + output);
+						}
 					}					
 				}
 				

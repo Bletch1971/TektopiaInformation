@@ -8,6 +8,7 @@ import bletch.common.utils.StringUtils;
 import bletch.common.utils.TextUtils;
 import bletch.tektopiainformation.core.ModConfig;
 import bletch.tektopiainformation.utils.DebugUtils;
+import bletch.tektopiainformation.utils.TektopiaUtils;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaEntityAccessor;
 import mcp.mobius.waila.api.IWailaEntityProvider;
@@ -242,6 +243,31 @@ public class TektopiaEntityWaila implements IWailaEntityProvider {
 					if (blessed > 0) {
 						output = TextUtils.translate("gui.villager.blessedlevels") + " " + TextFormatting.WHITE + blessed;
 						currentTip.add(TextFormatting.DARK_AQUA + output);
+					}
+					
+					// Additional Professions
+					Boolean addProfessionCountShown = false;
+	    			
+					for (ProfessionType addProfessionType : TektopiaUtils.getProfessionTypes()) {
+						if (addProfessionType == villager.getProfessionType()) {
+							// do not include the villagers main profession
+							continue;
+						}
+
+						profession = TextUtils.translate("entity." + addProfessionType.name + ".name");
+						professionSkillLevel = villager.getSkill(addProfessionType);
+
+						if (professionSkillLevel > 0) {
+							if (!addProfessionCountShown) {
+								output = TextUtils.translate("gui.villager.additionalprofessions");
+								currentTip.add(TextFormatting.WHITE + output);
+								
+								addProfessionCountShown = true;
+							}
+							
+							output = TextUtils.SYMBOL_BULLET + " " + profession + TextUtils.SEPARATOR_DASH + TextFormatting.WHITE + professionSkillLevel;
+		                    currentTip.add(TextFormatting.DARK_AQUA + output);
+						}
 					}
 				}
 				

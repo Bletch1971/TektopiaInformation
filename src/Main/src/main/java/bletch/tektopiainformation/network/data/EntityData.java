@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import bletch.common.utils.ModIdentification;
 import bletch.tektopiainformation.TektopiaInformation;
+import bletch.tektopiainformation.core.ModDetails;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
@@ -17,7 +20,11 @@ import net.tangotek.tektopia.entities.EntityVillagerTek;
 public class EntityData {
 
 	private static final String NBTTAG_VILLAGE_ENTITYID = "villageentityid";
+	private static final String NBTTAG_VILLAGE_ENTITYCLASSNAME = "villageentityclassname";
+	private static final String NBTTAG_VILLAGE_ENTITYMODID = "villageentitymodid";
+	private static final String NBTTAG_VILLAGE_ENTITYMODNAME = "villageentitymodname";
 	private static final String NBTTAG_VILLAGE_ENTITYNAME = "villageentityname";
+	private static final String NBTTAG_VILLAGE_ENTITYLEVEL = "villageentitylevel";
 	private static final String NBTTAG_VILLAGE_ENTITYHEALTH = "villageentityhealth";
 	private static final String NBTTAG_VILLAGE_ENTITYMAXHEALTH = "villageentitymaxhealth";
 	private static final String NBTTAG_VILLAGE_ENTITYHOMEPOSITION = "villageentityhomeposition";
@@ -31,7 +38,11 @@ public class EntityData {
 	protected static List<Entity> entityList = null;
 	
 	private int id;
+	private String className;
+	private String modId;
+	private String modName;
 	private String name;
+	protected int level;
 	private float health;
 	private float maxHealth;
 	private BlockPos homePosition;
@@ -53,8 +64,24 @@ public class EntityData {
 		return this.id;
 	}
 	
+	public String getClassName() {
+		return this.className;
+	}
+	
+	public String getModId() {
+		return this.modId;
+	}
+	
+	public String getModName() {
+		return this.modName;
+	}
+	
 	public String getName() {
 		return this.name;
+	}
+	
+	public int getLevel() {
+		return this.level;
 	}
 	
 	public float getHealth() {
@@ -97,7 +124,11 @@ public class EntityData {
 	
 	protected void clearData() {
 		this.id = 0;
+		this.className = "";
+		this.modId = ModDetails.MOD_ID;
+		this.modName = "";
 		this.name = "";
+		this.level = 1;
 		this.health = 0;
 		this.maxHealth = 20;
 		this.homePosition = null;
@@ -113,6 +144,10 @@ public class EntityData {
 		
 		if (entity != null) {
 			this.id = entity.getEntityId();
+			this.className = entity.getClass().getSimpleName().toLowerCase();
+			this.modId = ModIdentification.getEntityModId(entity);
+			this.modName = ModIdentification.getEntityModName(entity);
+			//this.level = 1;
 			this.name = entity.getDisplayName().getFormattedText();
 			this.health = entity.getHealth();
 			this.maxHealth = entity.getMaxHealth();
@@ -137,7 +172,11 @@ public class EntityData {
 		clearData();
 
 		this.id = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYID) ? nbtTag.getInteger(NBTTAG_VILLAGE_ENTITYID) : 0;
+		this.className = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYCLASSNAME) ? nbtTag.getString(NBTTAG_VILLAGE_ENTITYCLASSNAME) : "";
+		this.modId = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYMODID) ? nbtTag.getString(NBTTAG_VILLAGE_ENTITYMODID) : ModDetails.MOD_ID;
+		this.modName = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYMODNAME) ? nbtTag.getString(NBTTAG_VILLAGE_ENTITYMODNAME) : "";
 		this.name = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYNAME) ? nbtTag.getString(NBTTAG_VILLAGE_ENTITYNAME) : "";
+		this.level = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYLEVEL) ? nbtTag.getInteger(NBTTAG_VILLAGE_ENTITYLEVEL) : 0;
 		this.health = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYHEALTH) ? nbtTag.getFloat(NBTTAG_VILLAGE_ENTITYHEALTH) : 0;
 		this.maxHealth = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYMAXHEALTH) ? nbtTag.getFloat(NBTTAG_VILLAGE_ENTITYMAXHEALTH) : 0;
 		this.homePosition = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYHOMEPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_ENTITYHOMEPOSITION)) : null;
@@ -185,7 +224,11 @@ public class EntityData {
 		}
 		
 		nbtTag.setInteger(NBTTAG_VILLAGE_ENTITYID, this.id);
+		nbtTag.setString(NBTTAG_VILLAGE_ENTITYCLASSNAME, this.className);
+		nbtTag.setString(NBTTAG_VILLAGE_ENTITYMODID, this.modId);
+		nbtTag.setString(NBTTAG_VILLAGE_ENTITYMODNAME, this.modName);
 		nbtTag.setString(NBTTAG_VILLAGE_ENTITYNAME, this.name);
+		nbtTag.setInteger(NBTTAG_VILLAGE_ENTITYLEVEL, this.level);
 		nbtTag.setFloat(NBTTAG_VILLAGE_ENTITYHEALTH, this.health);
 		nbtTag.setFloat(NBTTAG_VILLAGE_ENTITYMAXHEALTH, this.maxHealth);
 		if (this.homePosition != null) {
