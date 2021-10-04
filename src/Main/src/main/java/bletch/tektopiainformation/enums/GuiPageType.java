@@ -16,4 +16,6 @@ public enum GuiPageType {
 	STATS,
 	ECONOMY,
 	MAP,
+	VISITOR,
+	ENEMY,
 }

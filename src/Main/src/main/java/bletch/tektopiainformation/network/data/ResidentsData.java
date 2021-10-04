@@ -51,7 +51,7 @@ public class ResidentsData {
 	
 	public List<ResidentData> getResidents() {
 		return Collections.unmodifiableList(this.residents == null ? new ArrayList<ResidentData>() : this.residents.stream()
-				.sorted((c1 , c2) -> c1.getResidentName().compareTo(c2.getResidentName()))
+				.sorted((c1 , c2) -> c1.getName().compareTo(c2.getName()))
 				.collect(Collectors.toList()));
 	}
 	
@@ -60,10 +60,7 @@ public class ResidentsData {
 				.filter(r -> professionType != null && professionType.equals(r.getProfessionType()))
 				.sorted((c1 , c2) -> { 
 					int compare = Integer.compare(c2.getBaseLevel(), c1.getBaseLevel());
-					if (compare == 0) {
-						compare = c1.getResidentName().compareTo(c2.getResidentName());
-					}
-					return compare;
+					return compare != 0 ? compare : c1.getName().compareTo(c2.getName());
 				})
 				.collect(Collectors.toList()));
 	}
@@ -74,7 +71,7 @@ public class ResidentsData {
 	
 	public ResidentData getResidentById(int residentId) {
 		return this.residents == null ? null : this.residents.stream()
-				.filter(r -> r.getResidentId() == residentId)
+				.filter(r -> r.getId() == residentId)
 				.findFirst().orElse(null);
 	}
 	
@@ -145,7 +142,7 @@ public class ResidentsData {
 				entry.getValue().sort((c1, c2) -> {
 					int compare = Integer.compare(c1.getHappy(), c2.getHappy());
 					if (compare == 0) {
-						compare = c1.getResidentName().compareTo(c2.getResidentName());
+						compare = c1.getName().compareTo(c2.getName());
 					}
 					return compare;
 				});
@@ -183,7 +180,7 @@ public class ResidentsData {
 				entry.getValue().sort((c1, c2) -> {
 					int compare = Integer.compare(c1.getHunger(), c2.getHunger());
 					if (compare == 0) {
-						compare = c1.getResidentName().compareTo(c2.getResidentName());
+						compare = c1.getName().compareTo(c2.getName());
 					}
 					return compare;
 				});

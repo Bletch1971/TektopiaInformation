@@ -7,4 +7,6 @@ public enum GuiMapMarkerType {
 	TOWNHALL,
 	RESIDENT,
 	PLAYER,
+	VISITOR,
+	ENEMY,
 }

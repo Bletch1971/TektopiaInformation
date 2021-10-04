@@ -5,7 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.tangotek.tektopia.Village;
-import net.tangotek.tektopia.entities.EntityVillagerTek;
+import net.tangotek.tektopia.entities.EntityVillageNavigator;
 
 public class VillageData {
 
@@ -13,7 +13,7 @@ public class VillageData {
 	private static final String NBTTAG_VILLAGE_ORIGIN = "villageorigin";
 	private static final String NBTTAG_VILLAGE_SIZE = "villagesize";
 
-	private static final String NBTTAG_RESIDENTID = "residentid";
+	private static final String NBTTAG_ENTITYID = "entityid";
 	private static final String NBTTAG_BEDPOSITION = "bedposition";
 	private static final String NBTTAG_FRAMEPOSITION = "frameposition";
 	
@@ -27,8 +27,10 @@ public class VillageData {
 	private HomesData homesData;
 	private ResidentsData residentsData;
 	private EconomyData economyData;
+	private VisitorsData visitorsData;
+	private EnemiesData enemiesData;
 	
-	private int residentId;
+	private int entityId;
 	private BlockPos bedPosition;
 	private BlockPos framePosition;
 	
@@ -92,10 +94,18 @@ public class VillageData {
 
 	public EconomyData getEconomyData() {
 		return this.structuresData == null ? new EconomyData() : this.economyData;
-	}	
+	}
+
+	public VisitorsData getVisitorsData() {
+		return this.visitorsData == null ? new VisitorsData() : this.visitorsData;
+	}
+
+	public EnemiesData getEnemiesData() {
+		return this.enemiesData == null ? new EnemiesData() : this.enemiesData;
+	}
 	
-	public int getResidentId() {
-		return this.residentId;
+	public int getEntityId() {
+		return this.entityId;
 	}
 	
 	public BlockPos getBedPosition() {
@@ -110,15 +120,15 @@ public class VillageData {
 		return this.playerPosition;
 	}
 	
-	public VillageData setResident(EntityVillagerTek villager) {
+	public VillageData setEntity(EntityVillageNavigator entity) {
 		ClearAssignments();
-		this.residentId = villager == null ? 0 : villager.getEntityId();
+		this.entityId = entity == null ? 0 : entity.getEntityId();
 		return this;
 	}
 	
-	public VillageData setResidentId(int residentId) {
+	public VillageData setEntityId(int entityId) {
 		ClearAssignments();
-		this.residentId = residentId;
+		this.entityId = entityId;
 		return this;
 	}
 	
@@ -135,7 +145,7 @@ public class VillageData {
 	}
 	
 	public void ClearAssignments() {
-		this.residentId = 0;
+		this.entityId = 0;
 		this.bedPosition = null;
 		this.framePosition = null;
 	}
@@ -153,6 +163,8 @@ public class VillageData {
 		this.homesData = new HomesData();
 		this.residentsData = new ResidentsData();
 		this.economyData = new EconomyData();
+		this.visitorsData = new VisitorsData();
+		this.enemiesData = new EnemiesData();
 	}
 	
 	public void populateData(Village village) {
@@ -168,6 +180,8 @@ public class VillageData {
 		this.homesData.populateData(village);
 		this.residentsData.populateData(village);
 		this.economyData.populateData(village);
+		this.visitorsData.populateData(village);
+		this.enemiesData.populateData(village);
 	}
 	
 	public void readBuffer(PacketBuffer buffer) throws IOException {
@@ -191,7 +205,7 @@ public class VillageData {
 		this.villageOrigin = nbtTag.hasKey(NBTTAG_VILLAGE_ORIGIN) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_ORIGIN)) : null;
 		this.villageSize = nbtTag.hasKey(NBTTAG_VILLAGE_SIZE) ? nbtTag.getInteger(NBTTAG_VILLAGE_SIZE) : 0;
 		
-		this.residentId = nbtTag.hasKey(NBTTAG_RESIDENTID) ? nbtTag.getInteger(NBTTAG_RESIDENTID) : 0;
+		this.entityId = nbtTag.hasKey(NBTTAG_ENTITYID) ? nbtTag.getInteger(NBTTAG_ENTITYID) : 0;
 		this.bedPosition = nbtTag.hasKey(NBTTAG_BEDPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_BEDPOSITION)) : null;
 		this.framePosition = nbtTag.hasKey(NBTTAG_FRAMEPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_FRAMEPOSITION)) : null;
 		
@@ -201,6 +215,8 @@ public class VillageData {
 		this.homesData.readNBT(nbtTag);
 		this.residentsData.readNBT(nbtTag);
 		this.economyData.readNBT(nbtTag);
+		this.visitorsData.readNBT(nbtTag);
+		this.enemiesData.readNBT(nbtTag);
 	}
 	
 	public void writeBuffer(PacketBuffer buffer) throws IOException {
@@ -224,7 +240,7 @@ public class VillageData {
 		}
 		nbtTag.setInteger(NBTTAG_VILLAGE_SIZE, this.villageSize);
 		
-		nbtTag.setInteger(NBTTAG_RESIDENTID, this.residentId);
+		nbtTag.setInteger(NBTTAG_ENTITYID, this.entityId);
 		if (this.bedPosition != null) {
 			nbtTag.setLong(NBTTAG_BEDPOSITION, this.bedPosition.toLong());
 		}
@@ -240,6 +256,8 @@ public class VillageData {
 		this.homesData.writeNBT(nbtTag);
 		this.residentsData.writeNBT(nbtTag);
 		this.economyData.writeNBT(nbtTag);
+		this.visitorsData.writeNBT(nbtTag);
+		this.enemiesData.writeNBT(nbtTag);
 	}
 	
 }

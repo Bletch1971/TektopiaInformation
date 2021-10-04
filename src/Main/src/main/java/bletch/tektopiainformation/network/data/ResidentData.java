@@ -1,8 +1,6 @@
 package bletch.tektopiainformation.network.data;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,9 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import bletch.tektopiainformation.TektopiaInformation;
 import bletch.tektopiainformation.utils.TektopiaUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemAxe;
@@ -29,10 +25,8 @@ import net.tangotek.tektopia.entities.EntityVillagerTek;
 import net.tangotek.tektopia.storage.VillagerInventory;
 import net.tangotek.tektopia.structures.VillageStructure;
 
-public class ResidentData {
+public class ResidentData extends EntityData {
 
-	private static final String NBTTAG_VILLAGE_RESIDENTID = "villageresidentid";
-	private static final String NBTTAG_VILLAGE_RESIDENTNAME = "villageresidentname";
 	private static final String NBTTAG_VILLAGE_RESIDENTPROFESSIONTYPE = "villageresidentprofessiontype";
 	private static final String NBTTAG_VILLAGE_RESIDENTMALE = "villageresidentmale";
 	private static final String NBTTAG_VILLAGE_RESIDENTCHILD = "villageresidentchild";
@@ -41,32 +35,20 @@ public class ResidentData {
 	private static final String NBTTAG_VILLAGE_RESIDENTBASELEVEL = "villageresidentbaselevel";
 	private static final String NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL = "villageresidentblessedlevel";
 	private static final String NBTTAG_VILLAGE_RESIDENTDAYSALIVE = "villageresidentdaysAlive";
-	private static final String NBTTAG_VILLAGE_RESIDENTHEALTH = "villageresidenthealth";
-	private static final String NBTTAG_VILLAGE_RESIDENTMAXHEALTH = "villageresidentmaxhealth";
 	private static final String NBTTAG_VILLAGE_RESIDENTHUNGER = "villageresidenthunger";
 	private static final String NBTTAG_VILLAGE_RESIDENTMAXHUNGER = "villageresidentmaxhunger";
 	private static final String NBTTAG_VILLAGE_RESIDENTHAPPY = "villageresidenthappy";
 	private static final String NBTTAG_VILLAGE_RESIDENTMAXHAPPY = "villageresidentmaxhappy";
 	private static final String NBTTAG_VILLAGE_RESIDENTINTELLIGENCE = "villageresidentintellegience";
 	private static final String NBTTAG_VILLAGE_RESIDENTMAXINTELLIGENCE = "villageresidentmaxintellegience";
-	private static final String NBTTAG_VILLAGE_RESIDENTHOMEPOSITION = "villageresidenthomeposition";
 	private static final String NBTTAG_VILLAGE_RESIDENTBEDPOSITION = "villageresidentbedposition";
-	private static final String NBTTAG_VILLAGE_RESIDENTCURRENTPOSITION = "villageresidentcurrentposition";
 	private static final String NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE = "villageresidentcurrentstructure";
 	private static final String NBTTAG_VILLAGE_RESIDENTADDPROFCOUNT = "villageresidentaddprofcount";
 	private static final String NBTTAG_VILLAGE_RESIDENTADDPROF = "villageresidentaddprof";
-	private static final String NBTTAG_VILLAGE_RESIDENTTOTALARMOR = "villageresidenttotslarmor";
-	private static final String NBTTAG_VILLAGE_RESIDENTARMORCOUNT = "villageresidentarmorcount";
-	private static final String NBTTAG_VILLAGE_RESIDENTARMOR = "villageresidentarmor";
-	private static final String NBTTAG_VILLAGE_RESIDENTEQUIPMENTCOUNT = "villageresidentequipmentcount";
-	private static final String NBTTAG_VILLAGE_RESIDENTEQUIPMENT = "villageresidentequipment";
 
 	@SuppressWarnings("rawtypes")
 	private static final List<Class> toolItemClasses = Arrays.asList(ItemAxe.class, ItemHoe.class, ItemSword.class, ItemPickaxe.class, ItemShears.class);
-	private static List<Entity> entityList = null;
 	
-	private int residentId;
-	private String residentName;
 	private ProfessionType professionType;
 	private boolean isMale;
 	private boolean isChild;
@@ -75,23 +57,16 @@ public class ResidentData {
 	private int baseLevel;
 	private int blessedLevel;
 	private int daysAlive;
-	private float health;
-	private float maxHealth;
 	private int hunger;
 	private int maxHunger;
 	private int happy;
 	private int maxHappy;
 	private int intelligence;
 	private int maxIntelligence;
-	private BlockPos homePosition;
 	private BlockPos bedPosition;
-	private BlockPos currentPosition;
-	private BlockPos currentStructure;	
-	private int totalArmorValue;
+	private BlockPos currentStructure;
 	
 	private Map<ProfessionType, Integer> additionalProfessions;
-	private List<ItemStack> armor = null;
-	private List<ItemStack> equipment = null;
 	
 	public ResidentData() {
 		populateData(null);
@@ -101,16 +76,12 @@ public class ResidentData {
 		populateData(villager);
 	}
 	
-	public int getResidentId() {
-		return this.residentId;
-	}
-	
-	public String getResidentName() {
-		return this.residentName;
-	}
-	
 	public ProfessionType getProfessionType() {
 		return this.professionType;
+	}
+	
+	public String getProfessionTypeString() {
+		return this.professionType == null ? "" : this.professionType.name();
 	}
 	
 	public boolean isMale() {
@@ -141,14 +112,6 @@ public class ResidentData {
 		return this.daysAlive;
 	}
 	
-	public float getHealth() {
-		return this.health;
-	}
-	
-	public float getMaxHealth() {
-		return this.maxHealth;
-	}
-	
 	public int getHunger() {
 		return this.hunger;
 	}
@@ -173,10 +136,6 @@ public class ResidentData {
 		return this.maxIntelligence;
 	}
 	
-	public BlockPos getHomePosition() {
-		return this.homePosition;
-	}
-	
 	public BlockPos getBedPosition() {
 		return this.bedPosition;
 	}
@@ -185,16 +144,8 @@ public class ResidentData {
 		return this.bedPosition != null;
 	}
 	
-	public BlockPos getCurrentPosition() {
-		return this.currentPosition;
-	}
-	
 	public BlockPos getCurrentStructure() {
 		return this.currentStructure;
-	}
-	
-	public int getTotalArmorValue() {
-		return this.totalArmorValue;
 	}
 	
 	public boolean isBlessed() {
@@ -209,28 +160,24 @@ public class ResidentData {
 					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new)));
 	}
 	
-	public List<ItemStack> getArmor() {
-		return Collections.unmodifiableList(this.armor == null ? new ArrayList<ItemStack>() : this.armor);
-	}
-	
-	public List<ItemStack> getEquipment() {
-		return Collections.unmodifiableList(this.equipment == null ? new ArrayList<ItemStack>() : this.equipment);
+	public int getAdditionalProfessionsCount() {
+		return this.additionalProfessions == null ? 0 : this.additionalProfessions.size();
 	}
 	
 	public EntityVillagerTek getVillagerEntity() {
 		if (entityList != null && entityList.size() > 0) {
 			return (EntityVillagerTek) entityList.stream()
-				.filter(e -> e instanceof EntityVillagerTek && e.getEntityId() == this.residentId)
+				.filter(e -> e instanceof EntityVillagerTek && e.getEntityId() == getId())
 				.findFirst().orElse(null);
 		}
 		
 		return null;
 	}
 	
-	private void clearData() {
-		this.residentId = 0;
-		this.residentName = "";
-		this.professionType = ProfessionType.NITWIT;
+	protected void clearData() {
+		super.clearData();
+		
+		this.professionType = null;
 		this.isMale = true;
 		this.isChild = false;
 		this.isCaptain = false;
@@ -238,62 +185,56 @@ public class ResidentData {
 		this.baseLevel = 0;
 		this.blessedLevel = 0;
 		this.daysAlive = 0;
-		this.health = 0;
-		this.maxHealth = 20;
 		this.hunger = 0;
 		this.maxHunger = 100;
 		this.happy = 0;
 		this.maxHappy = 100;
 		this.intelligence = 0;
 		this.maxIntelligence = 100;
-		this.homePosition = null;
 		this.bedPosition = null;
-		this.currentPosition = null;
 		this.currentStructure = null;
-		this.totalArmorValue = 0;
 		
 		this.additionalProfessions = new LinkedHashMap<ProfessionType, Integer>();
-		this.armor = new ArrayList<ItemStack>();
-		this.equipment = new ArrayList<ItemStack>();
 	}
 	
-	public void populateData(EntityVillagerTek villager) {
+	protected void populateData(EntityVillagerTek villager) {
 		clearData();
 		
+		super.populateData(villager);
+		
 		if (villager != null) {
-			ProfessionType primaryProfessionType = villager.getProfessionType();
-			
-			this.residentId = villager.getEntityId();
-			this.residentName = villager.getDisplayName().getFormattedText();
-			this.professionType = primaryProfessionType;
+			this.professionType = villager.getProfessionType();
 			this.isMale = villager.isMale();
-			this.isChild = primaryProfessionType == ProfessionType.CHILD || villager.isChild();
-			this.isCaptain = primaryProfessionType == ProfessionType.CAPTAIN || villager instanceof EntityGuard && ((EntityGuard)villager).isCaptain();
-			this.level = villager.getSkill(primaryProfessionType);
-			this.baseLevel = villager.getBaseSkill(primaryProfessionType);
+			if (this.professionType != null) {
+				this.isChild = this.professionType == ProfessionType.CHILD || villager.isChild();
+			}
+			if (this.professionType != null) {
+				this.isCaptain = this.professionType == ProfessionType.CAPTAIN || villager instanceof EntityGuard && ((EntityGuard)villager).isCaptain();
+			}
+			if (this.professionType != null) {
+				this.level = villager.getSkill(this.professionType);
+			}
+			if (this.professionType != null) {
+				this.baseLevel = villager.getBaseSkill(this.professionType);
+			}
 			this.blessedLevel = villager.getBlessed();
 			this.daysAlive = villager.getDaysAlive();
-			this.health = villager.getHealth();
-			this.maxHealth = villager.getMaxHealth();
 			this.hunger = villager.getHunger();
 			this.maxHunger = villager.getMaxHunger();
 			this.happy = villager.getHappy();
 			this.maxHappy = villager.getMaxHappy();
 			this.intelligence = villager.getIntelligence();
 			this.maxIntelligence = villager.getMaxIntelligence();
-			this.homePosition = villager.getHomePosition();
 			this.bedPosition = villager.getBedPos();
-			this.currentPosition = villager.getPosition();
-			this.totalArmorValue = villager.getTotalArmorValue();
 			
 			VillageStructure structure = villager.getCurrentStructure();
 			if (structure == null && villager.getVillage() != null) {
-				structure = villager.getVillage().getStructure(currentPosition);
+				structure = villager.getVillage().getStructure(getCurrentPosition());
 			}
 			this.currentStructure = structure == null ? null : structure.getFramePos();
 			
 			for (ProfessionType professionType : TektopiaUtils.getProfessionTypes()) {
-				if (professionType == primaryProfessionType) {
+				if (professionType == this.professionType) {
 					// do not include the villagers main profession
 					continue;
 				}
@@ -303,10 +244,6 @@ public class ResidentData {
 					this.additionalProfessions.put(professionType, level);
 				}
 			}
-
-			// populate the armor and equipment list from the villager
-			this.armor.addAll((Collection<? extends ItemStack>) villager.getArmorInventoryList());
-			this.equipment.addAll((Collection<? extends ItemStack>) villager.getHeldEquipment());
 			
 			// check if the villager has a tool in their inventory, add to the equipment list
 			VillagerInventory inventory = villager.getInventory();
@@ -333,10 +270,9 @@ public class ResidentData {
 		}
 		
 		clearData();
+		super.readNBT(nbtTag);
 
-		this.residentId = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTID) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTID) : 0;
-		this.residentName = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTNAME) ? nbtTag.getString(NBTTAG_VILLAGE_RESIDENTNAME) : "";
-		this.professionType = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTPROFESSIONTYPE) ? ProfessionType.valueOf(nbtTag.getString(NBTTAG_VILLAGE_RESIDENTPROFESSIONTYPE)) : ProfessionType.NITWIT;
+		this.professionType = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTPROFESSIONTYPE) ? ProfessionType.valueOf(nbtTag.getString(NBTTAG_VILLAGE_RESIDENTPROFESSIONTYPE)) : null;
 		this.isMale = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTMALE) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTMALE) : true;
 		this.isChild = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCHILD) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCHILD) : false;
 		this.isCaptain = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCAPTAIN) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCAPTAIN) : false;
@@ -344,20 +280,15 @@ public class ResidentData {
 		this.baseLevel = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTBASELEVEL) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTBASELEVEL) : 0;
 		this.blessedLevel = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL) : 0;
 		this.daysAlive = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTDAYSALIVE) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTDAYSALIVE) : 0;
-		this.health = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTHEALTH) ? nbtTag.getFloat(NBTTAG_VILLAGE_RESIDENTHEALTH) : 0;
-		this.maxHealth = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTMAXHEALTH) ? nbtTag.getFloat(NBTTAG_VILLAGE_RESIDENTMAXHEALTH) : 0;
 		this.hunger = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTHUNGER) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTHUNGER) : 0;
 		this.maxHunger = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTMAXHUNGER) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTMAXHUNGER) : 0;
 		this.happy = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTHAPPY) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTHAPPY) : 0;
 		this.maxHappy = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTMAXHAPPY) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTMAXHAPPY) : 0;
 		this.intelligence = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTINTELLIGENCE) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTINTELLIGENCE) : 0;
 		this.maxIntelligence = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTMAXINTELLIGENCE) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTMAXINTELLIGENCE) : 0;
-		this.homePosition = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTHOMEPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_RESIDENTHOMEPOSITION)) : null;
 		this.bedPosition = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTBEDPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_RESIDENTBEDPOSITION)) : null;
-		this.currentPosition = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCURRENTPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_RESIDENTCURRENTPOSITION)) : null;
 		this.currentStructure = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE)) : null;
-		this.totalArmorValue = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTTOTALARMOR) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTTOTALARMOR) : 0;
-
+		
 		ProfessionType originalProfessionType = this.professionType;
 		if (this.isCaptain) {
 			this.professionType = ProfessionType.CAPTAIN;
@@ -393,43 +324,9 @@ public class ResidentData {
 			}
 		}
 		
-		if (nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTARMORCOUNT)) {
-			int count = nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTARMORCOUNT);
-			
-			this.armor = new ArrayList<ItemStack>(count);
-			
-			for (int index = 0; index < count; index++) {
-				String key = NBTTAG_VILLAGE_RESIDENTARMOR + "@" + index;
-				
-				if (nbtTag.hasKey(key)) {
-					NBTTagCompound value = nbtTag.getCompoundTag(key);
-					this.armor.add(index, new ItemStack(value));
-				} else {
-					this.armor.add(index, ItemStack.EMPTY);
-				}
-			}
-		}
-		
-		if (nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTEQUIPMENTCOUNT)) {
-			int count = nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTEQUIPMENTCOUNT);
-			
-			this.equipment = new ArrayList<ItemStack>(count);
-			
-			for (int index = 0; index < count; index++) {
-				String key = NBTTAG_VILLAGE_RESIDENTEQUIPMENT + "@" + index;
-				
-				if (nbtTag.hasKey(key)) {
-					NBTTagCompound value = nbtTag.getCompoundTag(key);
-					this.equipment.add(index, new ItemStack(value));
-				} else {
-					this.equipment.add(index, ItemStack.EMPTY);
-				}
-			}
-		}
-		
 		if (entityList != null && entityList.size() > 0) {
 			Entity entity = entityList.stream()
-				.filter(e -> e instanceof EntityVillagerTek && e.getEntityId() == this.residentId)
+				.filter(e -> e instanceof EntityVillagerTek && e.getEntityId() == getId())
 				.findFirst().orElse(null);
 			
 			if (entity != null) {
@@ -448,9 +345,11 @@ public class ResidentData {
 			nbtTag = new NBTTagCompound();
 		}
 		
-		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTID, this.residentId);
-		nbtTag.setString(NBTTAG_VILLAGE_RESIDENTNAME, this.residentName);
-		nbtTag.setString(NBTTAG_VILLAGE_RESIDENTPROFESSIONTYPE, this.professionType != null ? this.professionType.name() : ProfessionType.NITWIT.name());
+		super.writeNBT(nbtTag);
+		
+		if (this.professionType != null) {
+			nbtTag.setString(NBTTAG_VILLAGE_RESIDENTPROFESSIONTYPE, this.professionType.name());
+		}
 		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTMALE, this.isMale);
 		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTCHILD, this.isChild);
 		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTCAPTAIN, this.isCaptain);
@@ -458,27 +357,18 @@ public class ResidentData {
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTBASELEVEL, this.baseLevel);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL, this.blessedLevel);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTDAYSALIVE, this.daysAlive);
-		nbtTag.setFloat(NBTTAG_VILLAGE_RESIDENTHEALTH, this.health);
-		nbtTag.setFloat(NBTTAG_VILLAGE_RESIDENTMAXHEALTH, this.maxHealth);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTHUNGER, this.hunger);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTMAXHUNGER, this.maxHunger);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTHAPPY, this.happy);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTMAXHAPPY, this.maxHappy);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTINTELLIGENCE, this.intelligence);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTMAXINTELLIGENCE, this.maxIntelligence);
-		if (this.homePosition != null) {
-			nbtTag.setLong(NBTTAG_VILLAGE_RESIDENTHOMEPOSITION, this.homePosition.toLong());
-		}
 		if (this.bedPosition != null) {
 			nbtTag.setLong(NBTTAG_VILLAGE_RESIDENTBEDPOSITION, this.bedPosition.toLong());
-		}
-		if (this.currentPosition != null) {
-			nbtTag.setLong(NBTTAG_VILLAGE_RESIDENTCURRENTPOSITION, this.currentPosition.toLong());
 		}
 		if (this.currentStructure != null) {
 			nbtTag.setLong(NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE, this.currentStructure.toLong());
 		}
-		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTTOTALARMOR, this.totalArmorValue);
 		
 		if (this.additionalProfessions != null && this.additionalProfessions.size() > 0) {
 			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTADDPROFCOUNT, this.additionalProfessions.size());
@@ -490,46 +380,6 @@ public class ResidentData {
 					index++;
 				}
 			}
-		}
-		
-		if (this.armor != null && this.armor.size() > 0) {
-			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTARMORCOUNT, this.armor.size());
-			
-			int index = 0;
-			for (ItemStack piece : this.armor) {
-				if (piece != null && piece != ItemStack.EMPTY && piece.getItem() != Items.AIR) {
-					NBTTagCompound nbtTagPiece = new NBTTagCompound();
-					piece.writeToNBT(nbtTagPiece);
-					
-					nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTARMOR + "@" + index, nbtTagPiece);
-					index++;
-				}
-			}
-		}
-		
-		if (this.equipment != null && this.equipment.size() > 0) {
-			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTEQUIPMENTCOUNT, this.equipment.size());
-			
-			int index = 0;
-			for (ItemStack piece : this.equipment) {
-				if (piece != null && piece != ItemStack.EMPTY && piece.getItem() != Items.AIR) {
-					NBTTagCompound nbtTagPiece = new NBTTagCompound();
-					piece.writeToNBT(nbtTagPiece);
-					
-					nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTEQUIPMENT + "@" + index, nbtTagPiece);
-					index++;
-				}
-			}
-		}
-	}
-	
-	public static void resetEntityList() {
-		entityList = null;
-
-		// check if we are client side only
-		if (TektopiaInformation.proxy.isRemote()) {
-			// get a list of the entities - client side
-			entityList = Minecraft.getMinecraft().world.getLoadedEntityList();
 		}
 	}
 	
