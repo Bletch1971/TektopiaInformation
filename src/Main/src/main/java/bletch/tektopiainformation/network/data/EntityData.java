@@ -41,11 +41,11 @@ public class EntityData {
 	private String className;
 	private String modId;
 	private String modName;
-	private String name;
+	protected String name;
 	protected int level;
 	private float health;
 	private float maxHealth;
-	private BlockPos homePosition;
+	protected BlockPos homePosition;
 	private BlockPos currentPosition;	
 	private int totalArmorValue;
 	
@@ -53,11 +53,14 @@ public class EntityData {
 	protected List<ItemStack> equipment = null;
 	
 	protected EntityData() {
-		populateData(null);
+		clearData();
 	}
 	
-	protected EntityData(EntityVillageNavigator entity) {
-		populateData(entity);
+	protected EntityData(EntityVillageNavigator entity, Boolean populateEntity) {
+		clearData();
+		
+		if (populateEntity)
+			populateData(entity);
 	}
 	
 	public int getId() {
@@ -123,6 +126,7 @@ public class EntityData {
 	}
 	
 	protected void clearData() {
+		
 		this.id = 0;
 		this.className = "";
 		this.modId = ModDetails.MOD_ID;
@@ -140,18 +144,18 @@ public class EntityData {
 	}
 	
 	protected void populateData(EntityVillageNavigator entity) {
-		clearData();
 		
 		if (entity != null) {
 			this.id = entity.getEntityId();
 			this.className = entity.getClass().getSimpleName().toLowerCase();
 			this.modId = ModIdentification.getEntityModId(entity);
 			this.modName = ModIdentification.getEntityModName(entity);
-			//this.level = 1;
-			this.name = entity.getDisplayName().getFormattedText();
+			this.level = 1;
+			this.name = entity.getName();
 			this.health = entity.getHealth();
 			this.maxHealth = entity.getMaxHealth();
-			this.homePosition = entity.getHomePosition();
+			// removed this so we can use this for other entities that do not have beds assigned (architect, tradesman, etc)
+			//this.homePosition = entity.getHomePosition();
 			this.currentPosition = entity.getPosition();
 			this.totalArmorValue = entity.getTotalArmorValue();
 

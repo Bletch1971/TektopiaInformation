@@ -33,7 +33,7 @@ public class VisitorsData {
 	
 	public List<VisitorData> getVisitors() {
 		return Collections.unmodifiableList(this.visitors == null ? new ArrayList<VisitorData>() : this.visitors.stream()
-				.sorted((c1 , c2) -> c1.getProfessionTypeString().compareTo(c2.getProfessionTypeString()))
+				.sorted((c1 , c2) -> c1.getProfessionType().compareTo(c2.getProfessionType()))
 				.sorted((c1 , c2) -> c1.getName().compareTo(c2.getName()))
 				.collect(Collectors.toList()));
 	}

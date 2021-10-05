@@ -29,6 +29,9 @@ import net.tangotek.tektopia.structures.VillageStructureType;
 
 @ParametersAreNonnullByDefault
 public class TektopiaUtils {
+
+	public static final String PROFESSIONTYPE_ARCHITECT = "ARCHITECT";
+	public static final String PROFESSIONTYPE_TRADESMAN = "TRADESMAN";
 	
 	public static List<Block> getTektopiaBlocks() {
 
@@ -113,14 +116,42 @@ public class TektopiaUtils {
 		}
 		
 		return structuresList;
+	}    
+	
+	public static ProfessionType getProfessionType(String professionTypeName) {
+    	if (professionTypeName == null || professionTypeName.trim().isEmpty()) {
+    		return null;
+    	}
+    	
+    	try {
+        	return ProfessionType.valueOf(professionTypeName);
+    	}
+		catch (Exception ex) {
+			return null;
+		}
+    }
+	
+	public static List<String> getProfessionTypeNames() {
+		List<String> results = StreamSupport.stream(Arrays.spliterator(ProfessionType.values()), false)
+			.distinct()
+			.filter(p -> p != ProfessionType.NOMAD)
+			.map(t -> t.name())
+			.collect(Collectors.toList());
+		
+		results.add(PROFESSIONTYPE_ARCHITECT);
+		results.add(PROFESSIONTYPE_TRADESMAN);
+		
+		return results.stream()
+				.sorted((c1, c2) -> c1.compareTo(c2))
+				.collect(Collectors.toList());
 	}
 	
 	public static List<ProfessionType> getProfessionTypes() {
 		return StreamSupport.stream(Arrays.spliterator(ProfessionType.values()), false)
-				.distinct()
-				.filter(p -> p != ProfessionType.NOMAD)
-				.sorted((c1, c2) -> c1.name().compareTo(c2.name()))
-				.collect(Collectors.toList());
+			.distinct()
+			.filter(p -> p != ProfessionType.NOMAD)
+			.sorted((c1, c2) -> c1.name.compareTo(c2.name))
+			.collect(Collectors.toList());
 	}
 	
 	public static List<VillageStructureType> getVillageStructureTypes() {
