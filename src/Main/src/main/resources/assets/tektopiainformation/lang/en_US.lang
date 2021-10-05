@@ -221,6 +221,8 @@ tektopiaBook.headers.visitor=Visitor
 tektopiaBook.economy.salesHistory=Merchant Sales History
 tektopiaBook.economy.merchantsales=Total Merchant Sales:
 tektopiaBook.economy.professionsales=Total Profession Sales:
+tektopiaBook.economy.architectitems=Architect Items
+tektopiaBook.economy.tradesmanitems=Tradesman Items
 
 tektopiaBook.enemies.total=Total Enemies:
 tektopiaBook.enemies.enemies=Enemies

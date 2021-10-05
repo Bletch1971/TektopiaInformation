@@ -138,8 +138,9 @@ public class GuiTektopiaBook extends GuiScreen {
 	private static final int STATRESIDENTS_PER_PAGE = 15;
 	private static final int SALESHISTORY_PER_PAGE = 15;
 	private static final int VISITORLIST_PER_PAGE = 18;
-	private static final int VENDORLIST0_PER_PAGE = 8;
-	private static final int VENDORLIST_PER_PAGE = 15;
+	private static final int VISITORVENDORLIST0_PER_PAGE = 8;
+	private static final int VISITORVENDORLIST_PER_PAGE = 15;
+	private static final int RESIDENTVENDORLIST_PER_PAGE = 14;
 	
 	private static final ResourceLocation book = new ResourceLocation(ModDetails.MOD_ID, "textures/gui/gui_book.png");
 	private static final ResourceLocation bookmarkLeft = new ResourceLocation(ModDetails.MOD_ID, "textures/gui/bookmark_left.png");
@@ -747,10 +748,10 @@ public class GuiTektopiaBook extends GuiScreen {
 					
 					// if visitor is a vendor, then make sure to add additional pages for items, if needed.
 					if (visitorData.isVendor()) {
-						count = visitorData.getRecipeList().size() - VENDORLIST0_PER_PAGE;
+						count = visitorData.getRecipeList().size() - VISITORVENDORLIST0_PER_PAGE;
 						if (count > 0) {
-							pages = count / VENDORLIST_PER_PAGE;
-							if (count % VENDORLIST_PER_PAGE > 0) {
+							pages = count / VISITORVENDORLIST_PER_PAGE;
+							if (count % VISITORVENDORLIST_PER_PAGE > 0) {
 								pages++;
 							}
 				    		
@@ -849,13 +850,44 @@ public class GuiTektopiaBook extends GuiScreen {
 	    	// title page
 	    	this.pages.add(new GuiPage(GuiPageType.SUMMARY, pageIndex++, getPageKey(BOOKMARK_KEY_ECONOMY, 0), BOOKMARK_KEY_ECONOMY));
 	    	
+	    	int count;
+	    	int pages;
+	    	
 	    	// Architect Items
+	    	ResidentData architect = residentsData.getArchitect();
+	    	if (architect != null) {
+				count = architect.getRecipeList().size();
+				if (count > 0) {
+		    		pages = count / RESIDENTVENDORLIST_PER_PAGE;
+		    		if (count % RESIDENTVENDORLIST_PER_PAGE > 0) {
+		    			pages++;
+		    		}
+		    		
+		    		for (int page = 0; page < pages; page++) {
+				    	this.pages.add(new GuiPage(GuiPageType.ECONOMY, pageIndex++, getPageKey("architectitems", page)));
+		    		}
+				}
+	    	}
 	    	
 	    	// Tradesman Items
+	    	ResidentData tradesman = residentsData.getTradesman();
+	    	if (tradesman != null) {
+				count = tradesman.getRecipeList().size();
+				if (count > 0) {
+		    		pages = count / RESIDENTVENDORLIST_PER_PAGE;
+		    		if (count % RESIDENTVENDORLIST_PER_PAGE > 0) {
+		    			pages++;
+		    		}
+		    		
+		    		for (int page = 0; page < pages; page++) {
+				    	this.pages.add(new GuiPage(GuiPageType.ECONOMY, pageIndex++, getPageKey("tradesmanitems", page)));
+		    		}
+				}
+	    	}
 	    	
 	    	// sales history pages
-			int count = economyData.getMerchantSales();
-    		int pages = count / (SALESHISTORY_PER_PAGE * 3);
+			count = economyData.getMerchantSales();
+    		pages = count / (SALESHISTORY_PER_PAGE * 3);
     		if (count % (SALESHISTORY_PER_PAGE * 3) > 0) {
     			pages++;
     		}
@@ -989,11 +1021,154 @@ public class GuiTektopiaBook extends GuiScreen {
     	int indentX = 10;
 
     	String[] dataKey = getPageKeyParts(guiPage.getDataKey());
-    	EconomyData economyData = this.villageData.getEconomyData();
         String continued = TextUtils.translate("tektopiaBook.continued");
+        
+        if (dataKey[0].equals("architectitems") || dataKey[0].equals("tradesmanitems")) {
+        	
+        	ResidentsData residentsData = this.villageData.getResidentsData();
+            MerchantRecipeList recipeList = null;
+            
+            if (dataKey[0].equals("architectitems")) {
+            	// architect items
+            	ResidentData architect = residentsData != null ? residentsData.getArchitect() : null;
+            	recipeList = architect != null ? architect.getRecipeList() : null;
+            }
+            
+            if (dataKey[0].equals("tradesmanitems")) {
+            	// tradesman items
+            	ResidentData tradesman = residentsData != null ? residentsData.getTradesman() : null;
+            	recipeList = tradesman != null ? tradesman.getRecipeList() : null;
+            }
+
+            String header = TextUtils.translate("tektopiaBook.economy." + dataKey[0]);
+        	
+            if (header != null && header.trim() != "") {
+            	if (!dataKey[1].equals("0") && continued != null && continued.trim() != "") {
+            		header += " " + continued;
+            	}
+            	header = TextFormatting.DARK_BLUE + header;
+            	
+            	if (guiPage.isLeftPage()) {
+                    Font.normal.printLeft(header, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X, y); 
+            	}
+            	
+            	if (guiPage.isRightPage()) {
+                    Font.normal.printLeft(header, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X, y); 
+            	}
+            	
+            	y += Font.normal.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+            }
+        	
+        	String sellHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.sell");
+        	String buyHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.buy");
+        	
+			if (guiPage.isLeftPage()) {
+                Font.small.printLeft(sellHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y); 
+                Font.small.printLeft(buyHeader, this.x + PAGE_LEFTPAGE_CENTER_X, y); 
+        	}
+        	
+        	if (guiPage.isRightPage()) {
+                Font.small.printLeft(sellHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y); 
+                Font.small.printLeft(buyHeader, this.x + PAGE_RIGHTPAGE_CENTER_X, y); 
+        	}
+
+        	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y + 2;
+
+        	if (recipeList != null && recipeList.size() > 0) {
+            	int page = 0;
+            	try {
+            		page = Integer.parseInt(dataKey[1]);
+            	}
+            	catch (NumberFormatException e) {
+            		page = 0;
+            	}
+            	int startIndex = page * RESIDENTVENDORLIST_PER_PAGE;
+            	int endIndex = Math.min(recipeList.size(), startIndex + RESIDENTVENDORLIST_PER_PAGE);
+            	
+            	List<MerchantRecipe> recipes = recipeList.subList(startIndex, endIndex);
+
+            	for (MerchantRecipe recipe : recipes) {
+            		ItemStack buyItem1Stack = recipe.getItemToBuy();
+            		ItemStack buyItem2Stack = recipe.getSecondItemToBuy();
+            		ItemStack sellItemStack = recipe.getItemToSell();
+
+            		List<String> buyItem1Tooltip = buyItem1Stack.getTooltip(null, TooltipFlags.NORMAL);
+            		if (buyItem1Stack.isItemEnchanted() && buyItem1Tooltip != null && buyItem1Tooltip.size() > 0) {
+            			buyItem1Tooltip.set(0, TextFormatting.AQUA + buyItem1Tooltip.get(0));
+            		}
+            		List<String> buyItem2Tooltip = buyItem2Stack.getTooltip(null, TooltipFlags.NORMAL);
+            		if (buyItem2Stack.isItemEnchanted() && buyItem2Tooltip != null && buyItem2Tooltip.size() > 0) {
+            			buyItem2Tooltip.set(0, TextFormatting.AQUA + buyItem2Tooltip.get(0));
+            		}
+            		List<String> sellTooltip = sellItemStack.getTooltip(null, TooltipFlags.NORMAL);
+            		if (sellItemStack.isItemEnchanted() && sellTooltip != null && sellTooltip.size() > 0) {
+            			sellTooltip.set(0, TextFormatting.AQUA + sellTooltip.get(0));
+            		}
+	            	
+	    			if (guiPage.isLeftPage()) {
+	                	
+	                	if (!buyItem1Stack.isEmpty()) {
+                    		RenderUtils.renderItemIntoGUI(buyItem1Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5);
+                    		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem1Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5);
+                			if (buyItem1Tooltip != null && buyItem1Tooltip.size() > 0) {
+                				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5, 16, 16, buyItem1Tooltip));
+                			}
+	                	}
+	                	
+            			if (!buyItem2Stack.isEmpty()) {
+                    		RenderUtils.renderItemIntoGUI(buyItem2Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
+                    		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem2Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
+                			if (buyItem2Tooltip != null && buyItem2Tooltip.size() > 0) {
+                				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, 16, 16, buyItem2Tooltip));
+                			}
+            			}
+	                	
+            			if (!sellItemStack.isEmpty()) {
+    	                    RenderUtils.renderItemIntoGUI(sellItemStack, this.x + PAGE_LEFTPAGE_CENTER_X, y - 5);
+    	                    RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, sellItemStack, this.x + PAGE_LEFTPAGE_CENTER_X, y - 5);
+                			if (sellTooltip != null && sellTooltip.size() > 0) {
+                				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_CENTER_X, y - 5, 16, 16, sellTooltip));
+                			}
+            			}
+	            	}
+	            	
+	            	if (guiPage.isRightPage()) {
+	                	
+	                	if (!buyItem1Stack.isEmpty()) {
+                    		RenderUtils.renderItemIntoGUI(buyItem1Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5);
+                    		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem1Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5);
+                			if (buyItem1Tooltip != null && buyItem1Tooltip.size() > 0) {
+                				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5, 16, 16, buyItem1Tooltip));
+                			}
+	                	}
+	                	
+            			if (!buyItem2Stack.isEmpty()) {
+                    		RenderUtils.renderItemIntoGUI(buyItem2Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
+                    		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem2Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
+                			if (buyItem2Tooltip != null && buyItem2Tooltip.size() > 0) {
+                				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, 16, 16, buyItem2Tooltip));
+                			}
+            			}
+	                	
+            			if (!sellItemStack.isEmpty()) {
+    	                    RenderUtils.renderItemIntoGUI(sellItemStack, this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5);
+    	                    RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, sellItemStack, this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5);
+                			if (sellTooltip != null && sellTooltip.size() > 0) {
+                				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5, 16, 16, sellTooltip));
+                			}
+            			}
+	            	}
+
+	            	y += Font.normal.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y + 5;
+            	}
+        	}
+        }
+        
         
         if (dataKey[0].equals("saleshistory")) {
         	// sales history
+        	
+        	EconomyData economyData = this.villageData.getEconomyData();
 
             String header = TextUtils.translate("tektopiaBook.economy.salesHistory");
         	
@@ -1017,67 +1192,69 @@ public class GuiTektopiaBook extends GuiScreen {
         	if (economyData != null) {
         		List<ItemStack> salesHistory = economyData.getSalesHistory();
         		
-            	int page = 0;
-	        	try {
-	        		page = Integer.parseInt(dataKey[1]);
-	        	}
-	        	catch (NumberFormatException e) {
-	        		page = 0;
-	        	}
-	        	int startIndex = page * SALESHISTORY_PER_PAGE;
-	        	int endIndex = Math.min(salesHistory.size(), startIndex + SALESHISTORY_PER_PAGE);
-            	
-	        	y += LINE_SPACE_Y;
-            	int yTop = y;
-            	
-            	for (int i = 0; i < 3; i++) {
-            		if (startIndex >= salesHistory.size())
-            			break;
-            		
-            		int xL = this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX;
-            		if (i == 1)
-            			xL = this.x + PAGE_LEFTPAGE_CENTER_X - 8;
-            		else if (i == 2)
-            			xL = this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X - 16 - indentX;
-            		
-            		int xR = this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX;
-            		if (i == 1)
-            			xR = this.x + PAGE_RIGHTPAGE_CENTER_X - 8;
-            		else if (i == 2)
-            			xR = this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X - 16 - indentX;
-            		
-            		List<ItemStack> sales = salesHistory.subList(startIndex, endIndex);
-            		
-            		for (ItemStack itemStack : sales) {
+        		if (salesHistory != null && salesHistory.size() > 0) {
+                	int page = 0;
+    	        	try {
+    	        		page = Integer.parseInt(dataKey[1]);
+    	        	}
+    	        	catch (NumberFormatException e) {
+    	        		page = 0;
+    	        	}
+    	        	int startIndex = page * SALESHISTORY_PER_PAGE;
+    	        	int endIndex = Math.min(salesHistory.size(), startIndex + SALESHISTORY_PER_PAGE);
+                	
+    	        	y += LINE_SPACE_Y;
+                	int yTop = y;
+                	
+                	for (int i = 0; i < 3; i++) {
+                		if (startIndex >= salesHistory.size())
+                			break;
+                		
+                		int xL = this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX;
+                		if (i == 1)
+                			xL = this.x + PAGE_LEFTPAGE_CENTER_X - 8;
+                		else if (i == 2)
+                			xL = this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X - 16 - indentX;
+                		
+                		int xR = this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX;
+                		if (i == 1)
+                			xR = this.x + PAGE_RIGHTPAGE_CENTER_X - 8;
+                		else if (i == 2)
+                			xR = this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X - 16 - indentX;
+                		
+                		List<ItemStack> sales = salesHistory.subList(startIndex, endIndex);
+                		
+                		for (ItemStack itemStack : sales) {
 
-                		List<String> itemStackTooltip = itemStack.getTooltip(null, TooltipFlags.NORMAL);
-                		if (itemStack.isItemEnchanted() && itemStackTooltip != null && itemStackTooltip.size() > 0) {
-                			itemStackTooltip.set(0, TextFormatting.AQUA + itemStackTooltip.get(0));
+                    		List<String> itemStackTooltip = itemStack.getTooltip(null, TooltipFlags.NORMAL);
+                    		if (itemStack.isItemEnchanted() && itemStackTooltip != null && itemStackTooltip.size() > 0) {
+                    			itemStackTooltip.set(0, TextFormatting.AQUA + itemStackTooltip.get(0));
+                    		}
+                			
+                        	if (guiPage.isLeftPage()) {
+        	                    RenderUtils.renderItemIntoGUI(itemStack, xL, y - 5);
+        	                    RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, itemStack, xL, y - 5);
+                    			if (itemStackTooltip != null && itemStackTooltip.size() > 0) {
+                    				this.tooltips.add(new GuiTooltip(xL, y - 5, 16, 16, itemStackTooltip));
+                    			}
+                        	}
+                        	
+                        	if (guiPage.isRightPage()) {
+                        		RenderUtils.renderItemIntoGUI(itemStack, xR, y - 5);
+                        		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, itemStack, xR, y - 5);
+                    			if (itemStackTooltip != null && itemStackTooltip.size() > 0) {
+                    				this.tooltips.add(new GuiTooltip(xR, y - 5, 16, 16, itemStackTooltip));
+                    			}
+                        	}                   	
+                        	
+        	            	y += Font.normal.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y + 4;
                 		}
-            			
-                    	if (guiPage.isLeftPage()) {
-    	                    RenderUtils.renderItemIntoGUI(itemStack, xL, y - 5);
-    	                    RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, itemStack, xL, y - 5);
-                			if (itemStackTooltip != null && itemStackTooltip.size() > 0) {
-                				this.tooltips.add(new GuiTooltip(xL, y - 5, 16, 16, itemStackTooltip));
-                			}
-                    	}
-                    	
-                    	if (guiPage.isRightPage()) {
-                    		RenderUtils.renderItemIntoGUI(itemStack, xR, y - 5);
-                    		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, itemStack, xR, y - 5);
-                			if (itemStackTooltip != null && itemStackTooltip.size() > 0) {
-                				this.tooltips.add(new GuiTooltip(xR, y - 5, 16, 16, itemStackTooltip));
-                			}
-                    	}                   	
-                    	
-    	            	y += Font.normal.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y + 4;
-            		}
-            		
-            		y = yTop;
-            		startIndex += SALESHISTORY_PER_PAGE;
-            		endIndex = Math.min(salesHistory.size(), startIndex + SALESHISTORY_PER_PAGE);
-            	}
+                		
+                		y = yTop;
+                		startIndex += SALESHISTORY_PER_PAGE;
+                		endIndex = Math.min(salesHistory.size(), startIndex + SALESHISTORY_PER_PAGE);
+                	}
+        		}
         	}
         }
     }
@@ -4795,24 +4972,8 @@ public class GuiTektopiaBook extends GuiScreen {
                 }
                 
 	            if (visitor.isVendor()) {
-	            	
-		        	int page = 0;
-		        	try {
-		        		page = Integer.parseInt(dataKey[1]);
-		        	}
-		        	catch (NumberFormatException e) {
-		        		page = 0;
-		        	}
-		        	int startIndex = 0;
-	            	int linesPerPage = VENDORLIST0_PER_PAGE;
-	            	int index = 0;
-	            	
-	            	if (page > 0) {
-	            		startIndex = VENDORLIST0_PER_PAGE + ((page - 1) * VENDORLIST_PER_PAGE);
-	            		linesPerPage = VENDORLIST_PER_PAGE;
-	            	}
-	            	
 	            	// display vendor items
+	            	
 	                String vendoritems = TextUtils.translate("tektopiaBook.visitors.vendoritems");
 	                String continued = TextUtils.translate("tektopiaBook.continued");
 	            	if (!dataKey[1].equals("0") && continued != null && continued.trim() != "") {
@@ -4853,90 +5014,103 @@ public class GuiTektopiaBook extends GuiScreen {
 	            	
 	            	MerchantRecipeList recipeList = visitor.getRecipeList();
 	            	
-	            	if (recipeList != null) {
-		            	for (MerchantRecipe recipe : visitor.getRecipeList()) {
-		            		if (index >= startIndex && index < startIndex + linesPerPage) {
-			            		ItemStack buyItem1Stack = recipe.getItemToBuy();
-			            		ItemStack buyItem2Stack = recipe.getSecondItemToBuy();
-			            		ItemStack sellItemStack = recipe.getItemToSell();
-			            		
-			            		String buyTimes = recipe.getToolUses() + TextUtils.SEPARATOR_FSLASH + recipe.getMaxTradeUses();
-			            		if (recipe.getToolUses() >= recipe.getMaxTradeUses())
-			            			buyTimes = TextFormatting.RED + buyTimes;
-
-		                		List<String> buyItem1Tooltip = buyItem1Stack.getTooltip(null, TooltipFlags.NORMAL);
-		                		if (buyItem1Stack.isItemEnchanted() && buyItem1Tooltip != null && buyItem1Tooltip.size() > 0) {
-		                			buyItem1Tooltip.set(0, TextFormatting.AQUA + buyItem1Tooltip.get(0));
-		                		}
-		                		List<String> buyItem2Tooltip = buyItem2Stack.getTooltip(null, TooltipFlags.NORMAL);
-		                		if (buyItem2Stack.isItemEnchanted() && buyItem2Tooltip != null && buyItem2Tooltip.size() > 0) {
-		                			buyItem2Tooltip.set(0, TextFormatting.AQUA + buyItem2Tooltip.get(0));
-		                		}
-		                		List<String> sellTooltip = sellItemStack.getTooltip(null, TooltipFlags.NORMAL);
-		                		if (sellItemStack.isItemEnchanted() && sellTooltip != null && sellTooltip.size() > 0) {
-		                			sellTooltip.set(0, TextFormatting.AQUA + sellTooltip.get(0));
-		                		}
-				            	
-				    			if (guiPage.isLeftPage()) {
-				                	Font.normal.printRight(buyTimes, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y);
-				                	
-				                	if (!buyItem1Stack.isEmpty()) {
-			                    		RenderUtils.renderItemIntoGUI(buyItem1Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5);
-			                    		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem1Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5);
-			                			if (buyItem1Tooltip != null && buyItem1Tooltip.size() > 0) {
-			                				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5, 16, 16, buyItem1Tooltip));
-			                			}
-				                	}
-				                	
-		                			if (!buyItem2Stack.isEmpty()) {
-		                        		RenderUtils.renderItemIntoGUI(buyItem2Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
-		                        		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem2Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
-		                    			if (buyItem2Tooltip != null && buyItem2Tooltip.size() > 0) {
-		                    				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, 16, 16, buyItem2Tooltip));
-		                    			}
-		                			}
-				                	
-		                			if (!sellItemStack.isEmpty()) {
-		        	                    RenderUtils.renderItemIntoGUI(sellItemStack, this.x + PAGE_LEFTPAGE_CENTER_X, y - 5);
-		        	                    RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, sellItemStack, this.x + PAGE_LEFTPAGE_CENTER_X, y - 5);
-		                    			if (sellTooltip != null && sellTooltip.size() > 0) {
-		                    				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_CENTER_X, y - 5, 16, 16, sellTooltip));
-		                    			}
-		                			}
-				            	}
-				            	
-				            	if (guiPage.isRightPage()) {
-				                	Font.normal.printRight(buyTimes, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
-				                	
-				                	if (!buyItem1Stack.isEmpty()) {
-			                    		RenderUtils.renderItemIntoGUI(buyItem1Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5);
-			                    		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem1Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5);
-			                			if (buyItem1Tooltip != null && buyItem1Tooltip.size() > 0) {
-			                				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5, 16, 16, buyItem1Tooltip));
-			                			}
-				                	}
-				                	
-		                			if (!buyItem2Stack.isEmpty()) {
-		                        		RenderUtils.renderItemIntoGUI(buyItem2Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
-		                        		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem2Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
-		                    			if (buyItem2Tooltip != null && buyItem2Tooltip.size() > 0) {
-		                    				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, 16, 16, buyItem2Tooltip));
-		                    			}
-		                			}
-				                	
-		                			if (!sellItemStack.isEmpty()) {
-		        	                    RenderUtils.renderItemIntoGUI(sellItemStack, this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5);
-		        	                    RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, sellItemStack, this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5);
-		                    			if (sellTooltip != null && sellTooltip.size() > 0) {
-		                    				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5, 16, 16, sellTooltip));
-		                    			}
-		                			}
-				            	}
-
-				            	y += Font.normal.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y + 5;
-		            		}
+	            	if (recipeList != null && recipeList.size() > 0) {
+			        	int page = 0;
+			        	try {
+			        		page = Integer.parseInt(dataKey[1]);
+			        	}
+			        	catch (NumberFormatException e) {
+			        		page = 0;
+			        	}
+			        	int startIndex = 0;
+		            	int endIndex = Math.min(recipeList.size(), startIndex + VISITORVENDORLIST0_PER_PAGE);
+		            	
+		            	if (page > 0) {
+		            		startIndex = VISITORVENDORLIST0_PER_PAGE + ((page - 1) * VISITORVENDORLIST_PER_PAGE);
+			            	endIndex = Math.min(recipeList.size(), startIndex + VISITORVENDORLIST_PER_PAGE);
+		            	}
+		            	
+		            	List<MerchantRecipe> recipes = recipeList.subList(startIndex, endIndex);
+		            	
+		            	for (MerchantRecipe recipe : recipes) {
+		            		ItemStack buyItem1Stack = recipe.getItemToBuy();
+		            		ItemStack buyItem2Stack = recipe.getSecondItemToBuy();
+		            		ItemStack sellItemStack = recipe.getItemToSell();
 		            		
-		            		index++;
+		            		String buyTimes = recipe.getToolUses() + TextUtils.SEPARATOR_FSLASH + recipe.getMaxTradeUses();
+		            		if (recipe.getToolUses() >= recipe.getMaxTradeUses())
+		            			buyTimes = TextFormatting.RED + buyTimes;
+
+	                		List<String> buyItem1Tooltip = buyItem1Stack.getTooltip(null, TooltipFlags.NORMAL);
+	                		if (buyItem1Stack.isItemEnchanted() && buyItem1Tooltip != null && buyItem1Tooltip.size() > 0) {
+	                			buyItem1Tooltip.set(0, TextFormatting.AQUA + buyItem1Tooltip.get(0));
+	                		}
+	                		List<String> buyItem2Tooltip = buyItem2Stack.getTooltip(null, TooltipFlags.NORMAL);
+	                		if (buyItem2Stack.isItemEnchanted() && buyItem2Tooltip != null && buyItem2Tooltip.size() > 0) {
+	                			buyItem2Tooltip.set(0, TextFormatting.AQUA + buyItem2Tooltip.get(0));
+	                		}
+	                		List<String> sellTooltip = sellItemStack.getTooltip(null, TooltipFlags.NORMAL);
+	                		if (sellItemStack.isItemEnchanted() && sellTooltip != null && sellTooltip.size() > 0) {
+	                			sellTooltip.set(0, TextFormatting.AQUA + sellTooltip.get(0));
+	                		}
+			            	
+			    			if (guiPage.isLeftPage()) {
+			                	Font.normal.printRight(buyTimes, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y);
+			                	
+			                	if (!buyItem1Stack.isEmpty()) {
+		                    		RenderUtils.renderItemIntoGUI(buyItem1Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5);
+		                    		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem1Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5);
+		                			if (buyItem1Tooltip != null && buyItem1Tooltip.size() > 0) {
+		                				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5, 16, 16, buyItem1Tooltip));
+		                			}
+			                	}
+			                	
+	                			if (!buyItem2Stack.isEmpty()) {
+	                        		RenderUtils.renderItemIntoGUI(buyItem2Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
+	                        		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem2Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
+	                    			if (buyItem2Tooltip != null && buyItem2Tooltip.size() > 0) {
+	                    				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, 16, 16, buyItem2Tooltip));
+	                    			}
+	                			}
+			                	
+	                			if (!sellItemStack.isEmpty()) {
+	        	                    RenderUtils.renderItemIntoGUI(sellItemStack, this.x + PAGE_LEFTPAGE_CENTER_X, y - 5);
+	        	                    RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, sellItemStack, this.x + PAGE_LEFTPAGE_CENTER_X, y - 5);
+	                    			if (sellTooltip != null && sellTooltip.size() > 0) {
+	                    				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_CENTER_X, y - 5, 16, 16, sellTooltip));
+	                    			}
+	                			}
+			            	}
+			            	
+			            	if (guiPage.isRightPage()) {
+			                	Font.normal.printRight(buyTimes, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
+			                	
+			                	if (!buyItem1Stack.isEmpty()) {
+		                    		RenderUtils.renderItemIntoGUI(buyItem1Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5);
+		                    		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem1Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5);
+		                			if (buyItem1Tooltip != null && buyItem1Tooltip.size() > 0) {
+		                				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5, 16, 16, buyItem1Tooltip));
+		                			}
+			                	}
+			                	
+	                			if (!buyItem2Stack.isEmpty()) {
+	                        		RenderUtils.renderItemIntoGUI(buyItem2Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
+	                        		RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem2Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
+	                    			if (buyItem2Tooltip != null && buyItem2Tooltip.size() > 0) {
+	                    				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, 16, 16, buyItem2Tooltip));
+	                    			}
+	                			}
+			                	
+	                			if (!sellItemStack.isEmpty()) {
+	        	                    RenderUtils.renderItemIntoGUI(sellItemStack, this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5);
+	        	                    RenderUtils.renderItemOverlayIntoGUI(Font.normal.fontRenderer, sellItemStack, this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5);
+	                    			if (sellTooltip != null && sellTooltip.size() > 0) {
+	                    				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5, 16, 16, sellTooltip));
+	                    			}
+	                			}
+			            	}
+
+			            	y += Font.normal.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y + 5;
 		            	}
 	            	}
 	            	

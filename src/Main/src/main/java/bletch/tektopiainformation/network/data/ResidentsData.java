@@ -194,6 +194,18 @@ public class ResidentsData {
 		return result;
 	}
 	
+	public ResidentData getArchitect() {
+		return this.residents == null ? null : this.residents.stream()
+				.filter(r -> r.getProfessionType().equals(TektopiaUtils.PROFESSIONTYPE_ARCHITECT))
+				.findFirst().orElse(null);
+	}
+	
+	public ResidentData getTradesman() {
+		return this.residents == null ? null : this.residents.stream()
+				.filter(r -> r.getProfessionType().equals(TektopiaUtils.PROFESSIONTYPE_TRADESMAN))
+				.findFirst().orElse(null);
+	}
+	
 	private void clearData() {
 		this.residentsCount = 0;
 		
