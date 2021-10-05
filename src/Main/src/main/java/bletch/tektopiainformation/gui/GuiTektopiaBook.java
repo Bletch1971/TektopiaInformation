@@ -748,16 +748,19 @@ public class GuiTektopiaBook extends GuiScreen {
 					
 					// if visitor is a vendor, then make sure to add additional pages for items, if needed.
 					if (visitorData.isVendor()) {
-						count = visitorData.getRecipeList().size() - VISITORVENDORLIST0_PER_PAGE;
-						if (count > 0) {
-							pages = count / VISITORVENDORLIST_PER_PAGE;
-							if (count % VISITORVENDORLIST_PER_PAGE > 0) {
-								pages++;
+						MerchantRecipeList recipeList = visitorData.getRecipeList();
+						if (recipeList != null && !recipeList.isEmpty()) {
+							count = recipeList.size() - VISITORVENDORLIST0_PER_PAGE;
+							if (count > 0) {
+								pages = count / VISITORVENDORLIST_PER_PAGE;
+								if (count % VISITORVENDORLIST_PER_PAGE > 0) {
+									pages++;
+								}
+					    		
+					    		for (int page = 0; page < pages; page++) {
+							    	this.pages.add(new GuiPage(GuiPageType.VISITOR, pageIndex++, getPageKey("" + visitorData.getId(), page + 1)));
+					    		}
 							}
-				    		
-				    		for (int page = 0; page < pages; page++) {
-						    	this.pages.add(new GuiPage(GuiPageType.VISITOR, pageIndex++, getPageKey("" + visitorData.getId(), page + 1)));
-				    		}
 						}
 					}
 				}
@@ -856,33 +859,39 @@ public class GuiTektopiaBook extends GuiScreen {
 	    	// Architect Items
 	    	ResidentData architect = residentsData.getArchitect();
 	    	if (architect != null) {
-				count = architect.getRecipeList().size();
-				if (count > 0) {
-		    		pages = count / RESIDENTVENDORLIST_PER_PAGE;
-		    		if (count % RESIDENTVENDORLIST_PER_PAGE > 0) {
-		    			pages++;
-		    		}
-		    		
-		    		for (int page = 0; page < pages; page++) {
-				    	this.pages.add(new GuiPage(GuiPageType.ECONOMY, pageIndex++, getPageKey("architectitems", page)));
-		    		}
-				}
+	    		MerchantRecipeList recipeList = architect.getRecipeList();
+	    		if (recipeList != null && !recipeList.isEmpty()) {
+					count = recipeList.size();
+					if (count > 0) {
+			    		pages = count / RESIDENTVENDORLIST_PER_PAGE;
+			    		if (count % RESIDENTVENDORLIST_PER_PAGE > 0) {
+			    			pages++;
+			    		}
+			    		
+			    		for (int page = 0; page < pages; page++) {
+					    	this.pages.add(new GuiPage(GuiPageType.ECONOMY, pageIndex++, getPageKey("architectitems", page)));
+			    		}
+					}
+	    		}
 	    	}
 	    	
 	    	// Tradesman Items
 	    	ResidentData tradesman = residentsData.getTradesman();
 	    	if (tradesman != null) {
-				count = tradesman.getRecipeList().size();
-				if (count > 0) {
-		    		pages = count / RESIDENTVENDORLIST_PER_PAGE;
-		    		if (count % RESIDENTVENDORLIST_PER_PAGE > 0) {
-		    			pages++;
-		    		}
-		    		
-		    		for (int page = 0; page < pages; page++) {
-				    	this.pages.add(new GuiPage(GuiPageType.ECONOMY, pageIndex++, getPageKey("tradesmanitems", page)));
-		    		}
-				}
+	    		MerchantRecipeList recipeList = tradesman.getRecipeList();
+	    		if (recipeList != null && !recipeList.isEmpty()) {
+					count = recipeList.size();
+					if (count > 0) {
+			    		pages = count / RESIDENTVENDORLIST_PER_PAGE;
+			    		if (count % RESIDENTVENDORLIST_PER_PAGE > 0) {
+			    			pages++;
+			    		}
+			    		
+			    		for (int page = 0; page < pages; page++) {
+					    	this.pages.add(new GuiPage(GuiPageType.ECONOMY, pageIndex++, getPageKey("tradesmanitems", page)));
+			    		}
+					}
+	    		}
 	    	}
 	    	
 	    	// sales history pages
