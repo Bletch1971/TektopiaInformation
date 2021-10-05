@@ -39,7 +39,10 @@ public class HomesData {
 	
 	public List<HomeData> getHomes() {
 		return Collections.unmodifiableList(this.homes == null ? new ArrayList<HomeData>() : this.homes.stream()
-				.sorted((c1 , c2) -> c1.getStructureType().name().compareTo(c2.getStructureType().name()))
+				.sorted((c1 , c2) -> {
+					int compare = c1.getStructureType().name().compareTo(c2.getStructureType().name());
+					return compare != 0 ? compare : c1.getFramePosition().compareTo(c2.getFramePosition());
+				})
 				.collect(Collectors.toList()));
 	}
 	

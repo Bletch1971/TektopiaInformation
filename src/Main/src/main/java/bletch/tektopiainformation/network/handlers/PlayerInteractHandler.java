@@ -18,10 +18,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.tangotek.tektopia.Village;
 import net.tangotek.tektopia.VillageManager;
-import net.tangotek.tektopia.VillagerRole;
-import net.tangotek.tektopia.entities.EntityArchitect;
-import net.tangotek.tektopia.entities.EntityTradesman;
-import net.tangotek.tektopia.entities.EntityVillagerTek;
+import net.tangotek.tektopia.entities.EntityVillageNavigator;
 
 /*
  * http://maven.thiakil.com/forge-1.12-javadoc/net/minecraftforge/event/entity/player/PlayerInteractEvent.html
@@ -45,15 +42,14 @@ public class PlayerInteractHandler {
 				
 				// check if the entity is valid
 				Entity entity = event.getTarget();
-				if (entity instanceof EntityArchitect || entity instanceof EntityTradesman ||
-						entity instanceof EntityVillagerTek && ((EntityVillagerTek)entity).isRole(VillagerRole.VILLAGER)) {
+				if (entity instanceof EntityVillageNavigator) {
 					
 					// check if the player is holding a minecraft book
 					ItemStack itemInHand = event.getEntityPlayer().getHeldItem(event.getHand());
 					if (itemInHand != null && itemInHand != ItemStack.EMPTY && itemInHand.getItem() == Item.getByNameOrId("minecraft:book")) {
 						
-						EntityVillagerTek villager = (EntityVillagerTek)event.getTarget();				
-						Village village = villager.getVillage();
+						EntityVillageNavigator villageEntity = (EntityVillageNavigator)event.getTarget();				
+						Village village = villageEntity.getVillage();
 						
 						if (village != null && village.isLoaded()) {
 							if (event.isCancelable()) {
@@ -67,7 +63,7 @@ public class PlayerInteractHandler {
 							
 							// create the village data
 							VillageData villageData = new VillageData(village, player.getPosition());
-							villageData.setResident(villager);
+							villageData.setEntity(villageEntity);
 							
 							// create the message to be sent to the client
 							VillageMessageToClient message = new VillageMessageToClient(villageData);

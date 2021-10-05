@@ -56,6 +56,7 @@ gui.villager.intelligence=Intelligence:
 gui.villager.blessedlevels=Blessed Levels:
 gui.villager.villagename=Village:
 gui.villager.hasbed=Has Bed:
+gui.villager.additionalprofessions=Additional Professions
 
 #==========
 #= Config =
@@ -173,6 +174,7 @@ button.startbook.name=Start of Book
 button.endbook.name=End of Book
 
 bookmark.economy.name=Economy
+bookmark.enemies.name=Enemies
 bookmark.homes.name=Homes
 bookmark.map.name=Map
 bookmark.professions.name=Professions
@@ -180,14 +182,17 @@ bookmark.residents.name=Residents
 bookmark.statistics.name=Statistics
 bookmark.structures.name=Structures
 bookmark.village.name=Village
+bookmark.visitors.name=Visitors
 
 bookmark.economy.information=Information related to the village economy.
+bookmark.enemies.information=Information relating to all the enemies in the village.
 bookmark.homes.information=Information relating to all the homes and barracks in the village.
 bookmark.professions.information=Information relating to the village professions.
 bookmark.residents.information=Information relating to all the residents in the village.
 #bookmark.statistics.information=
 bookmark.structures.information=Information relating to all the structures in the village.
 #bookmark.village.information=
+bookmark.visitors.information=Information relating to all the visitors in the village.
 
 tektopiaBook.continued=(cont.)
 tektopiaBook.empty=<empty>
@@ -196,7 +201,9 @@ tektopiaBook.nobed=No Bed
 tektopiaBook.summary=Summary
 
 tektopiaBook.headers.bed=Bed
+tektopiaBook.headers.buy=Buy
 tektopiaBook.headers.count=Count
+tektopiaBook.headers.enemy=Enemy
 tektopiaBook.headers.index=#
 tektopiaBook.headers.level=Level
 tektopiaBook.headers.name=Name
@@ -204,17 +211,21 @@ tektopiaBook.headers.position=Position
 tektopiaBook.headers.profession=Profession
 tektopiaBook.headers.range=Range
 tektopiaBook.headers.resident=Resident
+tektopiaBook.headers.sell=Sell
+tektopiaBook.headers.sleep=Sleep
+tektopiaBook.headers.times=Times
+tektopiaBook.headers.type=Type
 tektopiaBook.headers.valid=Valid
+tektopiaBook.headers.visitor=Visitor
 
+tektopiaBook.economy.salesHistory=Merchant Sales History
 tektopiaBook.economy.merchantsales=Total Merchant Sales:
-tektopiaBook.economy.salesHistory=Sales History
+tektopiaBook.economy.professionsales=Total Profession Sales:
+tektopiaBook.economy.architectitems=Architect Items
+tektopiaBook.economy.tradesmanitems=Tradesman Items
 
-tektopiaBook.structures.total=Total Structures:
-tektopiaBook.structures.structuretypes=Structure Types
-
-tektopiaBook.structuretypes.frameposition=Token Positions
-tektopiaBook.structuretypes.total=Total Structures:
-tektopiaBook.structuretypes.floor=Floor Tiles
+tektopiaBook.enemies.total=Total Enemies:
+tektopiaBook.enemies.enemies=Enemies
 
 tektopiaBook.homes.frameposition=Token Position:
 tektopiaBook.homes.totalhomes=Total Homes:
@@ -238,12 +249,15 @@ tektopiaBook.map.quadrantnorthwest=North West
 tektopiaBook.map.quadrantsoutheast=South East
 tektopiaBook.map.quadrantsouthwest=South West
 
+tektopiaBook.map.filter=Filters
 tektopiaBook.map.filter.showboundaries=Show Boundaries
+tektopiaBook.map.filter.showenemies=Show Enemies
 tektopiaBook.map.filter.showhomes=Show Homes
 tektopiaBook.map.filter.showplayer=Show Player
 tektopiaBook.map.filter.showresidents=Show Residents
 tektopiaBook.map.filter.showstructures=Show Structures
 tektopiaBook.map.filter.showtownhall=Show Town Hall
+tektopiaBook.map.filter.showvisitors=Show Visitors
 
 tektopiaBook.professions.total=Total Residents:
 tektopiaBook.professions.professiontypes=Profession Types
@@ -266,6 +280,7 @@ tektopiaBook.residents.hunger=Hunger:
 tektopiaBook.residents.happiness=Happiness:
 tektopiaBook.residents.intelligence=Intelligence:
 tektopiaBook.residents.blessed=Blessed:
+tektopiaBook.residents.sleeping=Sleeping:
 tektopiaBook.residents.totalarmorvalue=Total Armor:
 tektopiaBook.residents.home=Home Structure:
 tektopiaBook.residents.bed=Bed Position:
@@ -281,25 +296,43 @@ tektopiaBook.statistics.residents=Residents
 tektopiaBook.statistics.range=Range:
 tektopiaBook.statistics.total=Total Residents:
 
+tektopiaBook.structures.total=Total Structures:
+tektopiaBook.structures.structuretypes=Structure Types
+
+tektopiaBook.structuretypes.frameposition=Token Positions
+tektopiaBook.structuretypes.total=Total Structures:
+tektopiaBook.structuretypes.floor=Floor Tiles
+
 tektopiaBook.summary.header=Summary
 
 tektopiaBook.village.name=Village:
 
 tektopiaBook.village.header=Summary
 tektopiaBook.village.origin=Village Origin:
+
 tektopiaBook.village.boundaries=Boundaries
 tektopiaBook.village.boundarynortheast=North East:
 tektopiaBook.village.boundarynorthwest=North West:
 tektopiaBook.village.boundarysoutheast=South East:
 tektopiaBook.village.boundarysouthwest=South West:
+
 tektopiaBook.village.totals=Totals
-tektopiaBook.village.structures=Structures:
+tektopiaBook.village.enemies=Enemies:
 tektopiaBook.village.homes=Homes:
 tektopiaBook.village.residents=Residents:
-tektopiaBook.village.professionsales=Profession Sales:
-tektopiaBook.village.merchantsales=Merchant Sales:
+tektopiaBook.village.structures=Structures:
+tektopiaBook.village.visitors=Visitors:
+
 tektopiaBook.village.statistics=Statistics
+tektopiaBook.village.merchantsales=Merchant Sales:
+tektopiaBook.village.professionsales=Profession Sales:
 tektopiaBook.village.nobed=Residents Without Beds:
+
+tektopiaBook.visitors.total=Total Visitors:
+tektopiaBook.visitors.visitors=Visitors
+tektopiaBook.visitors.visitortype=Type:
+tektopiaBook.visitors.vendoritems=Items
+tektopiaBook.visitors.professions=Professions (top 4)
 
 #============
 #= Tooltips =

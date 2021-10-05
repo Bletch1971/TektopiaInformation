@@ -15,9 +15,10 @@ public class TextUtils {
 	public static final String SEPARATOR_COLON = " : ";
 	public static final String SEPARATOR_DASH = " - ";
 	public static final String SEPARATOR_FSLASH = "/";
-	public static final String SEPARATOR_TIMES = "x ";
+	public static final String SEPARATOR_TIMES = " x ";
 	public static final String INDENT = "  ";
-	
+
+	public static final String SYMBOL_BULLET = "\u2022";
 	public static final String SYMBOL_GREENTICK = TextFormatting.GREEN+"\u2714";
 	public static final String SYMBOL_REDCROSS = TextFormatting.RED+"\u2718";
 	public static final String SYMBOL_UNKNOWN = TextFormatting.GOLD+"\u003F";

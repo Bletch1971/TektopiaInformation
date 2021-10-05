@@ -11,10 +11,13 @@ import java.util.stream.Collectors;
 
 import bletch.tektopiainformation.utils.TektopiaUtils;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.tangotek.tektopia.ProfessionType;
 import net.tangotek.tektopia.Village;
+import net.tangotek.tektopia.entities.EntityArchitect;
 import net.tangotek.tektopia.entities.EntityGuard;
+import net.tangotek.tektopia.entities.EntityTradesman;
 import net.tangotek.tektopia.entities.EntityVillagerTek;
 
 public class ResidentsData {
@@ -25,12 +28,13 @@ public class ResidentsData {
 	private static final String NBTTAG_VILLAGE_RESIDENTCHILDCOUNT = "villageresidentchildcount";
 	private static final String NBTTAG_VILLAGE_RESIDENTMALECOUNT = "villageresidentmalecount";
 	private static final String NBTTAG_VILLAGE_RESIDENTFEMALECOUNT = "villageresidentfemalecount";
-		
+	
 	public static final int STATISTICS_RANGE = 20;
+
 	
 	private int residentsCount;
 	private List<ResidentData> residents;
-	private Map<ProfessionType, Integer> professionTypeCounts;
+	private Map<String, Integer> professionTypeCounts;
 
 	private int adultCount = 0;
 	private int childCount = 0;
@@ -51,19 +55,16 @@ public class ResidentsData {
 	
 	public List<ResidentData> getResidents() {
 		return Collections.unmodifiableList(this.residents == null ? new ArrayList<ResidentData>() : this.residents.stream()
-				.sorted((c1 , c2) -> c1.getResidentName().compareTo(c2.getResidentName()))
+				.sorted((c1 , c2) -> c1.getName().compareTo(c2.getName()))
 				.collect(Collectors.toList()));
 	}
 	
-	public List<ResidentData> getResidentsByType(ProfessionType professionType) {
+	public List<ResidentData> getResidentsByType(String professionType) {
 		return Collections.unmodifiableList(this.residents == null ? new ArrayList<ResidentData>() : this.residents.stream()
 				.filter(r -> professionType != null && professionType.equals(r.getProfessionType()))
 				.sorted((c1 , c2) -> { 
 					int compare = Integer.compare(c2.getBaseLevel(), c1.getBaseLevel());
-					if (compare == 0) {
-						compare = c1.getResidentName().compareTo(c2.getResidentName());
-					}
-					return compare;
+					return compare != 0 ? compare : c1.getName().compareTo(c2.getName());
 				})
 				.collect(Collectors.toList()));
 	}
@@ -74,7 +75,7 @@ public class ResidentsData {
 	
 	public ResidentData getResidentById(int residentId) {
 		return this.residents == null ? null : this.residents.stream()
-				.filter(r -> r.getResidentId() == residentId)
+				.filter(r -> r.getId() == residentId)
 				.findFirst().orElse(null);
 	}
 	
@@ -84,11 +85,11 @@ public class ResidentsData {
 				.findFirst().orElse(null);
 	}
 	
-	public Map<ProfessionType, Integer> getProfessionTypeCounts() {
-		return Collections.unmodifiableMap(this.professionTypeCounts == null ? new HashMap<ProfessionType, Integer>() : this.professionTypeCounts);
+	public Map<String, Integer> getProfessionTypeCounts() {
+		return Collections.unmodifiableMap(this.professionTypeCounts == null ? new HashMap<String, Integer>() : this.professionTypeCounts);
 	}	
 	
-	public int getProfessionTypeCount(ProfessionType professionType) {
+	public int getProfessionTypeCount(String professionType) {
 		return professionType != null && this.professionTypeCounts != null && this.professionTypeCounts.containsKey(professionType) ? this.professionTypeCounts.get(professionType) : 0;
 	}
 	
@@ -112,7 +113,7 @@ public class ResidentsData {
 		final int[] total = { 0 };
 		if (this.residents != null) {
 			this.residents.stream()
-					.forEach(h -> total[0] += h.hasBed() ? 0 : 1);
+					.forEach(h -> total[0] += (!h.getCanHaveBed() || h.hasBed() ? 0 : 1));
 		}
 		return total[0];
 	}
@@ -145,7 +146,7 @@ public class ResidentsData {
 				entry.getValue().sort((c1, c2) -> {
 					int compare = Integer.compare(c1.getHappy(), c2.getHappy());
 					if (compare == 0) {
-						compare = c1.getResidentName().compareTo(c2.getResidentName());
+						compare = c1.getName().compareTo(c2.getName());
 					}
 					return compare;
 				});
@@ -183,7 +184,7 @@ public class ResidentsData {
 				entry.getValue().sort((c1, c2) -> {
 					int compare = Integer.compare(c1.getHunger(), c2.getHunger());
 					if (compare == 0) {
-						compare = c1.getResidentName().compareTo(c2.getResidentName());
+						compare = c1.getName().compareTo(c2.getName());
 					}
 					return compare;
 				});
@@ -193,11 +194,23 @@ public class ResidentsData {
 		return result;
 	}
 	
+	public ResidentData getArchitect() {
+		return this.residents == null ? null : this.residents.stream()
+				.filter(r -> r.getProfessionType().equals(TektopiaUtils.PROFESSIONTYPE_ARCHITECT))
+				.findFirst().orElse(null);
+	}
+	
+	public ResidentData getTradesman() {
+		return this.residents == null ? null : this.residents.stream()
+				.filter(r -> r.getProfessionType().equals(TektopiaUtils.PROFESSIONTYPE_TRADESMAN))
+				.findFirst().orElse(null);
+	}
+	
 	private void clearData() {
 		this.residentsCount = 0;
 		
 		this.residents = new ArrayList<ResidentData>();
-		this.professionTypeCounts = new HashMap<ProfessionType, Integer>();
+		this.professionTypeCounts = new HashMap<String, Integer>();
 
 		this.adultCount = 0;
 		this.childCount = 0;
@@ -215,7 +228,7 @@ public class ResidentsData {
 			
 			this.residentsCount = village.getResidentCount();
 
-			for (ProfessionType professionType : TektopiaUtils.getProfessionTypes()) {
+			for (String professionType : TektopiaUtils.getProfessionTypeNames()) {
 				this.professionTypeCounts.put(professionType, 0);
 			}
 			
@@ -229,7 +242,8 @@ public class ResidentsData {
 					professionType = ProfessionType.CAPTAIN;
 				}
 				
-				this.professionTypeCounts.put(professionType, this.professionTypeCounts.get(professionType) + 1);
+				String professionTypeKey = getProfessionTypeKey(professionType);
+				this.professionTypeCounts.put(professionTypeKey, this.professionTypeCounts.get(professionTypeKey) + 1);
 				this.residents.add(new ResidentData(resident));
 
 				if (professionType == ProfessionType.CHILD)
@@ -241,6 +255,32 @@ public class ResidentsData {
 					this.maleCount++;
 				else
 					this.femaleCount++;
+			}
+			
+			AxisAlignedBB villageAABB = village.getAABB().grow(Village.VILLAGE_SIZE);
+			
+			// populate Architect
+			List<EntityVillagerTek> villageArchitects = village.getWorld().getEntitiesWithinAABB(EntityArchitect.class, villageAABB);
+			
+			for (EntityVillagerTek entity : villageArchitects) {
+				if (entity.isDead) {
+					continue;
+				}
+				
+				this.professionTypeCounts.put(TektopiaUtils.PROFESSIONTYPE_ARCHITECT, this.professionTypeCounts.get(TektopiaUtils.PROFESSIONTYPE_ARCHITECT) + 1);
+				this.residents.add(new ResidentData(entity));
+			}
+			
+			// populate Tradesman
+			List<EntityVillagerTek> villageTradesmen = village.getWorld().getEntitiesWithinAABB(EntityTradesman.class, villageAABB);
+			
+			for (EntityVillagerTek entity : villageTradesmen) {
+				if (entity.isDead) {
+					continue;
+				}
+				
+				this.professionTypeCounts.put(TektopiaUtils.PROFESSIONTYPE_TRADESMAN, this.professionTypeCounts.get(TektopiaUtils.PROFESSIONTYPE_TRADESMAN) + 1);
+				this.residents.add(new ResidentData(entity));
 			}
 			
 			this.residentsCount = this.residents.size();
@@ -259,9 +299,8 @@ public class ResidentsData {
 			
 			this.residentsCount = nbtResidentsData.hasKey(NBTTAG_VILLAGE_RESIDENTSCOUNT) ? nbtResidentsData.getInteger(NBTTAG_VILLAGE_RESIDENTSCOUNT) : 0;
 
-			for (ProfessionType professionType : TektopiaUtils.getProfessionTypes()) {
-				String key = getProfessionTypeKey(professionType);
-				this.professionTypeCounts.put(professionType, nbtResidentsData.hasKey(key) ? nbtResidentsData.getInteger(key) : 0);
+			for (String professionType : TektopiaUtils.getProfessionTypeNames()) {
+				this.professionTypeCounts.put(professionType, nbtResidentsData.hasKey(professionType) ? nbtResidentsData.getInteger(professionType) : 0);
 			}
 		
 			for (int residentIndex = 0; residentIndex < this.residentsCount; residentIndex++) {
@@ -291,8 +330,8 @@ public class ResidentsData {
 		nbtResidentsData.setInteger(NBTTAG_VILLAGE_RESIDENTSCOUNT, this.residentsCount);
 
 		if (this.professionTypeCounts != null) {
-			for (Entry<ProfessionType, Integer> professionType : this.professionTypeCounts.entrySet()) {
-				nbtResidentsData.setInteger(getProfessionTypeKey(professionType.getKey()), professionType.getValue());
+			for (Entry<String, Integer> professionType : this.professionTypeCounts.entrySet()) {
+				nbtResidentsData.setInteger(professionType.getKey(), professionType.getValue());
 			}
 		}
 		
