@@ -131,7 +131,7 @@ public class GuiTektopiaBook extends GuiScreen {
 	private static final int LINE_SPACE_Y = 5;
 	
 	private static final int LINES_PER_PAGE = 19;
-	private static final int BEDS_PER_PAGE = 5;
+	private static final int BEDS_PER_PAGE = 6;
 	private static final int ADDITIONALPROFESSIONS_PER_PAGE = 4;
 	private static final int ENEMYLIST_PER_PAGE = 18;
 	private static final int RESIDENTLIST_PER_PAGE = 18;
@@ -1767,7 +1767,7 @@ public class GuiTektopiaBook extends GuiScreen {
     	                	Font.small.printLeft(residentName, this.x + PAGE_LEFTPAGE_CENTER_X, y);
 	                    	Font.small.printRight(residentLevel, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y);
                     		
-        	            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+        	            	y += Font.small.fontRenderer.FONT_HEIGHT;
     	                    
     	                    Font.small.printLeft(residentProfession, this.x + PAGE_LEFTPAGE_CENTER_X, y);
 	                    }
@@ -1778,7 +1778,7 @@ public class GuiTektopiaBook extends GuiScreen {
     	                	Font.small.printLeft(residentName, this.x + PAGE_RIGHTPAGE_CENTER_X, y);
 	                    	Font.small.printRight(residentLevel, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
                     		
-        	            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+        	            	y += Font.small.fontRenderer.FONT_HEIGHT;
     	                    
     	                    Font.small.printLeft(residentProfession, this.x + PAGE_RIGHTPAGE_CENTER_X, y);
 	                    }
@@ -4851,7 +4851,7 @@ public class GuiTektopiaBook extends GuiScreen {
 	        		}
 	        		
 	    			// display visitor details
-	    			String typeLabel = TextUtils.translate("tektopiaBook.visitor.visitortype");
+	    			String typeLabel = TextUtils.translate("tektopiaBook.visitors.visitortype");
 		            String typeText = "";
 		        	
 		            if (typeLabel != null && typeLabel.trim() != "") {
@@ -5170,7 +5170,7 @@ public class GuiTektopiaBook extends GuiScreen {
 		                    	Font.small.printRight(additionalProfessionLevel, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
 		                    }
 
-			            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y; 
+			            	y += Font.small.fontRenderer.FONT_HEIGHT; 
 			            	index++;
 		                }
 	            	}
