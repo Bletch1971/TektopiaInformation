@@ -60,9 +60,9 @@ public class EnemiesData {
 			
 			// get the enemy data
 			AxisAlignedBB villageAABB = village.getAABB().grow(Village.VILLAGE_SIZE);
-			List<EntityVillageNavigator> villageEnemies = village.getWorld().getEntitiesWithinAABB(EntityVillageNavigator.class, villageAABB);
+			List<EntityVillageNavigator> villageEntities = village.getWorld().getEntitiesWithinAABB(EntityVillageNavigator.class, villageAABB);
 			
-			for (EntityVillageNavigator entity : villageEnemies) {
+			for (EntityVillageNavigator entity : villageEntities) { 
 				if (entity.isDead || !entity.isRole(VillagerRole.ENEMY)) {
 					continue;
 				}
