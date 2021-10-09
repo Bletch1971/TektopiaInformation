@@ -23,7 +23,7 @@ minecraft {
     version = "${project.minecraft_version}-${project.forge_version}"
     mappings = project.forge_mappings
     runDir = "run"
-    makeObfSourceJar = false
+    makeObfSourceJar = true
 }
 
 repositories {  
