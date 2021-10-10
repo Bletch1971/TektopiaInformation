@@ -42,12 +42,17 @@ repositories {
         name 'top'
         url "https://maven.tterrag.com/"
     }
+    maven {
+        name = "leviathan"
+        url = "https://repo.leviathan-studio.com/leviathan/"
+    }
 }
 
 dependencies {
     deobfCompile "mezz.jei:jei_1.12.2:${project.jei_version}"
     deobfCompile "mcp.mobius.waila:Hwyla:${project.hwyla_version}"
     deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:${project.top_version}"
+	deobfCompile "com.leviathanstudio:CraftStudioAPI:${project.craftstudio_version}-mc1.12-alpha:dev"
 }
 
 processResources {
