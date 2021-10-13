@@ -5,12 +5,11 @@ import java.util.List;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.translation.I18n;
 
 @ParametersAreNonnullByDefault
-@SuppressWarnings("deprecation")
 public class TextUtils {
 	public static final String SEPARATOR_COLON = " : ";
 	public static final String SEPARATOR_DASH = " - ";
@@ -33,38 +32,42 @@ public class TextUtils {
 	public static final String KEY_SHIFTHELP = "gui.showshifthelp";
 	public static final String KEY_SHIFTINFO = "gui.showshiftinfo";
     
-    public static boolean canTranslate(String key) {
-        return I18n.canTranslate(key);
-    }
-	
-	public static String translate(String translateKey) {
-		if (StringUtils.isNullOrWhitespace(translateKey) || !canTranslate(translateKey)) {
-			return StringUtils.EMPTY;
+	public static boolean canTranslate(String translateKey) {
+		if (StringUtils.isNullOrWhitespace(translateKey)) {
+			return false;
 		}
 		
-		String value = I18n.translateToLocal(translateKey);
-		if (StringUtils.isNullOrWhitespace(value) || value.equalsIgnoreCase(translateKey)) {
-			return StringUtils.EMPTY;
-		}
-		
-		return value;
+		String translate = translate(translateKey);
+		return StringUtils.isNullOrWhitespace(translate) || translate.equalsIgnoreCase(translateKey)
+				? false
+				: true;
 	}
 	
-	public static List<String> translateMulti(String translateKey) {
-		if (StringUtils.isNullOrWhitespace(translateKey) || !canTranslate(translateKey)) {
+	public static String translate(String translateKey, Object... translationArgs) {
+		if (StringUtils.isNullOrWhitespace(translateKey)) {
 			return null;
 		}
 		
-		String value = I18n.translateToLocal(translateKey);
-		if (StringUtils.isNullOrWhitespace(value) || value.equalsIgnoreCase(translateKey)) {
+		ITextComponent itextcomponent = new TextComponentTranslation(translateKey, translationArgs);
+		String translate = itextcomponent.getUnformattedText();
+		
+		return StringUtils.isNullOrWhitespace(translate) || translate.equalsIgnoreCase(translateKey) 
+				? null 
+				: translate;
+	}
+	
+	public static List<String> translateMulti(String translateKey, Object... translationArgs) {
+		if (StringUtils.isNullOrWhitespace(translateKey)) {
 			return null;
 		}
 		
-		String[] values = value.split("\\\\n");
+		String translate = translate(translateKey, translationArgs);
+		if (StringUtils.isNullOrWhitespace(translate) || translate.equalsIgnoreCase(translateKey)) {
+			return null;
+		}
+		
+		String[] values = translate.split("\\\\n");
 		return Arrays.asList(values);
 	}
-
-	public static String getClientLocale() {
-		return Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
-	}
+	
 }

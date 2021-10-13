@@ -8,6 +8,7 @@ import bletch.common.utils.TextUtils;
 import bletch.tektopiainformation.core.ModConfig;
 import bletch.tektopiainformation.core.ModDetails;
 import bletch.tektopiainformation.utils.DebugUtils;
+import bletch.tektopiainformation.utils.LoggerUtils;
 import bletch.tektopiainformation.utils.TektopiaUtils;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.IJeiHelpers;
@@ -49,7 +50,7 @@ public class TektopiaJei implements IModPlugin {
     			registerTektopiaIngredientInfo(registry);
     		}
     		catch (Exception ex) {
-    			ModDetails.MOD_LOGGER.error(ex.getMessage());
+    			LoggerUtils.error(ex.getMessage());
     		}    		
     	}
     	
@@ -91,7 +92,7 @@ public class TektopiaJei implements IModPlugin {
 	private static void registerTektopiaIngredientInfo(IModRegistry registry) {
 		ArrayList<String> processed = new ArrayList<String>();
 		
-		ModDetails.MOD_LOGGER.info("Registering item/block information with JEI");
+		LoggerUtils.info("Registering item/block information with JEI");
 		
 		ArrayList<ItemStack> tektopiaItemStacks = new ArrayList<ItemStack>();
 		tektopiaItemStacks.addAll(TektopiaUtils.getTektopiaBlockStacks());
@@ -161,7 +162,7 @@ public class TektopiaJei implements IModPlugin {
     		DebugUtils.writeLines(missingInformation, true);
     	}
     	
-    	ModDetails.MOD_LOGGER.info("Registered item/block information with JEI - count: " + count);
+    	LoggerUtils.info("Registered item/block information with JEI - count: " + count);
 	}
 
 }

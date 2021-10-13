@@ -8,6 +8,7 @@ import bletch.tektopiainformation.network.handlers.PlayerInteractHandler;
 import bletch.tektopiainformation.network.handlers.VillageMessageHandlerOnServer;
 import bletch.tektopiainformation.network.messages.VillageMessageToClient;
 import bletch.tektopiainformation.utils.DebugUtils;
+import bletch.tektopiainformation.utils.LoggerUtils;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -33,9 +34,9 @@ public class ModCommonProxy {
 	
 	public void registerGui() {
     	if (ModConfig.gui.enableGuiIntegration) {
-			ModDetails.MOD_LOGGER.info("Registering Gui");
+    		LoggerUtils.info("Registering Gui");
 			MinecraftForge.EVENT_BUS.register(new PlayerInteractHandler());
-			ModDetails.MOD_LOGGER.info("Registered Gui");
+			LoggerUtils.info("Registered Gui");
 		}
 	}
 	
