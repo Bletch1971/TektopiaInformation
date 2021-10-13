@@ -24,6 +24,7 @@ public class ResidentsData {
 	
 	private static final String NBTTAG_VILLAGE_RESIDENTS = "villageresidents";
 	private static final String NBTTAG_VILLAGE_RESIDENTSCOUNT = "villageresidentscount";
+	private static final String NBTTAG_VILLAGE_RESIDENTSLISTCOUNT = "villageresidentslistcount";
 	private static final String NBTTAG_VILLAGE_RESIDENTADULTCOUNT = "villageresidentadultcount";
 	private static final String NBTTAG_VILLAGE_RESIDENTCHILDCOUNT = "villageresidentchildcount";
 	private static final String NBTTAG_VILLAGE_RESIDENTMALECOUNT = "villageresidentmalecount";
@@ -51,6 +52,10 @@ public class ResidentsData {
 	
 	public int getResidentsCount() {
 		return this.residentsCount;
+	}
+	
+	public int getResidentsCountAll() {
+		return this.residents == null ? 0 : this.residents.size();
 	}
 	
 	public List<ResidentData> getResidents() {
@@ -282,8 +287,6 @@ public class ResidentsData {
 				this.professionTypeCounts.put(TektopiaUtils.PROFESSIONTYPE_TRADESMAN, this.professionTypeCounts.get(TektopiaUtils.PROFESSIONTYPE_TRADESMAN) + 1);
 				this.residents.add(new ResidentData(entity));
 			}
-			
-			this.residentsCount = this.residents.size();
 		}
 	}
 	
@@ -298,12 +301,13 @@ public class ResidentsData {
 			NBTTagCompound nbtResidentsData = nbtTag.getCompoundTag(NBTTAG_VILLAGE_RESIDENTS);
 			
 			this.residentsCount = nbtResidentsData.hasKey(NBTTAG_VILLAGE_RESIDENTSCOUNT) ? nbtResidentsData.getInteger(NBTTAG_VILLAGE_RESIDENTSCOUNT) : 0;
-
+			int residentsListCount = nbtResidentsData.hasKey(NBTTAG_VILLAGE_RESIDENTSLISTCOUNT) ? nbtResidentsData.getInteger(NBTTAG_VILLAGE_RESIDENTSLISTCOUNT) : this.residentsCount;
+			
 			for (String professionType : TektopiaUtils.getProfessionTypeNames()) {
 				this.professionTypeCounts.put(professionType, nbtResidentsData.hasKey(professionType) ? nbtResidentsData.getInteger(professionType) : 0);
 			}
 		
-			for (int residentIndex = 0; residentIndex < this.residentsCount; residentIndex++) {
+			for (int residentIndex = 0; residentIndex < residentsListCount; residentIndex++) {
 				String key = getResidentKey(residentIndex);
 				
 				if (nbtResidentsData.hasKey(key)) {
@@ -328,6 +332,7 @@ public class ResidentsData {
 		NBTTagCompound nbtResidentsData = new NBTTagCompound();
 
 		nbtResidentsData.setInteger(NBTTAG_VILLAGE_RESIDENTSCOUNT, this.residentsCount);
+		nbtResidentsData.setInteger(NBTTAG_VILLAGE_RESIDENTSLISTCOUNT, this.residents.size());
 
 		if (this.professionTypeCounts != null) {
 			for (Entry<String, Integer> professionType : this.professionTypeCounts.entrySet()) {

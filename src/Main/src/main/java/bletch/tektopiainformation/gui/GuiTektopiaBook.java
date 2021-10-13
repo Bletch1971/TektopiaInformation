@@ -689,7 +689,7 @@ public class GuiTektopiaBook extends GuiScreen {
 	    	this.pages.add(new GuiPage(GuiPageType.SUMMARY, pageIndex++, getPageKey(BOOKMARK_KEY_RESIDENTS, 0), BOOKMARK_KEY_RESIDENTS));
 	    	
 	    	// resident list
-	    	int count = residentsData.getResidentsCount();
+	    	int count = residentsData.getResidentsCountAll();
     		int pages = count / RESIDENTLIST_PER_PAGE;
     		if (count % RESIDENTLIST_PER_PAGE > 0) {
     			pages++;
@@ -785,18 +785,6 @@ public class GuiTektopiaBook extends GuiScreen {
     		for (int page = 0; page < pages; page++) {
 		    	this.pages.add(new GuiPage(GuiPageType.ENEMY, pageIndex++, getPageKey("", page)));
     		}
-		
-			// enemy pages
-//			if (enemiesData.getEnemies() != null) {
-//				for (EnemyData enemyData : enemiesData.getEnemies()) {
-//		        	// check for the enemy
-//					if (this.villageData.getEntityId() > 0 && this.villageData.getEntityId() == enemyData.getId()) {
-//						startPageIndex = pageIndex;
-//					}  	        	
-//					
-//					this.pages.add(new GuiPage(GuiPageType.ENEMY, pageIndex++, getPageKey("" + enemyData.getId(), 0)));
-//				}
-//			}
 		}
     	
     	if (residentsData != null) {
@@ -4187,7 +4175,7 @@ public class GuiTektopiaBook extends GuiScreen {
         		String professionsTotal = TextUtils.translate("tektopiaBook.professions.total");
         		
         		if (!StringUtils.isNullOrWhitespace(professionsTotal)) {
-        			dataInformation.add(professionsTotal + "|" + residentsData.getResidentsCount() + "|");
+        			dataInformation.add(professionsTotal + "|" + residentsData.getResidentsCountAll() + "|");
         		}
         	}
     		break;
@@ -4251,7 +4239,7 @@ public class GuiTektopiaBook extends GuiScreen {
         		String statisticsTotal = TextUtils.translate("tektopiaBook.statistics.total");
         		
         		if (!StringUtils.isNullOrWhitespace(statisticsTotal)) {
-        			dataInformation.add(statisticsTotal + "|" + residentsData.getResidentsCount() + "|");
+        			dataInformation.add(statisticsTotal + "|" + residentsData.getResidentsCountAll() + "|");
         		}
         	}
     		break;
