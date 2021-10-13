@@ -3,12 +3,12 @@ package bletch.tektopiainformation.core;
 import java.io.File;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import bletch.common.utils.LoggerUtils;
 import bletch.tektopiainformation.TektopiaInformation;
 import bletch.tektopiainformation.network.handlers.PlayerInteractHandler;
 import bletch.tektopiainformation.network.handlers.VillageMessageHandlerOnServer;
 import bletch.tektopiainformation.network.messages.VillageMessageToClient;
 import bletch.tektopiainformation.utils.DebugUtils;
-import bletch.tektopiainformation.utils.LoggerUtils;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;

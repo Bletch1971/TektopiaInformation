@@ -4,13 +4,13 @@ import java.io.File;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import bletch.common.utils.LoggerUtils;
 import bletch.tektopiainformation.TektopiaInformation;
 import bletch.tektopiainformation.network.handlers.VillageMessageHandlerOnClient;
 import bletch.tektopiainformation.network.messages.VillageMessageToClient;
 import bletch.tektopiainformation.tooltips.TektopiaItemTooltip;
 import bletch.tektopiainformation.top.TektopiaBlockTop;
 import bletch.tektopiainformation.top.TektopiaEntityTop;
-import bletch.tektopiainformation.utils.LoggerUtils;
 import bletch.tektopiainformation.waila.TektopiaBlockWaila;
 import bletch.tektopiainformation.waila.TektopiaEntityWaila;
 import net.minecraft.client.Minecraft;

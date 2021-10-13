@@ -1,4 +1,4 @@
-package bletch.tektopiainformation.utils;
+package bletch.common.utils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,19 +8,20 @@ import bletch.tektopiainformation.core.ModDetails;
 
 public class LoggerUtils {
 	
-	public static final Logger MOD_LOGGER = LogManager.getLogger(ModDetails.MOD_NAME);
+	private static final Logger MOD_LOGGER = LogManager.getLogger(ModDetails.MOD_NAME);
+	
+	public static void debug(String message) {
+		if (message == null)
+			return;
+		
+		MOD_LOGGER.debug(message);
+	}
 	
 	public static void debug(String message, Boolean checkConfig) {
 		if (message == null)
 			return;
 		
-		if (!checkConfig || ModConfig.debug.enableDebug) {
-			MOD_LOGGER.debug(message);
-		}
-	}
-	
-	public static void debug(String message) {
-		if (message == null)
+		if (checkConfig && !ModConfig.debug.enableDebug)
 			return;
 		
 		MOD_LOGGER.debug(message);
@@ -42,6 +43,16 @@ public class LoggerUtils {
 	
 	public static void info(String message) {
 		if (message == null)
+			return;
+		
+		MOD_LOGGER.info(message);
+	}
+	
+	public static void info(String message, Boolean checkConfig) {
+		if (message == null)
+			return;
+		
+		if (checkConfig && !ModConfig.debug.enableDebug)
 			return;
 		
 		MOD_LOGGER.info(message);
