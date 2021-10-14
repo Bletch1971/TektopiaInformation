@@ -168,6 +168,7 @@ config.gui.tektopiaInformationBook.enableTektopiaInformationBook.tooltip=If true
 tektopiaBook.name=TekTopia Information Book
 tektopiaBook.information=This book contains information about the village and it's residents.
 
+button.back.name=Back
 button.previouspage.name=Previous Page
 button.nextpage.name=Next Page
 button.startbook.name=Start of Book
@@ -349,6 +350,12 @@ tektopiaBook.visitors.visitors=Visitors
 tektopiaBook.visitors.visitortype=Type:
 tektopiaBook.visitors.vendoritems=Items
 tektopiaBook.visitors.professions=Professions (top 4)
+
+tektopiaBook.links.professiondetails=Click to view profession details
+tektopiaBook.links.residentdetails=Click to view resident details
+tektopiaBook.links.statisticsdetails=Click to view statistic details
+tektopiaBook.links.structuredetails=Click to view structure details
+tektopiaBook.links.visitordetails=Click to view visitor details
 
 #============
 #= Tooltips =

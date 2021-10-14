@@ -31,6 +31,7 @@ public class VillageData {
 	private EnemiesData enemiesData;
 	
 	private int entityId;
+	private int structureId;
 	private BlockPos bedPosition;
 	private BlockPos framePosition;
 	
@@ -108,6 +109,10 @@ public class VillageData {
 		return this.entityId;
 	}
 	
+	public int getStructureId() {
+		return this.structureId;
+	}
+	
 	public BlockPos getBedPosition() {
 		return this.bedPosition;
 	}
@@ -132,6 +137,12 @@ public class VillageData {
 		return this;
 	}
 	
+	public VillageData setStructureId(int structureId) {
+		ClearAssignments();
+		this.structureId = structureId;
+		return this;
+	}
+	
 	public VillageData setBedPosition(BlockPos bedPosition) {
 		ClearAssignments();
 		this.bedPosition = bedPosition;
@@ -146,6 +157,7 @@ public class VillageData {
 	
 	public void ClearAssignments() {
 		this.entityId = 0;
+		this.structureId = 0;
 		this.bedPosition = null;
 		this.framePosition = null;
 	}

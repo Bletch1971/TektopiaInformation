@@ -100,23 +100,23 @@ public class TektopiaUtils {
 				.collect(Collectors.toList());
 	}
 	
-	public static Map<VillageStructureType, List<VillageStructure>> getHomeStructures(Village village) {
-		if (village == null) {
-			return new HashMap<VillageStructureType, List<VillageStructure>>(); 
-		}
-		
-		HashMap<VillageStructureType, List<VillageStructure>> structuresList = new HashMap<VillageStructureType, List<VillageStructure>>(); 
-
-		for (VillageStructureType structureType : getHomeStructureTypes()) {
-			List<VillageStructure> structures = village.getStructures(structureType);
-			if (structures == null) {
-				structures = new ArrayList<VillageStructure>();
-			}
-			structuresList.put(structureType, structures);
-		}
-		
-		return structuresList;
-	}    
+//	public static Map<VillageStructureType, List<VillageStructure>> getHomeStructures(Village village) {
+//		if (village == null) {
+//			return new HashMap<VillageStructureType, List<VillageStructure>>(); 
+//		}
+//		
+//		HashMap<VillageStructureType, List<VillageStructure>> structuresList = new HashMap<VillageStructureType, List<VillageStructure>>(); 
+//
+//		for (VillageStructureType structureType : getHomeStructureTypes()) {
+//			List<VillageStructure> structures = village.getStructures(structureType);
+//			if (structures == null) {
+//				structures = new ArrayList<VillageStructure>();
+//			}
+//			structuresList.put(structureType, structures);
+//		}
+//		
+//		return structuresList;
+//	}    
 	
 	public static ProfessionType getProfessionType(String professionTypeName) {
     	if (professionTypeName == null || professionTypeName.trim().isEmpty()) {

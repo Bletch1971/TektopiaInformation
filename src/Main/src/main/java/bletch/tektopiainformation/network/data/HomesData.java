@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import java.util.UUID;
-
 import bletch.tektopiainformation.utils.TektopiaUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -57,9 +55,9 @@ public class HomesData {
 		return this.homes == null ? null : this.homes.get(index);
 	}
 	
-	public HomeData getHomeById(UUID homeId) {
+	public HomeData getHomeById(int homeId) {
 		return this.homes == null ? null : this.homes.stream()
-				.filter(r -> homeId != null && homeId.equals(r.getHomeId()))
+				.filter(r -> homeId > 0 && homeId == r.getHomeId())
 				.findFirst().orElse(null);
 	}
 	
@@ -122,7 +120,7 @@ public class HomesData {
 		clearData();
 		
 		if (village != null) {
-
+			
 			Map<VillageStructureType, List<VillageStructure>> structuresList = TektopiaUtils.getVillageStructures(village); 
 			List<VillageStructureType> homeTypes = TektopiaUtils.getHomeStructureTypes();
 			
