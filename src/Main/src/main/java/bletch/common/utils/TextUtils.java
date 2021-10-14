@@ -18,8 +18,10 @@ public class TextUtils {
 	public static final String INDENT = "  ";
 
 	public static final String SYMBOL_BULLET = "\u2022";
-	public static final String SYMBOL_GREENTICK = TextFormatting.GREEN+"\u2714";
+	public static final String SYMBOL_GREENTICK = TextFormatting.DARK_GREEN+"\u2714";
+	public static final String SYMBOL_GREENCROSS = TextFormatting.DARK_GREEN+"\u2718";
 	public static final String SYMBOL_REDCROSS = TextFormatting.RED+"\u2718";
+	public static final String SYMBOL_REDTICK = TextFormatting.RED+"\u2714";
 	public static final String SYMBOL_UNKNOWN = TextFormatting.GOLD+"\u003F";
 	
 	public static final String SYMBOL_FEMALE = TextFormatting.LIGHT_PURPLE+"\u2640";

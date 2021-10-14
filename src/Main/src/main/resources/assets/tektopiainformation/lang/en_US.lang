@@ -298,6 +298,14 @@ tektopiaBook.statistics.total=Total Residents:
 
 tektopiaBook.structures.total=Total Structures:
 tektopiaBook.structures.structuretypes=Structure Types
+tektopiaBook.structures.frameposition=Token Position:
+tektopiaBook.structures.floortiles=Total Floor Tiles:
+tektopiaBook.structures.currentoccupants=Current Occupants:
+tektopiaBook.structures.tilesperoccupant=Tiles Per Occupant
+tektopiaBook.structures.minimumtiles=Minimum:
+tektopiaBook.structures.currenttiles=Current:
+tektopiaBook.structures.overcrowded=Is Overcrowded:
+tektopiaBook.structures.occupants=Occupants
 
 tektopiaBook.structuretypes.frameposition=Token Positions
 tektopiaBook.structuretypes.total=Total Structures:

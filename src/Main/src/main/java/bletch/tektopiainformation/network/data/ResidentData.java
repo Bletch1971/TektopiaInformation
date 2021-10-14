@@ -292,6 +292,17 @@ public class ResidentData extends EntityData {
 				this.canHaveBed = false;
 			}
 			
+			if (villager.isRole(VillagerRole.VISITOR)) {
+				if (villagerProfessionType == null) {
+					String className = villager.getClass().getSimpleName().toUpperCase();
+					if (className.startsWith("ENTITY")) {
+						this.professionType = className.substring("ENTITY".length());
+					}
+				}				
+				this.homePosition = null;
+				this.canHaveBed = false;
+			}
+			
 			if (villager instanceof IMerchant) {
 				this.recipes = ((IMerchant)villager).getRecipes(null);
 			}

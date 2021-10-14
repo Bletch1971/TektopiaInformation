@@ -141,6 +141,7 @@ public class GuiTektopiaBook extends GuiScreen {
 	private static final int VISITORVENDORLIST0_PER_PAGE = 8;
 	private static final int VISITORVENDORLIST_PER_PAGE = 15;
 	private static final int RESIDENTVENDORLIST_PER_PAGE = 14;
+	private static final int STRUCTUREOCCUPANTLIST_PER_PAGE = 10;
 	
 	private static final ResourceLocation book = new ResourceLocation(ModDetails.MOD_ID, "textures/gui/gui_book.png");
 	private static final ResourceLocation bookmarkLeft = new ResourceLocation(ModDetails.MOD_ID, "textures/gui/bookmark_left.png");
@@ -532,7 +533,7 @@ public class GuiTektopiaBook extends GuiScreen {
 
 	    	List<VillageStructureType> structureTypes = TektopiaUtils.getVillageStructureTypes();
     		
-	    	// structure type pages
+	    	// structure type summary
     		if (structuresData.getStructureTypeCounts() != null) {
     			int count = structureTypes.size();
     			
@@ -548,15 +549,10 @@ public class GuiTektopiaBook extends GuiScreen {
         		}
     		}
     		
-	    	// structure pages
     		if (structuresData.getStructures() != null) {
+    			// structure type pages
         		for (VillageStructureType structureType : structureTypes) {
         			List<StructureData> structures = structuresData.getStructuresByType(structureType);
-
-        			StructureData structure = structures == null || this.villageData.getFramePosition() == null ? null : structures.stream()
-        					.filter(s -> s.getFramePosition() != null && this.villageData.getFramePosition().equals(s.getFramePosition()))
-        					.findFirst().orElse(null);
-        			int indexOf = structure == null ? -1 : structures.indexOf(structure);
         			
     	    		int count = structures == null || structures.size() == 0 ? 0 : structures.size();
     	    		if (count > 0) {
@@ -565,15 +561,28 @@ public class GuiTektopiaBook extends GuiScreen {
     		    			pages++;
     		    		}
     		    		
-    		    		for (int page = 0; page < pages; page++) {
-    	        			// check if the structure owns the frame position
-    	        			if (indexOf >= 0 && indexOf <= ((page + 1) * LINES_PER_PAGE)) {
-	        					startPageIndex = pageIndex;
-    	        			} 
-    	        			
+    		    		for (int page = 0; page < pages; page++) {    	        			
     			        	this.pages.add(new GuiPage(GuiPageType.STRUCTURETYPE, pageIndex++, getPageKey(structureType.name(), page)));
     		    		}
     	    		}
+        		}
+        		
+        		// structure pages
+        		for (StructureData structure : structuresData.getStructures()) {
+        			int count = structure.getOccupantCount();
+    				int pages = count / STRUCTUREOCCUPANTLIST_PER_PAGE;
+    	    		if (count % STRUCTUREOCCUPANTLIST_PER_PAGE > 0) {
+    	    			pages++;
+    	    		}
+    	    		pages = Math.max(1, pages);
+    	    		
+    	    		for (int page = 0; page < pages; page++) {
+	        			// check if the structure owns the frame position
+	        			if (page == 0 && this.villageData.getFramePosition() != null && structure.getFramePosition() != null && this.villageData.getFramePosition().equals(structure.getFramePosition())) {
+        					startPageIndex = pageIndex;
+	        			} 
+	        			this.pages.add(new GuiPage(GuiPageType.STRUCTURE, pageIndex++, getPageKey("" + structure.getStructureId(), page)));
+        			}
         		}
     		}
     	}
@@ -587,7 +596,7 @@ public class GuiTektopiaBook extends GuiScreen {
 	    	
     		List<VillageStructureType> homeTypes = TektopiaUtils.getHomeStructureTypes();
     		
-        	// home type pages
+        	// home type summary
     		if (homesData.getHomeTypeCounts() != null) {
     			int count = homeTypes.size();
     			
@@ -3857,76 +3866,352 @@ public class GuiTektopiaBook extends GuiScreen {
 		Map<VillageStructureType, Integer> structureTypeCounts = structuresData != null ? structuresData.getStructureTypeCounts() : null;
         String continued = TextUtils.translate("tektopiaBook.continued");
         
-        String typeHeader = TextUtils.translate("tektopiaBook.structures.structuretypes");
-    	if (!dataKey[1].equals("0") && continued != null && continued.trim() != "") {
-    		typeHeader += " " + continued;
-    	}
-        if (typeHeader != null && typeHeader.trim() != "") {
-        	typeHeader = TextFormatting.DARK_BLUE + typeHeader;
+        if (dataKey[0].equals("")) {
+        	// structure type
+        	
+            String typeHeader = TextUtils.translate("tektopiaBook.structures.structuretypes");
+        	if (!dataKey[1].equals("0") && continued != null && continued.trim() != "") {
+        		typeHeader += " " + continued;
+        	}
+            if (typeHeader != null && typeHeader.trim() != "") {
+            	typeHeader = TextFormatting.DARK_BLUE + typeHeader;
 
-        	if (guiPage.isLeftPage()) {
-                Font.normal.printLeft(typeHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X, y); 
-        	}
+            	if (guiPage.isLeftPage()) {
+                    Font.normal.printLeft(typeHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X, y); 
+            	}
+            	
+            	if (guiPage.isRightPage()) {
+                    Font.normal.printLeft(typeHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X, y);
+            	}
+            	
+            	y += Font.normal.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+            } 
+                
+            if (structureTypeCounts != null) {
+            	final int[] maxLength = { 0 };
+            	
+            	int page = 0;
+            	try {
+            		page = Integer.parseInt(dataKey[1]);
+            	}
+            	catch (NumberFormatException e) {
+            		page = 0;
+            	}
+            	int startIndex = page * LINES_PER_PAGE;
+            	int index = 0;
+            	
+            	String nameHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.name");
+            	String countHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.count");
+            	
+            	maxLength[0] += Font.small.getStringWidth(countHeader);
+            	
+    			if (guiPage.isLeftPage()) {
+                    Font.small.printLeft(nameHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y); 
+                    Font.small.printLeft(countHeader, this.x + PAGE_LEFTPAGE_CENTER_X, y);
+            	}
+            	
+            	if (guiPage.isRightPage()) {
+                    Font.small.printLeft(nameHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y); 
+                    Font.small.printLeft(countHeader, this.x + PAGE_RIGHTPAGE_CENTER_X, y);
+            	}
+
+            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+            	
+            	for (VillageStructureType structureType : TektopiaUtils.getVillageStructureTypes()) {
+            		if (index >= startIndex && index < startIndex + LINES_PER_PAGE) {
+            			String typeName = getStructureTypeName(structureType);
+            			int typeCount = 0;
+            			
+            			if (structureTypeCounts.containsKey(structureType)) {
+            				typeCount = structureTypeCounts.get(structureType);
+            			}
+            			
+            			if (guiPage.isLeftPage()) {
+    	                    Font.small.printLeft(typeName, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y); 
+    	                    Font.small.printRight(typeCount, this.x + PAGE_LEFTPAGE_CENTER_X +  maxLength[0], y);
+    	            	}
+    	            	
+    	            	if (guiPage.isRightPage()) {
+    	                    Font.small.printLeft(typeName, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y); 
+    	                    Font.small.printRight(typeCount, this.x + PAGE_RIGHTPAGE_CENTER_X + maxLength[0], y);
+    	            	}
+
+    	            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+            		}  
+            		index++;
+            	}
+            }
         	
-        	if (guiPage.isRightPage()) {
-                Font.normal.printLeft(typeHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X, y);
-        	}
+        } else {
+        	// structure
         	
-        	y += Font.normal.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
-        } 
-            
-        if (structureTypeCounts != null) {
-        	final int[] maxLength = { 0 };
-        	
-        	int page = 0;
+        	UUID structureId = null;
         	try {
-        		page = Integer.parseInt(dataKey[1]);
+        		structureId = UUID.fromString(dataKey[0]);
         	}
-        	catch (NumberFormatException e) {
-        		page = 0;
-        	}
-        	int startIndex = page * LINES_PER_PAGE;
-        	int index = 0;
-        	
-        	String nameHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.name");
-        	String countHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.count");
-        	
-        	maxLength[0] += Font.small.getStringWidth(countHeader);
-        	
-			if (guiPage.isLeftPage()) {
-                Font.small.printLeft(nameHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y); 
-                Font.small.printLeft(countHeader, this.x + PAGE_LEFTPAGE_CENTER_X, y);
+        	catch (IllegalArgumentException e) {
+        		structureId = null;
         	}
         	
-        	if (guiPage.isRightPage()) {
-                Font.small.printLeft(nameHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y); 
-                Font.small.printLeft(countHeader, this.x + PAGE_RIGHTPAGE_CENTER_X, y);
-        	}
+        	StructureData structureData = structuresData.getStructureById(structureId);
+        	if (structureData != null) {
 
-        	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
-        	
-        	for (VillageStructureType structureType : TektopiaUtils.getVillageStructureTypes()) {
-        		if (index >= startIndex && index < startIndex + LINES_PER_PAGE) {
-        			String typeName = getStructureTypeName(structureType);
-        			int typeCount = 0;
-        			
-        			if (structureTypeCounts.containsKey(structureType)) {
-        				typeCount = structureTypeCounts.get(structureType);
-        			}
-        			
-        			if (guiPage.isLeftPage()) {
-	                    Font.small.printLeft(typeName, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y); 
-	                    Font.small.printRight(typeCount, this.x + PAGE_LEFTPAGE_CENTER_X +  maxLength[0], y);
-	            	}
-	            	
-	            	if (guiPage.isRightPage()) {
-	                    Font.small.printLeft(typeName, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y); 
-	                    Font.small.printRight(typeCount, this.x + PAGE_RIGHTPAGE_CENTER_X + maxLength[0], y);
-	            	}
+                String header = structureData.getStructureTypeName();
+            	
+                if (header != null && header.trim() != "") {
+                	// check if this is the villager we clicked on
+        			if (this.villageData.getFramePosition() != null && this.villageData.getFramePosition().equals(structureData.getFramePosition())) {
+        				header = TextFormatting.UNDERLINE + header;
+        			}      
+        			if (!dataKey[1].equals("0") && continued != null && continued.trim() != "") {
+                		header += " " + continued;
+                	}
+                	header = TextFormatting.DARK_BLUE + header;
+               	
+                	if (guiPage.isLeftPage()) {
+                        Font.normal.printLeft(header, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X, y); 
+                	}
+                	
+                	if (guiPage.isRightPage()) {
+                        Font.normal.printLeft(header, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X, y); 
+                	}
+                	
+                	y += Font.normal.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+                } 
 
-	            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
-        		}  
-        		index++;
+                String framePositionLabel = TextUtils.translate("tektopiaBook.structures.frameposition");
+                String framePositionText = "";
+
+                if (framePositionLabel != null && framePositionLabel.trim() != "") {
+                	framePositionText += formatBlockPos(structureData.getFramePosition());
+                	
+                	if (guiPage.isLeftPage()) {
+                        Font.small.printLeft(framePositionLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y); 
+                        Font.small.printLeft(framePositionText, this.x + PAGE_LEFTPAGE_CENTER_X, y); 
+                	}
+                	
+                	if (guiPage.isRightPage()) {
+                        Font.small.printLeft(framePositionLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y);
+                        Font.small.printLeft(framePositionText, this.x + PAGE_RIGHTPAGE_CENTER_X, y); 
+                	}
+                	
+                	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+                } 
+
+                String floorTilesLabel = TextUtils.translate("tektopiaBook.structures.floortiles");
+                String floorTilesText = "";
+
+                if (floorTilesLabel != null && floorTilesLabel.trim() != "") {
+                	floorTilesText += "" + structureData.getFloorTileCount();
+                	
+                	if (guiPage.isLeftPage()) {
+                        Font.small.printLeft(floorTilesLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y);
+                        Font.small.printRight(floorTilesText, this.x + PAGE_LEFTPAGE_CENTER_X + indentX, y); 
+                	}
+                	
+                	if (guiPage.isRightPage()) {
+                        Font.small.printLeft(floorTilesLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y); 
+                        Font.small.printRight(floorTilesText, this.x + PAGE_RIGHTPAGE_CENTER_X + indentX, y); 
+                	}
+                	
+                	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+                }
+
+                String currentOccupantsLabel = TextUtils.translate("tektopiaBook.structures.currentoccupants");
+                String currentOccupantsText = "";
+
+                if (currentOccupantsLabel != null && currentOccupantsLabel.trim() != "") {
+                	currentOccupantsText += "" + structureData.getOccupantCount();
+                	
+                	if (guiPage.isLeftPage()) {
+                        Font.small.printLeft(currentOccupantsLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y);
+                        Font.small.printRight(currentOccupantsText, this.x + PAGE_LEFTPAGE_CENTER_X + indentX, y); 
+                	}
+                	
+                	if (guiPage.isRightPage()) {
+                        Font.small.printLeft(currentOccupantsLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y); 
+                        Font.small.printRight(currentOccupantsText, this.x + PAGE_RIGHTPAGE_CENTER_X + indentX, y); 
+                	}
+                	
+                	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+                }
+                
+            	y += 10;
+                
+                if (structureData.getTilesPerVillager() > 0) {
+
+                    String tilesperoccupantLabel = TextUtils.translate("tektopiaBook.structures.tilesperoccupant");
+
+                    if (tilesperoccupantLabel != null && tilesperoccupantLabel.trim() != "") {
+                    	tilesperoccupantLabel = TextFormatting.DARK_BLUE + tilesperoccupantLabel;
+                    	
+                    	if (guiPage.isLeftPage()) {
+                            Font.small.printLeft(tilesperoccupantLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X, y);
+                    	}
+                    	
+                    	if (guiPage.isRightPage()) {
+                            Font.small.printLeft(tilesperoccupantLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X, y); 
+                    	}
+                    	
+                    	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+                    }
+
+                    String minimumTilesLabel = TextUtils.translate("tektopiaBook.structures.minimumtiles");
+                    String minimumTilesText = "";
+
+                    if (minimumTilesLabel != null && minimumTilesLabel.trim() != "") {
+                    	minimumTilesText += "" + structureData.getTilesPerVillager();
+                    	
+                    	if (guiPage.isLeftPage()) {
+                            Font.small.printLeft(minimumTilesLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y);
+                            Font.small.printRight(minimumTilesText, this.x + PAGE_LEFTPAGE_CENTER_X + indentX, y); 
+                    	}
+                    	
+                    	if (guiPage.isRightPage()) {
+                            Font.small.printLeft(minimumTilesLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y); 
+                            Font.small.printRight(minimumTilesText, this.x + PAGE_RIGHTPAGE_CENTER_X + indentX, y); 
+                    	}
+                    	
+                    	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+                    }
+
+                    String currentTilesLabel = TextUtils.translate("tektopiaBook.structures.currenttiles");
+                    String currentTilesText = "";
+
+                    if (currentTilesLabel != null && currentTilesLabel.trim() != "") {
+                    	currentTilesText += "" + structureData.getDensityRatio();
+                    	if (structureData.isOvercrowdedCurrent()) {
+                    		currentTilesText = TextFormatting.DARK_RED + currentTilesText;
+                    	} else {
+                    		currentTilesText = TextFormatting.DARK_GREEN + currentTilesText;
+                    	}
+                    	
+                    	if (guiPage.isLeftPage()) {
+                            Font.small.printLeft(currentTilesLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y);
+                            Font.small.printRight(currentTilesText, this.x + PAGE_LEFTPAGE_CENTER_X + indentX, y); 
+                    	}
+                    	
+                    	if (guiPage.isRightPage()) {
+                            Font.small.printLeft(currentTilesLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y); 
+                            Font.small.printRight(currentTilesText, this.x + PAGE_RIGHTPAGE_CENTER_X + indentX, y); 
+                    	}
+                    	
+                    	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+                    }
+
+                    String overcrowdedLabel = TextUtils.translate("tektopiaBook.structures.overcrowded");
+                    String overcrowdedText = "";
+
+                    if (overcrowdedLabel != null && overcrowdedLabel.trim() != "") {
+                    	overcrowdedText += "" + (structureData.isOvercrowdedCurrent() ? TextUtils.SYMBOL_REDTICK : TextUtils.SYMBOL_GREENCROSS);
+                    	
+                    	if (guiPage.isLeftPage()) {
+                            Font.small.printLeft(overcrowdedLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y);
+                            Font.small.printRight(overcrowdedText, this.x + PAGE_LEFTPAGE_CENTER_X + indentX, y); 
+                    	}
+                    	
+                    	if (guiPage.isRightPage()) {
+                            Font.small.printLeft(overcrowdedLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y); 
+                            Font.small.printRight(overcrowdedText, this.x + PAGE_RIGHTPAGE_CENTER_X + indentX, y); 
+                    	}
+                    	
+                    	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+                    }
+                    
+                } else {
+                	
+                	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+                	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+                	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+                	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+                	
+                }
+            	
+            	y += 10;
+
+                String occupantsText = TextUtils.translate("tektopiaBook.structures.occupants");
+            	
+                if (occupantsText != null && occupantsText.trim() != "") {
+                	occupantsText = TextFormatting.DARK_BLUE + occupantsText;
+
+                	if (guiPage.isLeftPage()) {
+                        Font.small.printLeft(occupantsText, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X, y); 
+                	}
+                	
+                	if (guiPage.isRightPage()) {
+                        Font.small.printLeft(occupantsText, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X, y); 
+                	}
+                	
+                	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+                } 
+            	
+            	int page = 0;
+            	try {
+            		page = Integer.parseInt(dataKey[1]);
+            	}
+            	catch (NumberFormatException e) {
+            		page = 0;
+            	}
+            	int startIndex = page * STRUCTUREOCCUPANTLIST_PER_PAGE;
+            	int index = 0;
+
+            	String nameHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.name");
+            	String professionHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.profession");
+            	String levelHeader = TextFormatting.UNDERLINE + TextUtils.translate("tektopiaBook.headers.level");
+            	
+            	if (guiPage.isLeftPage()) {
+            		Font.small.printLeft(nameHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y); 
+                	Font.small.printLeft(professionHeader, this.x + PAGE_LEFTPAGE_CENTER_X, y);
+    				Font.small.printRight(levelHeader, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y);
+            	}
+
+            	if (guiPage.isRightPage()) {
+                    Font.small.printLeft(nameHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y); 
+                	Font.small.printLeft(professionHeader, this.x + PAGE_RIGHTPAGE_CENTER_X, y);
+    				Font.small.printRight(levelHeader, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
+            	}
+            	
+            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y; 
+        		
+            	for (ResidentData occupant : structureData.getOccupants()) {
+            		if (index >= startIndex && index < startIndex + STRUCTUREOCCUPANTLIST_PER_PAGE) {
+                		
+                		String occupantName = "";
+                		String occupantProfession = "";
+                		String occupantLevel = "";
+                		
+                		occupantName += formatResidentName(occupant.isMale(), occupant.getName(), true);
+                		occupantProfession += getTypeName(occupant.getProfessionType());
+            			
+        				ProfessionType professionType = TektopiaUtils.getProfessionType(occupant.getProfessionType());
+        				if (professionType != null) {
+                			switch (professionType) {
+                			case CHILD:
+                			case NITWIT:
+                				break;
+                			default:                       			
+                				occupantLevel = formatResidentLevel(occupant.getLevel(), occupant.getBaseLevel(), false, false);
+                    			break;
+                			}
+        				}
+            			
+            			if (guiPage.isLeftPage()) {
+    	                	Font.small.printLeft(occupantName, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y);
+    	                    Font.small.printLeft(occupantProfession, this.x + PAGE_LEFTPAGE_CENTER_X, y);
+	                    	Font.small.printRight(occupantLevel, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y);
+	                    }
+    	            	
+    	            	if (guiPage.isRightPage()) {
+    	                	Font.small.printLeft(occupantName, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y);
+    	                    Font.small.printLeft(occupantProfession, this.x + PAGE_RIGHTPAGE_CENTER_X, y);
+	                    	Font.small.printRight(occupantLevel, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
+	                    }
+                		
+    	            	y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+            			
+            		}
+            		index++;
+            	}
         	}
         }
     }
