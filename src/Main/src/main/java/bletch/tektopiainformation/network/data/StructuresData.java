@@ -53,6 +53,13 @@ public class StructuresData {
 				.collect(Collectors.toList()));
 	}
 	
+	public List<StructureData> getStructuresOvercrowded() {
+		return Collections.unmodifiableList(this.structures == null ? new ArrayList<StructureData>() : this.structures.stream()
+				.filter(s -> s.isOvercrowdedCurrent())
+				.sorted((c1 , c2) -> c1.getStructureTypeName().compareTo(c2.getStructureTypeName()))
+				.collect(Collectors.toList()));
+	}
+	
 	public StructureData getStructure(int index) {
 		return this.structures == null ? null : this.structures.get(index);
 	}
