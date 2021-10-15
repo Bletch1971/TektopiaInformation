@@ -7,10 +7,12 @@ public class GuiButton {
 	
 	protected String key;
 	protected GuiTexture icon;
+	protected String buttonData;
 	
 	public GuiButton(String key) {
 		this.key = key;
 		this.icon = null;
+		this.buttonData = "";
 	}
 	
 	public GuiButton(String key, GuiTexture icon) {
@@ -27,6 +29,10 @@ public class GuiButton {
 		return this.icon;
 	}
 	
+	public String getButtonData() {
+		return this.buttonData;
+	}
+	
 	public String getDisplayName() {
 		return TextUtils.translate(getUnlocalizedName());
 	}
@@ -41,6 +47,10 @@ public class GuiButton {
 	
 	public void setIcon(ResourceLocation texture, int left, int top, int width, int height, int textureLeft, int textureTop, int textureWidth, int textureHeight) {
 		this.icon = new GuiTexture(texture, left, top, width, height, textureLeft, textureTop, textureWidth, textureHeight);
+	}
+	
+	public void setButtonData(String buttonData) {
+		this.buttonData = buttonData;
 	}
 	
 	public boolean withinBounds(int x, int y, float scale) {

@@ -173,6 +173,7 @@ button.previouspage.name=Previous Page
 button.nextpage.name=Next Page
 button.startbook.name=Start of Book
 button.endbook.name=End of Book
+button.close.name=Close
 
 bookmark.economy.name=Economy
 bookmark.enemies.name=Enemies
@@ -205,6 +206,7 @@ tektopiaBook.headers.bed=Bed
 tektopiaBook.headers.buy=Buy
 tektopiaBook.headers.count=Count
 tektopiaBook.headers.current=Current
+tektopiaBook.headers.enabled=Enabled
 tektopiaBook.headers.enemy=Enemy
 tektopiaBook.headers.index=#
 tektopiaBook.headers.level=Level
@@ -222,6 +224,8 @@ tektopiaBook.headers.times=Times
 tektopiaBook.headers.type=Type
 tektopiaBook.headers.valid=Valid
 tektopiaBook.headers.visitor=Visitor
+
+tektopiaBook.aifilters.header=AI Filters
 
 tektopiaBook.economy.salesHistory=Merchant Sales History
 tektopiaBook.economy.merchantsales=Total Merchant Sales:
@@ -588,6 +592,7 @@ ai.filter.craft_wooden_bowl=Craft: Wooden Bowl
 ai.filter.craft_sugar=Craft: Sugar
 ai.filter.craft_pumpkin_pie=Craft: Pumpkin Pie
 ai.filter.craft_cookie=Craft: Cookie
+ai.filter.craft_golden_apple=Creaft: Golden Apple
 
 ai.filter.play_tag=Play Tag
 ai.filter.attend_school=Attend School
