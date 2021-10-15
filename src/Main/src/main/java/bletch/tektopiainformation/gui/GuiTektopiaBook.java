@@ -13,6 +13,7 @@ import java.util.Stack;
 import org.lwjgl.input.Mouse;
 import bletch.common.utils.Font;
 import bletch.common.utils.LoggerUtils;
+import bletch.common.utils.RenderUtils;
 import bletch.common.utils.StringUtils;
 import bletch.common.utils.TextUtils;
 import bletch.tektopiainformation.core.ModDetails;
@@ -1208,24 +1209,24 @@ public class GuiTektopiaBook extends GuiScreen {
 	    			if (guiPage.isLeftPage()) {
 	                	
 	                	if (!buyItem1Stack.isEmpty()) {
-	                		super.itemRender.renderItemIntoGUI(buyItem1Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5);
-	                		super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem1Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5, null);
+	                		RenderUtils.renderItemIntoGUI(super.itemRender, buyItem1Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5);
+	                		RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, buyItem1Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5, null);
                 			if (buyItem1Tooltip != null && buyItem1Tooltip.size() > 0) {
                 				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5, 16, 16, buyItem1Tooltip));
                 			}
 	                	}
 	                	
             			if (!buyItem2Stack.isEmpty()) {
-            				super.itemRender.renderItemIntoGUI(buyItem2Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
-                    		super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem2Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, null);
+            				RenderUtils.renderItemIntoGUI(super.itemRender, buyItem2Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
+                    		RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, buyItem2Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, null);
                 			if (buyItem2Tooltip != null && buyItem2Tooltip.size() > 0) {
                 				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, 16, 16, buyItem2Tooltip));
                 			}
             			}
 	                	
             			if (!sellItemStack.isEmpty()) {
-            				super.itemRender.renderItemIntoGUI(sellItemStack, this.x + PAGE_LEFTPAGE_CENTER_X, y - 5);
-    	                    super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, sellItemStack, this.x + PAGE_LEFTPAGE_CENTER_X, y - 5, null);
+            				RenderUtils.renderItemIntoGUI(super.itemRender, sellItemStack, this.x + PAGE_LEFTPAGE_CENTER_X, y - 5);
+    	                    RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, sellItemStack, this.x + PAGE_LEFTPAGE_CENTER_X, y - 5, null);
                 			if (sellTooltip != null && sellTooltip.size() > 0) {
                 				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_CENTER_X, y - 5, 16, 16, sellTooltip));
                 			}
@@ -1235,24 +1236,24 @@ public class GuiTektopiaBook extends GuiScreen {
 	            	if (guiPage.isRightPage()) {
 	                	
 	                	if (!buyItem1Stack.isEmpty()) {
-	                		super.itemRender.renderItemIntoGUI(buyItem1Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5);
-                    		super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem1Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5, null);
+	                		RenderUtils.renderItemIntoGUI(super.itemRender, buyItem1Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5);
+                    		RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, buyItem1Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5, null);
                 			if (buyItem1Tooltip != null && buyItem1Tooltip.size() > 0) {
                 				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5, 16, 16, buyItem1Tooltip));
                 			}
 	                	}
 	                	
             			if (!buyItem2Stack.isEmpty()) {
-            				super.itemRender.renderItemIntoGUI(buyItem2Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
-                    		super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem2Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, null);
+            				RenderUtils.renderItemIntoGUI(super.itemRender, buyItem2Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
+                    		RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, buyItem2Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, null);
                 			if (buyItem2Tooltip != null && buyItem2Tooltip.size() > 0) {
                 				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, 16, 16, buyItem2Tooltip));
                 			}
             			}
 	                	
             			if (!sellItemStack.isEmpty()) {
-            				super.itemRender.renderItemIntoGUI(sellItemStack, this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5);
-    	                    super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, sellItemStack, this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5, null);
+            				RenderUtils.renderItemIntoGUI(super.itemRender, sellItemStack, this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5);
+    	                    RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, sellItemStack, this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5, null);
                 			if (sellTooltip != null && sellTooltip.size() > 0) {
                 				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5, 16, 16, sellTooltip));
                 			}
@@ -1332,16 +1333,16 @@ public class GuiTektopiaBook extends GuiScreen {
                     		}
                 			
                         	if (guiPage.isLeftPage()) {
-                        		super.itemRender.renderItemIntoGUI(itemStack, xL, y - 5);
-        	                    super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, itemStack, xL, y - 5, null);
+                        		RenderUtils.renderItemIntoGUI(super.itemRender, itemStack, xL, y - 5);
+        	                    RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, itemStack, xL, y - 5, null);
                     			if (itemStackTooltip != null && itemStackTooltip.size() > 0) {
                     				this.tooltips.add(new GuiTooltip(xL, y - 5, 16, 16, itemStackTooltip));
                     			}
                         	}
                         	
                         	if (guiPage.isRightPage()) {
-                        		super.itemRender.renderItemIntoGUI(itemStack, xR, y - 5);
-                        		super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, itemStack, xR, y - 5, null);
+                        		RenderUtils.renderItemIntoGUI(super.itemRender, itemStack, xR, y - 5);
+                        		RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, itemStack, xR, y - 5, null);
                     			if (itemStackTooltip != null && itemStackTooltip.size() > 0) {
                     				this.tooltips.add(new GuiTooltip(xR, y - 5, 16, 16, itemStackTooltip));
                     			}
@@ -3362,16 +3363,16 @@ public class GuiTektopiaBook extends GuiScreen {
 	                		}
 
 	                		if (guiPage.isLeftPage()) {
-	                			super.itemRender.renderItemAndEffectIntoGUI(piece, tXL, tY);
-	                			super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, piece, tXL, tY, null);
+	                			RenderUtils.renderItemAndEffectIntoGUI(piece, tXL, tY);
+	                			RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, piece, tXL, tY, null);
 	                			if (tooltip != null && tooltip.size() > 0) {
 	                				this.tooltips.add(new GuiTooltip(tXL, tY, 16, 16, tooltip));
 	                			}
 	                		}
 
 	                		if (guiPage.isRightPage()) {
-	                			super.itemRender.renderItemAndEffectIntoGUI(piece, tXR, tY);
-	                			super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, piece, tXR, tY, null);
+	                			RenderUtils.renderItemAndEffectIntoGUI(piece, tXR, tY);
+	                			RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, piece, tXR, tY, null);
 	                			if (tooltip != null && tooltip.size() > 0) {
 	                				this.tooltips.add(new GuiTooltip(tXR, tY, 16, 16, tooltip));
 	                			}
@@ -3393,16 +3394,16 @@ public class GuiTektopiaBook extends GuiScreen {
 	                		}
 
 	                		if (guiPage.isLeftPage()) {
-	                			super.itemRender.renderItemAndEffectIntoGUI(piece, tXL, tY);
-	                			super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, piece, tXL, tY, null);
+	                			RenderUtils.renderItemAndEffectIntoGUI(piece, tXL, tY);
+	                			RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, piece, tXL, tY, null);
 	                			if (tooltip != null && tooltip.size() > 0) {
 	                				this.tooltips.add(new GuiTooltip(tXL, tY, 16, 16, tooltip));
 	                			}
 	                		}
 
 	                		if (guiPage.isRightPage()) {
-	                			super.itemRender.renderItemAndEffectIntoGUI(piece, tXR, tY);
-	                			super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, piece, tXR, tY, null);
+	                			RenderUtils.renderItemAndEffectIntoGUI(piece, tXR, tY);
+	                			RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, piece, tXR, tY, null);
 	                			if (tooltip != null && tooltip.size() > 0) {
 	                				this.tooltips.add(new GuiTooltip(tXR, tY, 16, 16, tooltip));
 	                			}
@@ -6109,24 +6110,24 @@ public class GuiTektopiaBook extends GuiScreen {
 			                	Font.normal.printRight(buyTimes, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y);
 			                	
 			                	if (!buyItem1Stack.isEmpty()) {
-			                		super.itemRender.renderItemIntoGUI(buyItem1Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5);
-			                		super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem1Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5, null);
+			                		RenderUtils.renderItemIntoGUI(super.itemRender, buyItem1Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5);
+			                		RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, buyItem1Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5, null);
 		                			if (buyItem1Tooltip != null && buyItem1Tooltip.size() > 0) {
 		                				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y - 5, 16, 16, buyItem1Tooltip));
 		                			}
 			                	}
 			                	
 	                			if (!buyItem2Stack.isEmpty()) {
-	                				super.itemRender.renderItemIntoGUI(buyItem2Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
-	                				super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem2Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, null);
+	                				RenderUtils.renderItemIntoGUI(super.itemRender, buyItem2Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
+	                				RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, buyItem2Stack, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, null);
 	                    			if (buyItem2Tooltip != null && buyItem2Tooltip.size() > 0) {
 	                    				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, 16, 16, buyItem2Tooltip));
 	                    			}
 	                			}
 			                	
 	                			if (!sellItemStack.isEmpty()) {
-	                				super.itemRender.renderItemIntoGUI(sellItemStack, this.x + PAGE_LEFTPAGE_CENTER_X, y - 5);
-	                				super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, sellItemStack, this.x + PAGE_LEFTPAGE_CENTER_X, y - 5, null);
+	                				RenderUtils.renderItemIntoGUI(super.itemRender, sellItemStack, this.x + PAGE_LEFTPAGE_CENTER_X, y - 5);
+	                				RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, sellItemStack, this.x + PAGE_LEFTPAGE_CENTER_X, y - 5, null);
 	                    			if (sellTooltip != null && sellTooltip.size() > 0) {
 	                    				this.tooltips.add(new GuiTooltip(this.x + PAGE_LEFTPAGE_CENTER_X, y - 5, 16, 16, sellTooltip));
 	                    			}
@@ -6137,24 +6138,24 @@ public class GuiTektopiaBook extends GuiScreen {
 			                	Font.normal.printRight(buyTimes, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y);
 			                	
 			                	if (!buyItem1Stack.isEmpty()) {
-			                		super.itemRender.renderItemIntoGUI(buyItem1Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5);
-			                		super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem1Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5, null);
+			                		RenderUtils.renderItemIntoGUI(super.itemRender, buyItem1Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5);
+			                		RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, buyItem1Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5, null);
 		                			if (buyItem1Tooltip != null && buyItem1Tooltip.size() > 0) {
 		                				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y - 5, 16, 16, buyItem1Tooltip));
 		                			}
 			                	}
 			                	
 	                			if (!buyItem2Stack.isEmpty()) {
-	                				super.itemRender.renderItemIntoGUI(buyItem2Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
-	                				super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, buyItem2Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, null);
+	                				RenderUtils.renderItemIntoGUI(super.itemRender, buyItem2Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5);
+	                				RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, buyItem2Stack, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, null);
 	                    			if (buyItem2Tooltip != null && buyItem2Tooltip.size() > 0) {
 	                    				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX + 20, y - 5, 16, 16, buyItem2Tooltip));
 	                    			}
 	                			}
 			                	
 	                			if (!sellItemStack.isEmpty()) {
-	                				super.itemRender.renderItemIntoGUI(sellItemStack, this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5);
-	        	                    super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, sellItemStack, this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5, null);
+	                				RenderUtils.renderItemIntoGUI(super.itemRender, sellItemStack, this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5);
+	        	                    RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, sellItemStack, this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5, null);
 	                    			if (sellTooltip != null && sellTooltip.size() > 0) {
 	                    				this.tooltips.add(new GuiTooltip(this.x + PAGE_RIGHTPAGE_CENTER_X, y - 5, 16, 16, sellTooltip));
 	                    			}
