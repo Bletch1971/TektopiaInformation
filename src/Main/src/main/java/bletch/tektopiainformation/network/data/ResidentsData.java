@@ -66,7 +66,7 @@ public class ResidentsData {
 	
 	public List<ResidentData> getResidentsByType(String professionType) {
 		return Collections.unmodifiableList(this.residents == null ? new ArrayList<ResidentData>() : this.residents.stream()
-				.filter(r -> professionType != null && professionType.equals(r.getProfessionType()))
+				.filter(r -> professionType != null && professionType.toUpperCase().equals(r.getProfessionType()))
 				.sorted((c1 , c2) -> { 
 					int compare = Integer.compare(c2.getBaseLevel(), c1.getBaseLevel());
 					return compare != 0 ? compare : c1.getName().compareTo(c2.getName());
@@ -95,7 +95,7 @@ public class ResidentsData {
 	}	
 	
 	public int getProfessionTypeCount(String professionType) {
-		return professionType != null && this.professionTypeCounts != null && this.professionTypeCounts.containsKey(professionType) ? this.professionTypeCounts.get(professionType) : 0;
+		return professionType != null && this.professionTypeCounts != null && this.professionTypeCounts.containsKey(professionType.toUpperCase()) ? this.professionTypeCounts.get(professionType.toUpperCase()) : 0;
 	}
 	
 	public int getAdultCount() {

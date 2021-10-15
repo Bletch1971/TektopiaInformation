@@ -3,7 +3,7 @@ package bletch.tektopiainformation.network.data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import bletch.tektopiainformation.utils.TektopiaUtils;
@@ -28,8 +28,10 @@ public class HomeData {
 	private static final String NBTTAG_VILLAGE_HOMEFULL = "villagehomefull";
 	private static final String NBTTAG_VILLAGE_HOMERESIDENTS = "villagehomeresidents";
 	private static final String NBTTAG_VILLAGE_HOMEBEDPOSITIONCOUNT = "villagehomebedpositioncount";
+	
+	private static Random rand = new Random();
 
-	private UUID homeId;
+	private int homeId;
 	private VillageStructureType structureType;
 	private BlockPos framePosition;
 	private boolean isValid;
@@ -49,7 +51,7 @@ public class HomeData {
 		populateData(structure);
 	}
 	
-	public UUID getHomeId() {
+	public int getHomeId() {
 		return this.homeId;
 	}
 	
@@ -135,7 +137,7 @@ public class HomeData {
 	}
 	
 	private void clearData() {
-		this.homeId = UUID.randomUUID();
+		this.homeId = rand.nextInt();
 		this.structureType = null;
 		this.framePosition = null;
 		this.isValid = false;
@@ -154,6 +156,7 @@ public class HomeData {
 		List<VillageStructureType> homeTypes = TektopiaUtils.getHomeStructureTypes();
 
 		if (structure != null && homeTypes != null && homeTypes.contains(structure.type)) {
+			this.homeId = structure.getItemFrame().getEntityId();
 			this.structureType = structure.type;
 			this.framePosition = structure.getFramePos();
 			this.isValid = structure.isValid();
@@ -197,7 +200,7 @@ public class HomeData {
 		
 		clearData();
 		
-		this.homeId = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEID) ? nbtTag.getUniqueId(NBTTAG_VILLAGE_HOMEID) : UUID.randomUUID();
+		this.homeId = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEID) ? nbtTag.getInteger(NBTTAG_VILLAGE_HOMEID) : rand.nextInt();
 		this.structureType = nbtTag.hasKey(NBTTAG_VILLAGE_HOMETYPE) ? VillageStructureType.valueOf(nbtTag.getString(NBTTAG_VILLAGE_HOMETYPE)) : null;
 		this.framePosition = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_HOMEPOSITION)) : null;
 		this.isValid = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEVALID) ? nbtTag.getBoolean(NBTTAG_VILLAGE_HOMEVALID) : false;
@@ -237,7 +240,7 @@ public class HomeData {
 			nbtTag = new NBTTagCompound();
 		}
 
-		nbtTag.setUniqueId(NBTTAG_VILLAGE_HOMEID, this.homeId);
+		nbtTag.setInteger(NBTTAG_VILLAGE_HOMEID, this.homeId);
 		if (this.structureType != null) {
 			nbtTag.setString(NBTTAG_VILLAGE_HOMETYPE, this.structureType.name());
 		}

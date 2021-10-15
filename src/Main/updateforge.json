@@ -13,6 +13,6 @@
     "1.3.1": "Fixed the crash opening the book, when running on dedicated server.",
     "1.4.0": "Added Total Armor Value, Armor Items and Equipment Items to resident pages.",
     "1.5.0": "Cleaned up the book's display. Added new maps at the end of the book. Added more information into the book.",
-    "1.6.0": "Fixed the Resident Count on specific pages. Removed use of deprecated I18n. Changed the way the debug logging is done."
+    "1.6.0": "Added AI Filter page to Resident pages. Replaced Sleeping line with Task, so you can now see what the villager is currently doing.\nAdded Overcrowding to Structures and Statistics pages.\nAdded mouse click links to most page types to navigate around and a back button.\nFixed the Resident Count on specific pages."
   }	
 }

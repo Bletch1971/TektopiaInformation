@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import bletch.tektopiainformation.utils.TektopiaUtils;
@@ -53,13 +52,20 @@ public class StructuresData {
 				.collect(Collectors.toList()));
 	}
 	
+	public List<StructureData> getStructuresOvercrowded() {
+		return Collections.unmodifiableList(this.structures == null ? new ArrayList<StructureData>() : this.structures.stream()
+				.filter(s -> s.isOvercrowdedCurrent())
+				.sorted((c1 , c2) -> c1.getStructureTypeName().compareTo(c2.getStructureTypeName()))
+				.collect(Collectors.toList()));
+	}
+	
 	public StructureData getStructure(int index) {
 		return this.structures == null ? null : this.structures.get(index);
 	}
 	
-	public StructureData getStructureById(UUID structureId) {
+	public StructureData getStructureById(int structureId) {
 		return this.structures == null ? null : this.structures.stream()
-				.filter(r -> structureId != null && structureId.equals(r.getStructureId()))
+				.filter(r -> structureId > 0 && structureId == r.getStructureId())
 				.findFirst().orElse(null);
 	}
 	

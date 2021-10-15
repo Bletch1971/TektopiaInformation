@@ -168,10 +168,12 @@ config.gui.tektopiaInformationBook.enableTektopiaInformationBook.tooltip=If true
 tektopiaBook.name=TekTopia Information Book
 tektopiaBook.information=This book contains information about the village and it's residents.
 
+button.back.name=Back
 button.previouspage.name=Previous Page
 button.nextpage.name=Next Page
 button.startbook.name=Start of Book
 button.endbook.name=End of Book
+button.close.name=Close
 
 bookmark.economy.name=Economy
 bookmark.enemies.name=Enemies
@@ -203,9 +205,12 @@ tektopiaBook.summary=Summary
 tektopiaBook.headers.bed=Bed
 tektopiaBook.headers.buy=Buy
 tektopiaBook.headers.count=Count
+tektopiaBook.headers.current=Current
+tektopiaBook.headers.enabled=Enabled
 tektopiaBook.headers.enemy=Enemy
 tektopiaBook.headers.index=#
 tektopiaBook.headers.level=Level
+tektopiaBook.headers.minimum=Minimum
 tektopiaBook.headers.name=Name
 tektopiaBook.headers.position=Position
 tektopiaBook.headers.profession=Profession
@@ -213,10 +218,14 @@ tektopiaBook.headers.range=Range
 tektopiaBook.headers.resident=Resident
 tektopiaBook.headers.sell=Sell
 tektopiaBook.headers.sleep=Sleep
+tektopiaBook.headers.structure=Structure
+tektopiaBook.headers.structures=Structures
 tektopiaBook.headers.times=Times
 tektopiaBook.headers.type=Type
 tektopiaBook.headers.valid=Valid
 tektopiaBook.headers.visitor=Visitor
+
+tektopiaBook.aifilters.header=AI Filters
 
 tektopiaBook.economy.salesHistory=Merchant Sales History
 tektopiaBook.economy.merchantsales=Total Merchant Sales:
@@ -280,24 +289,37 @@ tektopiaBook.residents.hunger=Hunger:
 tektopiaBook.residents.happiness=Happiness:
 tektopiaBook.residents.intelligence=Intelligence:
 tektopiaBook.residents.blessed=Blessed:
-tektopiaBook.residents.sleeping=Sleeping:
+tektopiaBook.residents.task=Task:
 tektopiaBook.residents.totalarmorvalue=Total Armor:
 tektopiaBook.residents.home=Home Structure:
 tektopiaBook.residents.bed=Bed Position:
 tektopiaBook.residents.position=Current Position:
 tektopiaBook.residents.structure=Current Structure:
 tektopiaBook.residents.additionalprofessions=Additional Professions (top 4)
+tektopiaBook.residents.viewaifilters=View AI Filters
 
 tektopiaBook.statistics.happinessheader=Happiness Statistics
 tektopiaBook.statistics.hungerheader=Hunger Statistics
+tektopiaBook.statistics.overcrowdingheader=Overcrowding
 tektopiaBook.statistics.happiness=Happiness
 tektopiaBook.statistics.hunger=Hunger
+tektopiaBook.statistics.overcrowding=Overcrowding
+tektopiaBook.statistics.overcrowded=Overcrowded
 tektopiaBook.statistics.residents=Residents
 tektopiaBook.statistics.range=Range:
 tektopiaBook.statistics.total=Total Residents:
+tektopiaBook.statistics.tilesperoccupant=Tiles Per Occupant
 
 tektopiaBook.structures.total=Total Structures:
 tektopiaBook.structures.structuretypes=Structure Types
+tektopiaBook.structures.frameposition=Token Position:
+tektopiaBook.structures.floortiles=Total Floor Tiles:
+tektopiaBook.structures.currentoccupants=Current Occupants:
+tektopiaBook.structures.tilesperoccupant=Tiles Per Occupant
+tektopiaBook.structures.minimumtiles=Minimum:
+tektopiaBook.structures.currenttiles=Current:
+tektopiaBook.structures.overcrowded=Overcrowded:
+tektopiaBook.structures.occupants=Occupants
 
 tektopiaBook.structuretypes.frameposition=Token Positions
 tektopiaBook.structuretypes.total=Total Structures:
@@ -333,6 +355,12 @@ tektopiaBook.visitors.visitors=Visitors
 tektopiaBook.visitors.visitortype=Type:
 tektopiaBook.visitors.vendoritems=Items
 tektopiaBook.visitors.professions=Professions (top 4)
+
+tektopiaBook.links.professiondetails=Click to view profession details
+tektopiaBook.links.residentdetails=Click to view resident details
+tektopiaBook.links.statisticsdetails=Click to view statistic details
+tektopiaBook.links.structuredetails=Click to view structure details
+tektopiaBook.links.visitordetails=Click to view visitor details
 
 #============
 #= Tooltips =
@@ -493,3 +521,151 @@ entity.nomad.information=Nomads are visitors to your Village. They come to see t
 entity.rancher.information=The Rancher wrangles Animals from the wild and places them in animal pens. Once there, the Rancher will feed them crops and seeds that they gather from the Storage building.
 entity.teacher.information=The Teacher will gather the children inside the School and teach them during the mid day hours.  This is the fastest way to raise a villager's intelligence.
 entity.tradesman.information=The Architect is a permanent vendor found in the Town Hall. A player can trade with him to buy Profession Tokens in exchange for emeralds.
+
+#==============
+#= AI Filters =
+#==============
+
+ai.filter.read_book=Read in Library
+ai.filter.visit_tavern=Visit Tavern
+ai.filter.harvest_tile.crops=Harvest Wheat
+ai.filter.harvest_tile.carrots=Harvest Carrot
+ai.filter.harvest_tile.potatoes=Harvest Potato
+ai.filter.harvest_tile.beetroots=Harvest Beetroot
+ai.filter.plant_tile.crops=Plant Wheat
+ai.filter.plant_tile.carrots=Plant Carrot
+ai.filter.plant_tile.potatoes=Plant Potato
+ai.filter.plant_tile.beetroots=Plant Beetroot
+ai.filter.till_dirt=Till Dirt
+ai.filter.gather_cane=Gather Sugar Cane
+
+ai.filter.perform_wander=Perform in Village
+ai.filter.perform_tavern=Perform in Tavern
+
+ai.filter.feed_cow=Feed Cow
+ai.filter.feed_pig=Feed Pig
+ai.filter.feed_chicken=Feed Chicken
+ai.filter.feed_sheep=Feed Sheep
+ai.filter.harvest_cow=Milk Cow
+ai.filter.harvest_sheep=Shear Sheep
+ai.filter.return_lost_animals=Return Lost Animals
+ai.filter.cook_beef=Cook Beef
+ai.filter.cook_pork=Cook Pork
+ai.filter.cook_chicken=Cook Chicken
+ai.filter.cook_mutton=Cook Mutton
+ai.filter.cook_potato=Cook Potato
+
+ai.filter.teach_school=Teach School
+ai.filter.smelt_charcoal=Smelt Charcoal
+ai.filter.smelt_iron=Smelt Iron
+ai.filter.smelt_gold=Smelt Gold
+ai.filter.craft_iron_axe=Craft: Iron Axe
+ai.filter.craft_iron_pickaxe=Craft: Iron Pickaxe
+ai.filter.craft_iron_sword=Craft: Iron Sword
+ai.filter.craft_iron_hoe=Craft: Iron Hoe
+ai.filter.craft_bucket=Craft: Bucket
+ai.filter.craft_shears=Craft: Shears
+ai.filter.craft_iron_boots=Craft: Iron Boots
+ai.filter.craft_iron_chestplate=Craft: Iron Chestplate
+ai.filter.craft_iron_leggings=Craft: Iron Leggings
+ai.filter.craft_iron_helmet=Craft: Iron Helmet
+ai.filter.craft_diamond_sword=Craft: Diamond Sword
+ai.filter.craft_diamond_boots=Craft: Diamond Boots
+ai.filter.craft_diamond_chestplate=Craft: Diamond Chestplate
+ai.filter.craft_diamond_leggings=Craft: Diamond Leggings
+ai.filter.craft_diamond_helmet=Craft: Diamond Helmet
+ai.filter.craft_diamond_axe=Craft: Diamond Axe
+ai.filter.craft_diamond_pickaxe=Craft: Diamond Pickaxe
+ai.filter.craft_torch=Craft: Torch
+
+ai.filter.craft_wooden_sword=Craft: Wooden Sword
+ai.filter.craft_leather_boots=Craft: Leather Boots
+ai.filter.craft_leather_chestplate=Craft: Leather Chest
+ai.filter.craft_leather_leggings=Craft: Leather Leggings
+ai.filter.craft_leather_helmet=Craft: Leather Helmet
+
+ai.filter.craft_golden_carrot=Craft: Golden Carrot
+ai.filter.craft_bread=Craft: Bread
+ai.filter.craft_beetroot_soup=Craft: Beetroot Soup
+ai.filter.craft_cake=Craft: Cake
+ai.filter.craft_wooden_bowl=Craft: Wooden Bowl
+ai.filter.craft_sugar=Craft: Sugar
+ai.filter.craft_pumpkin_pie=Craft: Pumpkin Pie
+ai.filter.craft_cookie=Craft: Cookie
+ai.filter.craft_golden_apple=Creaft: Golden Apple
+
+ai.filter.play_tag=Play Tag
+ai.filter.attend_school=Attend School
+
+ai.filter.cast_bless=Cast: Bless
+ai.filter.cast_heal=Cast: Heal
+ai.filter.cast_earth_reform=Cast: Earth Reform
+ai.filter.cast_growth_trees=Cast: Growth (trees)
+ai.filter.cast_growth_crops=Cast: Growth (crops)
+
+
+ai.filter.craft_paper=Craft: Paper
+ai.filter.craft_book=Craft: Book
+ai.filter.craft_name_tag=Craft: Name Tag
+
+ai.filter.enchant_iron_sword=Enchant: Iron Sword
+ai.filter.enchant_iron_axe=Enchant: Iron Axe
+ai.filter.enchant_iron_pickaxe=Enchant: Iron Pickaxe
+ai.filter.enchant_iron_chestplate=Enchant: Iron Chestplate
+ai.filter.enchant_iron_helmet=Enchant: Iron Helmet
+ai.filter.enchant_iron_boots=Enchant: Iron Boots
+ai.filter.enchant_iron_leggings=Enchant: Iron Leggings
+ai.filter.enchant_leather_chestplate=Enchant: Leather Chest
+ai.filter.enchant_leather_helmet=Enchant: Leather Helmet
+ai.filter.enchant_leather_boots=Enchant: Leather Boots
+ai.filter.enchant_leather_leggings=Enchant: Leather Leggings
+ai.filter.enchant_diamond_sword=Enchant: Diamond Sword
+ai.filter.enchant_diamond_axe=Enchant: Diamond Axe
+ai.filter.enchant_diamond_pickaxe=Enchant: Diamond Pickaxe
+ai.filter.enchant_diamond_chestplate=Enchant: Diamond Chest
+ai.filter.enchant_diamond_helmet=Enchant: Diamond Helmet
+ai.filter.enchant_diamond_boots=Enchant: Diamond Boots
+ai.filter.enchant_diamond_leggings=Enchant: Diamond Leggings
+ai.filter.enchant_book=Enchant: Book
+
+ai.filter.craft_wooden_hoe=Craft: Wooden Hoe
+ai.filter.craft_wooden_sword=Craft: Wooden Sword
+ai.filter.craft_wooden_axe=Craft: Wooden Axe
+ai.filter.craft_wooden_pickaxe=Craft: Wooden Pickaxe
+
+ai.filter.guard_super_attack=Super Attack
+
+ai.filter.salute=Salute Player
+ai.filter.eat_golden_apple=Eat Golden Apple
+ai.filter.pickup_emeralds=Pick Up Emeralds
+ai.filter.patrol_guard_post=Patrol Guard Posts
+ai.filter.practice_melee=Practice Melee
+ai.filter.equip_leather_armor=Equip Leather Armor
+ai.filter.equip_iron_armor=Equip Iron Armor
+ai.filter.equip_diamond_armor=Equip Diamond Armor
+ai.filter.equip_enchanted_armor=Equip Enchanted Armor
+ai.filter.equip_iron_sword=Equip Iron Sword
+ai.filter.equip_diamond_sword=Equip Diamond Sword
+ai.filter.equip_enchanted_sword=Equip Enchanted Sword
+
+ai.filter.pickup_oak_saplings=Pick Up: Oak Saplings
+ai.filter.pickup_spruce_saplings=Pick Up: Spruce Saplings
+ai.filter.pickup_birch_saplings=Pick Up: Birch Saplings
+ai.filter.pickup_jungle_saplings=Pick Up: Jungle Saplings
+ai.filter.pickup_acacia_saplings=Pick Up: Acacia Saplings
+ai.filter.pickup_dark_oak_saplings=Pick Up: Dark Oak Saplings
+ai.filter.pickup_apples=Pick Up: Apples
+ai.filter.chop_tree_oak=Chop Tree: Oak
+ai.filter.chop_tree_birch=Chop Tree: Birch
+ai.filter.chop_tree_jungle=Chop Tree: Jungle
+ai.filter.chop_tree_spruce=Chop Tree: Spruce
+
+ai.filter.mining=Mining
+ai.filter.craft_charcoal_torch=Craft: Charcoal Torch
+ai.filter.craft_coal_torch=Craft: Coal Torch
+
+ai.filter.butcher_animals=Butcher Animals
+ai.filter.retrieve_cows=Retrieve Cows
+ai.filter.retrieve_pigs=Retrieve Pigs
+ai.filter.retrieve_sheep=Retrieve Sheep
+ai.filter.retrieve_chickens=Retrieve Chickens
