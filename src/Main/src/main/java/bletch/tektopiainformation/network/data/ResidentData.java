@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import bletch.tektopiainformation.utils.TektopiaUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IMerchant;
+import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemHoe;
@@ -50,8 +51,11 @@ public class ResidentData extends EntityData {
 	private static final String NBTTAG_VILLAGE_RESIDENTCANHAVEBED = "villageresidentcanhavebed";
 	private static final String NBTTAG_VILLAGE_RESIDENTBEDPOSITION = "villageresidentbedposition";
 	private static final String NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE = "villageresidentcurrentstructure";
+	private static final String NBTTAG_VILLAGE_RESIDENTCURRENTTASK = "villageresidentcurrenttask";
 	private static final String NBTTAG_VILLAGE_RESIDENTADDPROFCOUNT = "villageresidentaddprofcount";
 	private static final String NBTTAG_VILLAGE_RESIDENTADDPROF = "villageresidentaddprof";
+	private static final String NBTTAG_VILLAGE_RESIDENTAIFILTERCOUNT = "villageresidentaifiltercount";
+	private static final String NBTTAG_VILLAGE_RESIDENTAIFILTER = "villageresidentaifilter";
 	private static final String NBTTAG_VILLAGE_RESIDENTRECIPES = "villageresidentrecipes";
 
 	@SuppressWarnings("rawtypes")
@@ -75,8 +79,10 @@ public class ResidentData extends EntityData {
 	protected Boolean canHaveBed;
 	private BlockPos bedPosition;
 	private BlockPos currentStructure;
+	private String currentTask;
 	
 	private Map<String, Integer> additionalProfessions;
+	private Map<String, Boolean> aiFilters;
 	private MerchantRecipeList recipes;
 	
 	public ResidentData() {
@@ -165,6 +171,10 @@ public class ResidentData extends EntityData {
 		return this.currentStructure;
 	}
 	
+	public String getCurrentTask() {
+		return this.currentTask;
+	}
+	
 	public boolean isBlessed() {
 		return this.blessedLevel > 0;
 	}
@@ -179,6 +189,18 @@ public class ResidentData extends EntityData {
 	
 	public int getAdditionalProfessionsCount() {
 		return this.additionalProfessions == null ? 0 : this.additionalProfessions.size();
+	}
+	
+	public Map<String, Boolean> getAiFilters() {
+		return this.aiFilters == null 
+				? Collections.unmodifiableMap(new LinkedHashMap<String, Boolean>())
+				: Collections.unmodifiableMap(this.aiFilters.entrySet().stream()
+					.sorted((c1 , c2) -> c1.getKey().compareTo(c2.getKey()))
+					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new)));
+	}
+	
+	public int getAiFiltersCount() {
+		return this.aiFilters == null ? 0 : this.aiFilters.size();
 	}
 	
 	public MerchantRecipeList getRecipeList() {
@@ -216,8 +238,10 @@ public class ResidentData extends EntityData {
 		this.canHaveBed = true;
 		this.bedPosition = null;
 		this.currentStructure = null;
+		this.currentTask = null;
 		
 		this.additionalProfessions = new LinkedHashMap<String, Integer>();
+		this.aiFilters = new LinkedHashMap<String, Boolean>(); 
 		this.recipes = null;
 	}
 	
@@ -261,6 +285,12 @@ public class ResidentData extends EntityData {
 			}
 			this.currentStructure = structure == null ? null : structure.getFramePos();
 			
+			for (EntityAITaskEntry task : villager.tasks.taskEntries) {
+				if (task != null && task.action != null && task.using) {
+					this.currentTask = task.action.getClass().getSimpleName();
+				}
+			}
+			
 			for (String professionType : TektopiaUtils.getProfessionTypeNames()) {
 				if (professionType == this.professionType) {
 					// do not include the villagers main profession
@@ -275,6 +305,13 @@ public class ResidentData extends EntityData {
 				}
 				catch (Exception ex) {
 					//do nothing if an error was encountered
+				}
+			}
+			
+			List<String> aiFilters = villager.getAIFilters();
+			if (aiFilters != null && aiFilters.size() > 0) {
+				for (String aiFilter : aiFilters) {
+					this.aiFilters.put(aiFilter, villager.isAIFilterEnabled(aiFilter));
 				}
 			}
 			
@@ -352,6 +389,7 @@ public class ResidentData extends EntityData {
 		this.canHaveBed = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCANHAVEBED) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCANHAVEBED) : true;
 		this.bedPosition = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTBEDPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_RESIDENTBEDPOSITION)) : null;
 		this.currentStructure = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE)) : null;
+		this.currentTask = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCURRENTTASK) ? nbtTag.getString(NBTTAG_VILLAGE_RESIDENTCURRENTTASK) : null;
 		
 		ProfessionType originalProfessionType = null;
 		if (this.professionType != null && this.professionType.trim() != "") {
@@ -383,7 +421,33 @@ public class ResidentData extends EntityData {
 								int level = Integer.parseInt(valueParts[1]);
 								this.additionalProfessions.put(professionType.name(), level);
 							}
-							catch (Exception e) {
+							catch (Exception ex) {
+								// do nothing if conversion error
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		if (nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTAIFILTERCOUNT)) {
+			int count = nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTAIFILTERCOUNT);
+			
+			for (int index = 0; index < count; index++) {
+				String key = NBTTAG_VILLAGE_RESIDENTAIFILTER + "@" + index;
+				
+				if (nbtTag.hasKey(key)) {
+					String value = nbtTag.getString(key);
+					
+					if (value != null && value.contains("@")) {
+						String[] valueParts = value.split("@");
+						
+						if (valueParts.length == 2) {
+							try {
+								Boolean enabled = Boolean.parseBoolean(valueParts[1]);
+								this.aiFilters.put(valueParts[0], enabled);
+							}
+							catch (Exception ex) {
 								// do nothing if conversion error
 							}
 						}
@@ -447,10 +511,11 @@ public class ResidentData extends EntityData {
 		if (this.currentStructure != null) {
 			nbtTag.setLong(NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE, this.currentStructure.toLong());
 		}
+		if (this.currentTask != null) {
+			nbtTag.setString(NBTTAG_VILLAGE_RESIDENTCURRENTTASK, this.currentTask);
+		}
 		
 		if (this.additionalProfessions != null && this.additionalProfessions.size() > 0) {
-			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTADDPROFCOUNT, this.additionalProfessions.size());
-			
 			int index = 0;
 			for (Entry<String, Integer> additionalProfession : this.additionalProfessions.entrySet()) {
 				if (additionalProfession != null) {
@@ -458,6 +523,20 @@ public class ResidentData extends EntityData {
 					index++;
 				}
 			}
+			
+			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTADDPROFCOUNT, index);
+		}
+		
+		if (this.aiFilters != null && this.aiFilters.size() > 0) {
+			int index = 0;
+			for (Entry<String, Boolean> aiFilter : this.aiFilters.entrySet()) {
+				if (aiFilter != null) {
+					nbtTag.setString(NBTTAG_VILLAGE_RESIDENTAIFILTER + "@" + index, aiFilter.getKey() + "@" + aiFilter.getValue());
+					index++;
+				}
+			}
+			
+			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTAIFILTERCOUNT, index);
 		}
 		
 		if (this.recipes != null && !this.recipes.isEmpty()) {
