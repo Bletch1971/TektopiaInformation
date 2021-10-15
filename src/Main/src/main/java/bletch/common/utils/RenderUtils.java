@@ -61,12 +61,22 @@ public class RenderUtils {
 	
 	@SideOnly(Side.CLIENT)
 	public static void renderItemIntoGUI(ItemStack stack, int x, int y) {
-		Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(stack, x, y);
+		renderItemIntoGUI(Minecraft.getMinecraft().getRenderItem(), stack, x, y);
+	}
+	
+	@SideOnly(Side.CLIENT)
+	public static void renderItemIntoGUI(RenderItem renderItem, ItemStack stack, int x, int y) {
+		renderItem.renderItemIntoGUI(stack, x, y);
 	}
 	
 	@SideOnly(Side.CLIENT)
 	public static void renderItemAndEffectIntoGUI(ItemStack stack, int x, int y) {
-		Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
+		renderItemAndEffectIntoGUI(Minecraft.getMinecraft().getRenderItem(), stack, x, y);
+	}
+	
+	@SideOnly(Side.CLIENT)
+	public static void renderItemAndEffectIntoGUI(RenderItem renderItem, ItemStack stack, int x, int y) {
+		renderItem.renderItemAndEffectIntoGUI(stack, x, y);
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -74,8 +84,16 @@ public class RenderUtils {
      * Renders the stack size and/or damage bar for the given ItemStack.
      */
 	public static void renderItemOverlayIntoGUI(FontRenderer fontRenderer, ItemStack stack, int x, int y) {
+    	renderItemOverlayIntoGUI(Minecraft.getMinecraft().getRenderItem(), fontRenderer, stack, x, y);
+	}
+	
+	@SideOnly(Side.CLIENT)
+    /**
+     * Renders the stack size and/or damage bar for the given ItemStack.
+     */
+	public static void renderItemOverlayIntoGUI(RenderItem renderItem, FontRenderer fontRenderer, ItemStack stack, int x, int y) {
     	GlStateManager.pushMatrix();
-		Minecraft.getMinecraft().getRenderItem().renderItemOverlays(fontRenderer, stack, x, y);
+    	renderItem.renderItemOverlays(fontRenderer, stack, x, y);
 		GlStateManager.disableLighting();
         GlStateManager.popMatrix();
 	}

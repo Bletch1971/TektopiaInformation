@@ -1477,9 +1477,6 @@ public class GuiTektopiaBook extends GuiScreen {
                 	int tXL = this.x + (PAGE_LEFTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
                 	int tXR = this.x + (PAGE_RIGHTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
                 	int tY = y;
-
-	            	GlStateManager.pushMatrix();
-        	        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 	
 	            	String modId = enemy.getModId();
 	            	if (modId.equals(ModDetails.MOD_ID_TEKTOPIA))
@@ -1490,6 +1487,9 @@ public class GuiTektopiaBook extends GuiScreen {
 	            	ResourceLocation visitorResource = new ResourceLocation(modId, "textures/enemies/" + className + "_" + level + ".png");
 	                
 	                if (visitorResource != null) {
+		            	GlStateManager.pushMatrix();
+	        	        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+	        	        
 		    	        mc.getTextureManager().bindTexture(visitorResource);
 		                
 		                if (guiPage.isLeftPage()) {
@@ -1498,10 +1498,10 @@ public class GuiTektopiaBook extends GuiScreen {
 		                
 		                if (guiPage.isRightPage()) {
 		                	super.drawModalRectWithCustomSizedTexture(tXR, tY, 0, 0, PROFESSION_WIDTH, PROFESSION_HEIGHT, 56, 90);
-		                }	                	
+		                }	             
+		                
+		                GlStateManager.popMatrix();   	
 	                }
-	                
-	                GlStateManager.popMatrix();
         		}
         	}
         }
@@ -3322,97 +3322,95 @@ public class GuiTektopiaBook extends GuiScreen {
                 }
             	
             	y += Font.normal.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
-                
-        		{
-                	int tXL = this.x + (PAGE_LEFTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
-                	int tXR = this.x + (PAGE_RIGHTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
-                	int tY = y;
+            	
+            	int tXL = this.x + (PAGE_LEFTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
+            	int tXR = this.x + (PAGE_RIGHTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
+            	int tY = y;
 
+            	String gender = resident.isMale() ? "m" : "f";
+                ResourceLocation residentResource = new ResourceLocation(ModDetails.MOD_ID, "textures/professions/" + resident.getProfessionType() + "_" + gender + ".png");
+                
+                if (residentResource != null) {
 	            	GlStateManager.pushMatrix();
         	        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-	
-	            	String gender = resident.isMale() ? "m" : "f";
-	                ResourceLocation residentResource = new ResourceLocation(ModDetails.MOD_ID, "textures/professions/" + resident.getProfessionType() + "_" + gender + ".png");
+        	        
+	    	        mc.getTextureManager().bindTexture(residentResource);
 	                
-	                if (residentResource != null) {
-		    	        mc.getTextureManager().bindTexture(residentResource);
-		                
-		                if (guiPage.isLeftPage()) {
-		                	super.drawModalRectWithCustomSizedTexture(tXL, tY, 0, 0, PROFESSION_WIDTH, PROFESSION_HEIGHT, 56, 90);
-		                }
-		                
-		                if (guiPage.isRightPage()) {
-		                	super.drawModalRectWithCustomSizedTexture(tXR, tY, 0, 0, PROFESSION_WIDTH, PROFESSION_HEIGHT, 56, 90);
-		                }	                	
+	                if (guiPage.isLeftPage()) {
+	                	super.drawModalRectWithCustomSizedTexture(tXL, tY, 0, 0, PROFESSION_WIDTH, PROFESSION_HEIGHT, 56, 90);
 	                }
 	                
-        			tXL = this.x + PAGE_LEFTPAGE_CENTER_X;
-        			tXR = this.x + PAGE_RIGHTPAGE_CENTER_X;
-        			tY = y + 10;
-
-        			if (!this.isSubPageOpen()) {
-        				
-    	                // draw equipment slots
-    	                for (ItemStack piece : resident.getEquipment()) {
-    	                	if (piece != null && piece != ItemStack.EMPTY) {
-    	                		List<String> tooltip = piece.getTooltip(null, TooltipFlags.NORMAL);
-    	                		if (piece.isItemEnchanted() && tooltip != null && tooltip.size() > 0) {
-    	                			tooltip.set(0, TextFormatting.AQUA + tooltip.get(0));
-    	                		}
-
-    	                		if (guiPage.isLeftPage()) {
-    	                			super.itemRender.renderItemAndEffectIntoGUI(piece, tXL, tY);
-    	                			super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, piece, tXL, tY, null);
-    	                			if (tooltip != null && tooltip.size() > 0) {
-    	                				this.tooltips.add(new GuiTooltip(tXL, tY, 16, 16, tooltip));
-    	                			}
-    	                		}
-
-    	                		if (guiPage.isRightPage()) {
-    	                			super.itemRender.renderItemAndEffectIntoGUI(piece, tXR, tY);
-    	                			super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, piece, tXR, tY, null);
-    	                			if (tooltip != null && tooltip.size() > 0) {
-    	                				this.tooltips.add(new GuiTooltip(tXR, tY, 16, 16, tooltip));
-    	                			}
-    	                		}
-    	                	}
-    	                	tY += 20;
-    	                }
-
-    	                tXL += 20;
-    	                tXR += 20;
-    	                tY = y + 70;
-
-    	                // draw armor slots (armor stored backwards)
-    	                for (ItemStack piece : resident.getArmor()) {
-    	                	if (piece != null && piece != ItemStack.EMPTY) {
-    	                		List<String> tooltip = piece.getTooltip(null, TooltipFlags.NORMAL);
-    	                		if (piece.isItemEnchanted() && tooltip != null && tooltip.size() > 0) {
-    	                			tooltip.set(0, TextFormatting.AQUA + tooltip.get(0));
-    	                		}
-
-    	                		if (guiPage.isLeftPage()) {
-    	                			super.itemRender.renderItemAndEffectIntoGUI(piece, tXL, tY);
-    	                			super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, piece, tXL, tY, null);
-    	                			if (tooltip != null && tooltip.size() > 0) {
-    	                				this.tooltips.add(new GuiTooltip(tXL, tY, 16, 16, tooltip));
-    	                			}
-    	                		}
-
-    	                		if (guiPage.isRightPage()) {
-    	                			super.itemRender.renderItemAndEffectIntoGUI(piece, tXR, tY);
-    	                			super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, piece, tXR, tY, null);
-    	                			if (tooltip != null && tooltip.size() > 0) {
-    	                				this.tooltips.add(new GuiTooltip(tXR, tY, 16, 16, tooltip));
-    	                			}
-    	                		}
-    	                	}
-    	                	tY -= 20;
-    	                }
-        			}
+	                if (guiPage.isRightPage()) {
+	                	super.drawModalRectWithCustomSizedTexture(tXR, tY, 0, 0, PROFESSION_WIDTH, PROFESSION_HEIGHT, 56, 90);
+	                }	              
 	                
-	                GlStateManager.popMatrix();
-        		}                
+	                GlStateManager.popMatrix();  	
+                }
+                
+    			tXL = this.x + PAGE_LEFTPAGE_CENTER_X;
+    			tXR = this.x + PAGE_RIGHTPAGE_CENTER_X;
+    			tY = y + 10;
+
+    			if (!this.isSubPageOpen()) {
+    				
+	                // draw equipment slots
+	                for (ItemStack piece : resident.getEquipment()) {
+	                	if (piece != null && piece != ItemStack.EMPTY) {
+	                		List<String> tooltip = piece.getTooltip(null, TooltipFlags.NORMAL);
+	                		if (piece.isItemEnchanted() && tooltip != null && tooltip.size() > 0) {
+	                			tooltip.set(0, TextFormatting.AQUA + tooltip.get(0));
+	                		}
+
+	                		if (guiPage.isLeftPage()) {
+	                			super.itemRender.renderItemAndEffectIntoGUI(piece, tXL, tY);
+	                			super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, piece, tXL, tY, null);
+	                			if (tooltip != null && tooltip.size() > 0) {
+	                				this.tooltips.add(new GuiTooltip(tXL, tY, 16, 16, tooltip));
+	                			}
+	                		}
+
+	                		if (guiPage.isRightPage()) {
+	                			super.itemRender.renderItemAndEffectIntoGUI(piece, tXR, tY);
+	                			super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, piece, tXR, tY, null);
+	                			if (tooltip != null && tooltip.size() > 0) {
+	                				this.tooltips.add(new GuiTooltip(tXR, tY, 16, 16, tooltip));
+	                			}
+	                		}
+	                	}
+	                	tY += 20;
+	                }
+
+	                tXL += 20;
+	                tXR += 20;
+	                tY = y + 70;
+
+	                // draw armor slots (armor stored backwards)
+	                for (ItemStack piece : resident.getArmor()) {
+	                	if (piece != null && piece != ItemStack.EMPTY) {
+	                		List<String> tooltip = piece.getTooltip(null, TooltipFlags.NORMAL);
+	                		if (piece.isItemEnchanted() && tooltip != null && tooltip.size() > 0) {
+	                			tooltip.set(0, TextFormatting.AQUA + tooltip.get(0));
+	                		}
+
+	                		if (guiPage.isLeftPage()) {
+	                			super.itemRender.renderItemAndEffectIntoGUI(piece, tXL, tY);
+	                			super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, piece, tXL, tY, null);
+	                			if (tooltip != null && tooltip.size() > 0) {
+	                				this.tooltips.add(new GuiTooltip(tXL, tY, 16, 16, tooltip));
+	                			}
+	                		}
+
+	                		if (guiPage.isRightPage()) {
+	                			super.itemRender.renderItemAndEffectIntoGUI(piece, tXR, tY);
+	                			super.itemRender.renderItemOverlayIntoGUI(Font.normal.fontRenderer, piece, tXR, tY, null);
+	                			if (tooltip != null && tooltip.size() > 0) {
+	                				this.tooltips.add(new GuiTooltip(tXR, tY, 16, 16, tooltip));
+	                			}
+	                		}
+	                	}
+	                	tY -= 20;
+	                }
+    			}              
                 
 	            String professionLabel = TextUtils.translate("tektopiaBook.residents.profession");
 	            String professionText = "";
@@ -5859,9 +5857,6 @@ public class GuiTektopiaBook extends GuiScreen {
 	                	int tXL = this.x + (PAGE_LEFTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
 	                	int tXR = this.x + (PAGE_RIGHTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
 	                	int tY = y;
-	
-		            	GlStateManager.pushMatrix();
-	        	        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		
 		            	String modId = visitor.getModId();
 		            	if (modId.equals(ModDetails.MOD_ID_TEKTOPIA))
@@ -5872,6 +5867,9 @@ public class GuiTektopiaBook extends GuiScreen {
 		            	ResourceLocation visitorResource = new ResourceLocation(modId, "textures/visitors/" + className + "_" + gender + ".png");
 		                
 		                if (visitorResource != null) {
+			            	GlStateManager.pushMatrix();
+		        	        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		        	        
 			    	        mc.getTextureManager().bindTexture(visitorResource);
 			                
 			                if (guiPage.isLeftPage()) {
@@ -5880,10 +5878,10 @@ public class GuiTektopiaBook extends GuiScreen {
 			                
 			                if (guiPage.isRightPage()) {
 			                	super.drawModalRectWithCustomSizedTexture(tXR, tY, 0, 0, PROFESSION_WIDTH, PROFESSION_HEIGHT, 56, 90);
-			                }	                	
+			                }	      
+			                
+			                GlStateManager.popMatrix();          	
 		                }
-		                
-		                GlStateManager.popMatrix();
 	        		}
 	        		
 	    			// display visitor details
