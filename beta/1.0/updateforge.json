@@ -1,8 +1,8 @@
 {
   "homepage": "https://minecraft.curseforge.com/projects/tektopia-information",
   "promos": {
-    "1.12.2-latest": "1.6.0",
-    "1.12.2-recommended": "1.6.0"
+    "1.12.2-latest": "1.7.0",
+    "1.12.2-recommended": "1.7.0"
   },
   "1.12.2":{
     "0.1.1": "Initial alpha release.",
@@ -13,6 +13,7 @@
     "1.3.1": "Fixed the crash opening the book, when running on dedicated server.",
     "1.4.0": "Added Total Armor Value, Armor Items and Equipment Items to resident pages.",
     "1.5.0": "Cleaned up the book's display. Added new maps at the end of the book. Added more information into the book.",
-    "1.6.0": "Added AI Filter page to Resident pages. Replaced Sleeping line with Task, so you can now see what the villager is currently doing.\nAdded Overcrowding to Structures and Statistics pages.\nAdded mouse click links to most page types to navigate around and a back button.\nFixed the Resident Count on specific pages."
+    "1.6.0": "Added AI Filter page to Resident pages. Replaced Sleeping line with Task, so you can now see what the villager is currently doing.\nAdded Overcrowding to Structures and Statistics pages.\nAdded mouse click links to most page types to navigate around and a back button.\nFixed the Resident Count on specific pages.",
+    "1.7.0": "Fixed Visitor link on Structure detail page.\nAdded current structure to Visitor page.\nAdded tile information to Home detail page.\nChanged tooltip text when link is for the Home page, not a Structure page.\nMore clean-up of the books pages."
   }	
 }
