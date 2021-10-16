@@ -362,6 +362,7 @@ tektopiaBook.visitors.visitortype=Type:
 tektopiaBook.visitors.vendoritems=Items
 tektopiaBook.visitors.professions=Professions (top 4)
 
+tektopiaBook.links.mapdetails=Click to view map location
 tektopiaBook.links.homedetails=Click to view home details
 tektopiaBook.links.professiondetails=Click to view profession details
 tektopiaBook.links.residentdetails=Click to view resident details

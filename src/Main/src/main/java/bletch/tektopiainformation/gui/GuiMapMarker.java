@@ -13,6 +13,7 @@ public class GuiMapMarker extends GuiButton implements Comparable<GuiMapMarker> 
 	private BlockPos position;
 	private GuiTooltip tooltip;
 	private List<GuiMapQuadrant> quadrants;
+	private int priority;
 	
 	public GuiMapMarker(String key) {
 		super(key);
@@ -20,6 +21,7 @@ public class GuiMapMarker extends GuiButton implements Comparable<GuiMapMarker> 
 		this.markerType = GuiMapMarkerType.UNKNOWN;
 		this.position = null;
 		this.tooltip = null;
+		this.priority = 1;
 		setQuadrants();
 	}
 	
@@ -29,6 +31,7 @@ public class GuiMapMarker extends GuiButton implements Comparable<GuiMapMarker> 
 		this.markerType = markerType;
 		this.position = position;
 		this.tooltip = tooltip;
+		this.priority = 1;
 		setQuadrants();
 	}
 	
@@ -50,6 +53,10 @@ public class GuiMapMarker extends GuiButton implements Comparable<GuiMapMarker> 
 		return this.tooltip;
 	}
 	
+	public int getPriority() {
+		return this.priority;
+	}
+	
 	public Boolean isInQuadrant(GuiMapQuadrant quadrant) {
 		return this.quadrants.contains(quadrant);
 	}
@@ -62,6 +69,12 @@ public class GuiMapMarker extends GuiButton implements Comparable<GuiMapMarker> 
 	
 	public GuiMapMarker setPosition(BlockPos position) {
 		this.position = position;
+		
+		return this;
+	}
+	
+	public GuiMapMarker setPriority(int priority) {
+		this.priority = priority;
 		
 		return this;
 	}
@@ -89,6 +102,10 @@ public class GuiMapMarker extends GuiButton implements Comparable<GuiMapMarker> 
     // Override the compareTo method
     public int compareTo(GuiMapMarker marker)
     {
+    	int result = Integer.compare(this.priority, marker.getPriority());
+    	if (result != 0)
+    		return result;
+    	
 		if (this.position.getZ() == marker.position.getZ()) {
         	if (this.position.getX() == marker.position.getX())
         		return 0;
