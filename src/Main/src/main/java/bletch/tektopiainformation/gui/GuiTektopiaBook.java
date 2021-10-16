@@ -1152,7 +1152,7 @@ public class GuiTektopiaBook extends GuiScreen {
 
 			String header = TextUtils.translate("tektopiaBook.economy." + dataKey[0]);
 
-			if (StringUtils.isNullOrWhitespace(header)) {
+			if (!StringUtils.isNullOrWhitespace(header)) {
 				if (!dataKey[1].equals("0") && !StringUtils.isNullOrWhitespace(continued)) {
 					header += " " + continued;
 				}
