@@ -67,12 +67,12 @@ public class StructureData {
 		return this.floorTileCount;
 	}
 	
-	public int getOccupantCount() {
-		return this.occupantCount;
-	}
-	
 	public int getTilesPerVillager() {
 		return this.tilesPerVillager;
+	}
+	
+	public int getOccupantCount() {
+		return this.occupantCount;
 	}
 	
 	public List<ResidentData> getOccupants() {

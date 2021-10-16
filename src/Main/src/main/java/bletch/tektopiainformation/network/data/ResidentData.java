@@ -38,6 +38,7 @@ public class ResidentData extends EntityData {
 	private static final String NBTTAG_VILLAGE_RESIDENTCHILD = "villageresidentchild";
 	private static final String NBTTAG_VILLAGE_RESIDENTCAPTAIN = "villageresidentcaptain";
 	private static final String NBTTAG_VILLAGE_RESIDENTVENDOR = "villageresidentvendor";
+	private static final String NBTTAG_VILLAGE_RESIDENTVISITOR = "villageresidentvisitor";
 	private static final String NBTTAG_VILLAGE_RESIDENTSLEEPING = "villageresidentsleeping";
 	private static final String NBTTAG_VILLAGE_RESIDENTBASELEVEL = "villageresidentbaselevel";
 	private static final String NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL = "villageresidentblessedlevel";
@@ -66,6 +67,7 @@ public class ResidentData extends EntityData {
 	private boolean isChild;
 	private boolean isCaptain;
 	private boolean isVendor;
+	private boolean isVisitor;
 	private boolean isSleeping;
 	private int baseLevel;
 	private int blessedLevel;
@@ -113,6 +115,10 @@ public class ResidentData extends EntityData {
 	
 	public boolean isVendor() {
 		return this.isVendor;
+	}
+	
+	public boolean isVisitor() {
+		return this.isVisitor;
 	}
 	
 	public boolean isSleeping() {
@@ -225,6 +231,7 @@ public class ResidentData extends EntityData {
 		this.isChild = false;
 		this.isCaptain = false;
 		this.isVendor = false;
+		this.isVisitor = false;
 		this.isSleeping = false;
 		this.baseLevel = 0;
 		this.blessedLevel = 0;
@@ -262,6 +269,7 @@ public class ResidentData extends EntityData {
 				this.isCaptain = villagerProfessionType == ProfessionType.CAPTAIN || villager instanceof EntityGuard && ((EntityGuard)villager).isCaptain();
 			}
 			this.isVendor = villager.isRole(VillagerRole.VENDOR);
+			this.isVisitor = villager.isRole(VillagerRole.VISITOR);
 			this.isSleeping = villager.isSleeping();
 			if (villagerProfessionType != null) {
 				this.level = villager.getSkill(villagerProfessionType);
@@ -376,6 +384,7 @@ public class ResidentData extends EntityData {
 		this.isChild = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCHILD) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCHILD) : false;
 		this.isCaptain = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCAPTAIN) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCAPTAIN) : false;
 		this.isVendor = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTVENDOR) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTVENDOR) : false;
+		this.isVisitor = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTVISITOR) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTVISITOR) : false;
 		this.isSleeping = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTSLEEPING) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTSLEEPING) : false;
 		this.baseLevel = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTBASELEVEL) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTBASELEVEL) : 0;
 		this.blessedLevel = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL) : 0;
@@ -494,6 +503,7 @@ public class ResidentData extends EntityData {
 		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTCHILD, this.isChild);
 		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTCAPTAIN, this.isCaptain);
 		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTVENDOR, this.isVendor);
+		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTVISITOR, this.isVisitor);
 		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTSLEEPING, this.isSleeping);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTBASELEVEL, this.baseLevel);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL, this.blessedLevel);

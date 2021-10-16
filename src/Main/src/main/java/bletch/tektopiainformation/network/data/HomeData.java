@@ -23,6 +23,7 @@ public class HomeData {
 	private static final String NBTTAG_VILLAGE_HOMEPOSITION = "villagehomeposition";
 	private static final String NBTTAG_VILLAGE_HOMEVALID = "villagehomevalid";
 	private static final String NBTTAG_VILLAGE_HOMEFLOORTILECOUNT = "villagehomefloortilecount";
+	private static final String NBTTAG_VILLAGE_HOMETILESPERVILLAGER = "villagehometilespervillager";
 	private static final String NBTTAG_VILLAGE_HOMEMAXBEDS = "villagehomemaxbeds";
 	private static final String NBTTAG_VILLAGE_HOMERESIDENTSCOUNT = "villagehomeresidentscount";
 	private static final String NBTTAG_VILLAGE_HOMEFULL = "villagehomefull";
@@ -37,6 +38,7 @@ public class HomeData {
 	private boolean isValid;
 	private int floorTileCount;
 	private int maxBeds;
+	private int tilesPerVillager;
 	private int residentsCount;
 	private boolean isFull;
 
@@ -77,6 +79,10 @@ public class HomeData {
 	
 	public int getMaxBeds() {
 		return this.maxBeds;
+	}
+	
+	public int getTilesPerVillager() {
+		return this.tilesPerVillager;
 	}
 	
 	public int getResidentsCount() {
@@ -136,6 +142,21 @@ public class HomeData {
 				.count();
 	}
 	
+	public int getDensityRatio() {
+		if (this.tilesPerVillager == 0 || this.maxBeds == 0)
+			return 0;
+		
+		return this.floorTileCount / this.maxBeds;
+	}
+	
+	public Boolean isOvercrowded() {
+		if (this.tilesPerVillager == 0 || this.maxBeds == 0)
+			return false;
+		
+		int densityRatio = this.floorTileCount / this.maxBeds;
+		return (densityRatio < this.tilesPerVillager);
+	}
+	
 	private void clearData() {
 		this.homeId = rand.nextInt();
 		this.structureType = null;
@@ -143,6 +164,7 @@ public class HomeData {
 		this.isValid = false;
 		this.floorTileCount = 0;
 		this.maxBeds = 0;
+		this.tilesPerVillager = 0;
 		this.residentsCount = 0;
 		this.isFull = this.residentsCount >= this.maxBeds;
 		
@@ -163,6 +185,8 @@ public class HomeData {
 			
 			List<BlockPos> floorTiles = TektopiaUtils.getStructureFloorTiles(structure);
 			this.floorTileCount = floorTiles == null ? 0 : floorTiles.size();
+
+			this.tilesPerVillager = structure.type.tilesPerVillager;
 			
 			if (structure instanceof VillageStructureBarracks) {
 				VillageStructureBarracks barracks = (VillageStructureBarracks)structure;
@@ -205,7 +229,7 @@ public class HomeData {
 		this.framePosition = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_HOMEPOSITION)) : null;
 		this.isValid = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEVALID) ? nbtTag.getBoolean(NBTTAG_VILLAGE_HOMEVALID) : false;
 		this.floorTileCount = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEFLOORTILECOUNT) ? nbtTag.getInteger(NBTTAG_VILLAGE_HOMEFLOORTILECOUNT) : 0;
-
+		this.tilesPerVillager = nbtTag.hasKey(NBTTAG_VILLAGE_HOMETILESPERVILLAGER) ? nbtTag.getInteger(NBTTAG_VILLAGE_HOMETILESPERVILLAGER) : 0;
 		this.maxBeds = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEMAXBEDS) ? nbtTag.getInteger(NBTTAG_VILLAGE_HOMEMAXBEDS) : 0;
 		this.residentsCount = nbtTag.hasKey(NBTTAG_VILLAGE_HOMERESIDENTSCOUNT) ? nbtTag.getInteger(NBTTAG_VILLAGE_HOMERESIDENTSCOUNT) : 0;
 		this.isFull = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEFULL) ? nbtTag.getBoolean(NBTTAG_VILLAGE_HOMEFULL) : false;
@@ -249,6 +273,7 @@ public class HomeData {
 		}
 		nbtTag.setBoolean(NBTTAG_VILLAGE_HOMEVALID, this.isValid);
 		nbtTag.setInteger(NBTTAG_VILLAGE_HOMEFLOORTILECOUNT, this.floorTileCount);
+		nbtTag.setInteger(NBTTAG_VILLAGE_HOMETILESPERVILLAGER, this.tilesPerVillager);
 
 		nbtTag.setInteger(NBTTAG_VILLAGE_HOMEMAXBEDS, this.maxBeds);
 		nbtTag.setInteger(NBTTAG_VILLAGE_HOMERESIDENTSCOUNT, this.residentsCount);
