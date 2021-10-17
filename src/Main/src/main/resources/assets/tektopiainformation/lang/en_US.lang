@@ -273,6 +273,11 @@ tektopiaBook.map.filter.showresidents=Show Residents
 tektopiaBook.map.filter.showstructures=Show Structures
 tektopiaBook.map.filter.showtownhall=Show Town Hall
 tektopiaBook.map.filter.showvisitors=Show Visitors
+tektopiaBook.map.options=Options
+tektopiaBook.map.options.clearselected=Clear Selected
+tektopiaBook.map.options.clearselectedtooltip=Click to clear the selected structure/entity
+tektopiaBook.map.options.showselectedonly=Only Show Selected
+tektopiaBook.map.options.showselectedalways=Always Show Selected
 
 tektopiaBook.professions.total=Total Residents:
 tektopiaBook.professions.professiontypes=Profession Types
