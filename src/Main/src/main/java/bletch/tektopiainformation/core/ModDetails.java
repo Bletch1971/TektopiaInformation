@@ -5,7 +5,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class ModDetails {
 	private static final int VersionMajor = 1;
-	private static final int VersionMinor = 7;
+	private static final int VersionMinor = 8;
 	private static final int VersionRevision = 0;
 
 	public static final String MOD_ID = "tektopiainformation";
