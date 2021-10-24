@@ -304,4 +304,62 @@ public class TektopiaUtils {
 		return null;
 	}
 	
+	public static int getVillagerSleepOffset(EntityVillagerTek villager) {
+		if (villager == null) {
+			return 0;
+		}
+		
+		try {
+			Field field = EntityVillagerTek.class.getDeclaredField("sleepOffset");
+			if (field != null) {
+				field.setAccessible(true);
+				
+				Object fieldValue = field.get(villager);
+				if (fieldValue != null && fieldValue instanceof Integer) {
+					return (int)fieldValue;
+				}
+			}
+		}
+		catch (Exception ex) {
+			//do nothing if an error was encountered
+		}
+		
+		return 0;
+	}
+
+	public static long fixTime(long time) {
+		while(time > 24000L) {
+			time -= 24000L;
+		}
+
+		while(time < 0L) {
+			time += 24000L;
+		}
+
+		return time;
+	}
+
+	public static int fixTime(int time) {
+		while(time > 24000) {
+			time -= 24000;
+		}
+
+		while(time < 0L) {
+			time += 24000;
+		}
+
+		return time;
+	}
+
+	public static boolean isTimeOfDay(long timeOfDay, long startTime, long endTime) {
+		startTime = fixTime(startTime);
+		endTime = fixTime(endTime);
+		
+		if (endTime > startTime) {
+			return timeOfDay >= startTime && timeOfDay <= endTime;
+		} else {
+			return timeOfDay >= startTime || timeOfDay <= endTime;
+		}
+	}
+	
 }

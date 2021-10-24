@@ -1,6 +1,8 @@
 package bletch.tektopiainformation.network.data;
 
 import java.io.IOException;
+
+import bletch.tektopiainformation.core.ModConfig;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -8,10 +10,12 @@ import net.tangotek.tektopia.Village;
 import net.tangotek.tektopia.entities.EntityVillageNavigator;
 
 public class VillageData {
+	public static final float MC_TICKS_PER_SECOND = 1000.0F / 60.0F / 60.0F;
 
 	private static final String NBTTAG_VILLAGE_NAME = "villagename";
 	private static final String NBTTAG_VILLAGE_ORIGIN = "villageorigin";
 	private static final String NBTTAG_VILLAGE_SIZE = "villagesize";
+	private static final String NBTTAG_VILLAGE_WORLDTIME = "villageworldtime";
 
 	private static final String NBTTAG_ENTITYID = "entityid";
 	private static final String NBTTAG_BEDPOSITION = "bedposition";
@@ -22,6 +26,7 @@ public class VillageData {
 	private String villageName;
 	private BlockPos villageOrigin;
 	private int villageSize;
+	private long worldTime;
 	
 	private StructuresData structuresData;
 	private HomesData homesData;
@@ -59,6 +64,22 @@ public class VillageData {
 	
 	public int getVillageSize() {
 		return this.villageSize;
+	}
+	
+	public long getVillageDays() {
+		return (long) Math.max(1.0F, ((float)this.worldTime / 24000.0F) + 1.0F);
+	}
+	
+	public long getVillageSeconds() {
+		return (long) Math.max(0.0F, ((float)this.worldTime % 24000.0F) / MC_TICKS_PER_SECOND);
+	}
+	
+	public long getVillageTicks() {
+		return (long) Math.max(0.0F, (float)this.worldTime % 24000.0F);
+	}
+	
+	public long getWorldTime() {
+		return this.worldTime;
 	}
 	
 	public BlockPos getVillageNorthWestCorner() {
@@ -166,6 +187,7 @@ public class VillageData {
 		this.villageName = "";
 		this.villageOrigin = null;
 		this.villageSize = 0;
+		this.worldTime = -1;
 		
 		ClearAssignments();
 		
@@ -186,6 +208,8 @@ public class VillageData {
 			this.villageName = village.getName();
 			this.villageOrigin = village.getOrigin();
 			this.villageSize = village.getSize();
+			
+			this.worldTime = village.getWorld().getTotalWorldTime();
 		}
 		
 		this.structuresData.populateData(village);
@@ -193,7 +217,9 @@ public class VillageData {
 		this.residentsData.populateData(village);
 		this.economyData.populateData(village);
 		this.visitorsData.populateData(village);
-		this.enemiesData.populateData(village);
+		
+		if (ModConfig.gui.tektopiaInformationBook.showEnemies)
+			this.enemiesData.populateData(village);
 	}
 	
 	public void readBuffer(PacketBuffer buffer) throws IOException {
@@ -216,6 +242,7 @@ public class VillageData {
 		this.villageName = nbtTag.hasKey(NBTTAG_VILLAGE_NAME) ? nbtTag.getString(NBTTAG_VILLAGE_NAME) : "";
 		this.villageOrigin = nbtTag.hasKey(NBTTAG_VILLAGE_ORIGIN) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_ORIGIN)) : null;
 		this.villageSize = nbtTag.hasKey(NBTTAG_VILLAGE_SIZE) ? nbtTag.getInteger(NBTTAG_VILLAGE_SIZE) : 0;
+		this.worldTime = nbtTag.hasKey(NBTTAG_VILLAGE_WORLDTIME) ? nbtTag.getLong(NBTTAG_VILLAGE_WORLDTIME) : -1;
 		
 		this.entityId = nbtTag.hasKey(NBTTAG_ENTITYID) ? nbtTag.getInteger(NBTTAG_ENTITYID) : 0;
 		this.bedPosition = nbtTag.hasKey(NBTTAG_BEDPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_BEDPOSITION)) : null;
@@ -251,6 +278,7 @@ public class VillageData {
 			nbtTag.setLong(NBTTAG_VILLAGE_ORIGIN, this.villageOrigin.toLong());
 		}
 		nbtTag.setInteger(NBTTAG_VILLAGE_SIZE, this.villageSize);
+		nbtTag.setLong(NBTTAG_VILLAGE_WORLDTIME, this.worldTime);
 		
 		nbtTag.setInteger(NBTTAG_ENTITYID, this.entityId);
 		if (this.bedPosition != null) {

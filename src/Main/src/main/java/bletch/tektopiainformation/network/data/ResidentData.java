@@ -49,6 +49,12 @@ public class ResidentData extends EntityData {
 	private static final String NBTTAG_VILLAGE_RESIDENTMAXHAPPY = "villageresidentmaxhappy";
 	private static final String NBTTAG_VILLAGE_RESIDENTINTELLIGENCE = "villageresidentintellegience";
 	private static final String NBTTAG_VILLAGE_RESIDENTMAXINTELLIGENCE = "villageresidentmaxintellegience";
+
+	private static final String NBTTAG_VILLAGE_RESIDENTWORKSTART = "villageresidentworkstart";
+	private static final String NBTTAG_VILLAGE_RESIDENTWORKFINISH = "villageresidentworkfinish";
+	private static final String NBTTAG_VILLAGE_RESIDENTSLEEPSTART = "villageresidentsleepstart";
+	private static final String NBTTAG_VILLAGE_RESIDENTSLEEPFINISH = "villageresidentsleepfinish";
+	
 	private static final String NBTTAG_VILLAGE_RESIDENTCANHAVEBED = "villageresidentcanhavebed";
 	private static final String NBTTAG_VILLAGE_RESIDENTBEDPOSITION = "villageresidentbedposition";
 	private static final String NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE = "villageresidentcurrentstructure";
@@ -78,6 +84,11 @@ public class ResidentData extends EntityData {
 	private int maxHappy;
 	private int intelligence;
 	private int maxIntelligence;
+	private int workStartTime;
+	private int workFinishTime;
+	private int sleepStartTime;
+	private int sleepFinishTime;
+	
 	protected Boolean canHaveBed;
 	private BlockPos bedPosition;
 	private BlockPos currentStructure;
@@ -159,6 +170,38 @@ public class ResidentData extends EntityData {
 	
 	public int getMaxIntelligence() {
 		return this.maxIntelligence;
+	}
+
+	public int getWorkStartSeconds() {
+		return (int) Math.max(0.0F, ((float)this.workStartTime) / VillageData.MC_TICKS_PER_SECOND);
+	}
+
+	public int getWorkStartTicks() {
+		return (int) Math.max(0.0F, (float)this.workStartTime);
+	}
+
+	public int getWorkFinishSeconds() {
+		return (int) Math.max(0.0F, ((float)this.workFinishTime) / VillageData.MC_TICKS_PER_SECOND);
+	}
+
+	public int getWorkFinishTicks() {
+		return (int) Math.max(0.0F, (float)this.workFinishTime);
+	}
+
+	public int getSleepStartSeconds() {
+		return (int) Math.max(0.0F, ((float)this.sleepStartTime) / VillageData.MC_TICKS_PER_SECOND);
+	}
+
+	public int getSleepStartTicks() {
+		return (int) Math.max(0.0F, (float)this.sleepStartTime);
+	}
+
+	public int getSleepFinishSeconds() {
+		return (int) Math.max(0.0F, ((float)this.sleepFinishTime) / VillageData.MC_TICKS_PER_SECOND);
+	}
+
+	public int getSleepFinishTicks() {
+		return (int) Math.max(0.0F, (float)this.sleepFinishTime);
 	}
 	
 	public boolean getCanHaveBed() {
@@ -242,6 +285,11 @@ public class ResidentData extends EntityData {
 		this.maxHappy = 100;
 		this.intelligence = 0;
 		this.maxIntelligence = 100;
+		this.workStartTime = 0;
+		this.workFinishTime = 0;
+		this.sleepStartTime = 0;
+		this.sleepFinishTime = 0;
+		
 		this.canHaveBed = true;
 		this.bedPosition = null;
 		this.currentStructure = null;
@@ -285,6 +333,13 @@ public class ResidentData extends EntityData {
 			this.maxHappy = villager.getMaxHappy();
 			this.intelligence = villager.getIntelligence();
 			this.maxIntelligence = villager.getMaxIntelligence();
+			
+			int sleepOffset = TektopiaUtils.getVillagerSleepOffset(villager);
+			this.workStartTime = TektopiaUtils.fixTime(EntityVillagerTek.WORK_START_TIME + sleepOffset);
+			this.workFinishTime = TektopiaUtils.fixTime(EntityVillagerTek.WORK_END_TIME + sleepOffset);
+			this.sleepStartTime = TektopiaUtils.fixTime(EntityVillagerTek.SLEEP_START_TIME + sleepOffset);
+			this.sleepFinishTime = TektopiaUtils.fixTime(EntityVillagerTek.SLEEP_END_TIME + sleepOffset);
+			
 			this.bedPosition = villager.getBedPos();
 			
 			VillageStructure structure = villager.getCurrentStructure();
@@ -395,6 +450,11 @@ public class ResidentData extends EntityData {
 		this.maxHappy = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTMAXHAPPY) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTMAXHAPPY) : 0;
 		this.intelligence = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTINTELLIGENCE) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTINTELLIGENCE) : 0;
 		this.maxIntelligence = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTMAXINTELLIGENCE) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTMAXINTELLIGENCE) : 0;
+		this.workStartTime = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTWORKSTART) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTWORKSTART) : 0;
+		this.workFinishTime = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTWORKFINISH) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTWORKFINISH) : 0;
+		this.sleepStartTime = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTSLEEPSTART) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTSLEEPSTART) : 0;
+		this.sleepFinishTime = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTSLEEPFINISH) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTSLEEPFINISH) : 0;
+		
 		this.canHaveBed = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCANHAVEBED) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCANHAVEBED) : true;
 		this.bedPosition = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTBEDPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_RESIDENTBEDPOSITION)) : null;
 		this.currentStructure = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE)) : null;
@@ -514,6 +574,11 @@ public class ResidentData extends EntityData {
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTMAXHAPPY, this.maxHappy);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTINTELLIGENCE, this.intelligence);
 		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTMAXINTELLIGENCE, this.maxIntelligence);
+		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTWORKSTART, this.workStartTime);
+		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTWORKFINISH, this.workFinishTime);
+		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTSLEEPSTART, this.sleepStartTime);
+		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTSLEEPFINISH, this.sleepFinishTime);
+		
 		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTCANHAVEBED, this.canHaveBed);
 		if (this.bedPosition != null) {
 			nbtTag.setLong(NBTTAG_VILLAGE_RESIDENTBEDPOSITION, this.bedPosition.toLong());
