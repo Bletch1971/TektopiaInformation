@@ -160,6 +160,8 @@ config.gui.tektopiaInformationBook=TekTopia Information Book
 config.gui.tektopiaInformationBook.tooltip=TekTopia Information Book settings
 config.gui.tektopiaInformationBook.enableTektopiaInformationBook=Enable TekTopia Information Book
 config.gui.tektopiaInformationBook.enableTektopiaInformationBook.tooltip=If true, will show the TekTopia Information Book when the player right-clicks a villager with a book in hand. When connected to a server, both the client and server must have this option enabled to display to information book.
+config.gui.tektopiaInformationBook.doesGuiPauseGame=Does Opening Book Pause Game
+config.gui.tektopiaInformationBook.doesGuiPauseGame.tooltip=If true, opening the book will pause the game when in single-player.
 config.gui.tektopiaInformationBook.showEnemies=Enemy Details Visible
 config.gui.tektopiaInformationBook.showEnemies.tooltip=If true, enemies will be shown in the book; otherwise the enemies section will be blank.
 

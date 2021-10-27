@@ -216,6 +216,10 @@ public class ModConfig {
 			@Config.LangKey("config.gui.tektopiaInformationBook.enableTektopiaInformationBook")
 			public boolean enableTektopiaInformationBook = true;
 			
+			@Config.Comment("If true, opening the book will pause the game when in single-player.")
+			@Config.LangKey("config.gui.tektopiaInformationBook.doesGuiPauseGame")
+			public boolean doesGuiPauseGame = true;
+			
 			@Config.Comment("If true, enemies will be shown in the book; otherwise the enemies section will be blank.")
 			@Config.LangKey("config.gui.tektopiaInformationBook.showEnemies")
 			public boolean showEnemies = true;

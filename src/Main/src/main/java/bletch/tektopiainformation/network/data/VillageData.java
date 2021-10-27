@@ -209,7 +209,7 @@ public class VillageData {
 			this.villageOrigin = village.getOrigin();
 			this.villageSize = village.getSize();
 			
-			this.worldTime = village.getWorld().getTotalWorldTime();
+			this.worldTime = village.getWorld().getWorldTime();
 		}
 		
 		this.structuresData.populateData(village);

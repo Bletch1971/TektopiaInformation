@@ -18,6 +18,7 @@ import bletch.common.utils.LoggerUtils;
 import bletch.common.utils.RenderUtils;
 import bletch.common.utils.StringUtils;
 import bletch.common.utils.TextUtils;
+import bletch.tektopiainformation.core.ModConfig;
 import bletch.tektopiainformation.core.ModDetails;
 import bletch.tektopiainformation.core.ModSounds;
 import bletch.tektopiainformation.enums.GuiMapMarkerType;
@@ -282,7 +283,7 @@ public class GuiTektopiaBook extends GuiScreen {
 	 */
 	@Override
 	public boolean doesGuiPauseGame() {
-		return true;
+		return ModConfig.gui.tektopiaInformationBook.doesGuiPauseGame;
 	}
 
 	/**
@@ -5731,9 +5732,10 @@ public class GuiTektopiaBook extends GuiScreen {
 				
 				dataInformation.add(villageTimeLabel 
 						+ "|" + villageTimeValue.format(DateTimeFormatter.ofPattern("HH:mm:ss")) 
+						+ "|" + (ModConfig.debug.enableDebug ? "village ticks: " + this.villageData.getVillageTicks() : "")
 						+ "|" 
-						+ "|" 
-						+ "|" + villageTimeValue.format(DateTimeFormatter.ofPattern("h:mm:ss a")));
+						+ "|" + villageTimeValue.format(DateTimeFormatter.ofPattern("h:mm:ss a"))
+						+ "|" + (ModConfig.debug.enableDebug ? "world ticks: " + this.villageData.getWorldTime() : ""));
 			}
 			break;
 		case BOOKMARK_KEY_VISITORS:
@@ -6490,6 +6492,32 @@ public class GuiTektopiaBook extends GuiScreen {
 						if (guiPage.isRightPage()) {
 							Font.small.printLeft(intelligenceLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y);
 							Font.small.printLeft(intelligenceText, this.x + PAGE_RIGHTPAGE_LEFTCENTER_X + indentX, y); 
+						}
+					}
+
+					y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+					
+					String workTimeLabel = TextUtils.translate("tektopiaBook.residents.worktime");
+					String workTimeText = "";
+
+					if (!StringUtils.isNullOrWhitespace(workTimeLabel)) {
+						LocalTime startTimeValue = java.time.LocalTime.of(6, 0).plusSeconds(visitor.getWorkStartSeconds());
+						LocalTime finishTimeValue = java.time.LocalTime.of(6, 0).plusSeconds(visitor.getWorkFinishSeconds());
+						
+						workTimeText += startTimeValue.format(DateTimeFormatter.ofPattern("HH:mm:ss")) 
+								+ " - " + finishTimeValue.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
+						if (TektopiaUtils.isTimeOfDay(this.villageData.getVillageTicks(), visitor.getWorkStartTicks(), visitor.getWorkFinishTicks()))
+							workTimeText = TextFormatting.DARK_AQUA + workTimeText;
+
+						if (guiPage.isLeftPage()) {
+							Font.small.printLeft(workTimeLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y); 
+							Font.small.printLeft(workTimeText, this.x + PAGE_LEFTPAGE_LEFTCENTER_X + indentX, y); 
+						}
+
+						if (guiPage.isRightPage()) {
+							Font.small.printLeft(workTimeLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y); 
+							Font.small.printLeft(workTimeText, this.x + PAGE_RIGHTPAGE_LEFTCENTER_X + indentX, y);
 						}
 					}
 
