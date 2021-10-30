@@ -313,6 +313,7 @@ tektopiaBook.residents.home=Home Structure:
 tektopiaBook.residents.bed=Bed Position:
 tektopiaBook.residents.position=Current Position:
 tektopiaBook.residents.structure=Current Structure:
+tektopiaBook.residents.recenteats=Recent Eats (last 5)
 tektopiaBook.residents.additionalprofessions=Additional Professions (top 4)
 tektopiaBook.residents.viewaifilters=View AI Filters
 

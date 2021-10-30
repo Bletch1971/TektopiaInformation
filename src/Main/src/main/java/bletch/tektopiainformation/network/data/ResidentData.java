@@ -14,6 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemPickaxe;
@@ -67,6 +68,8 @@ public class ResidentData extends EntityData {
 	private static final String NBTTAG_VILLAGE_RESIDENTRECIPES = "villageresidentrecipes";
 	private static final String NBTTAG_VILLAGE_RESIDENTINVENTORYCOUNT = "villageresidentinventorycount";
 	private static final String NBTTAG_VILLAGE_RESIDENTINVENTORY = "villageresidentinventory";
+	private static final String NBTTAG_VILLAGE_RESIDENTRECENTEATSCOUNT = "villageresidentrecenteatscount";
+	private static final String NBTTAG_VILLAGE_RESIDENTRECENTEATS = "villageresidentrecenteats";
 
 	@SuppressWarnings("rawtypes")
 	private static final List<Class> toolItemClasses = Arrays.asList(ItemAxe.class, ItemHoe.class, ItemSword.class, ItemPickaxe.class, ItemShears.class);
@@ -101,6 +104,7 @@ public class ResidentData extends EntityData {
 	private Map<String, Boolean> aiFilters;
 	private MerchantRecipeList recipes;
 	private List<ItemStack> inventory;
+	private List<Integer> recentEats;
 	
 	public ResidentData() {
 		super();
@@ -264,6 +268,12 @@ public class ResidentData extends EntityData {
 		return this.inventory;
 	}
 	
+	public List<ItemStack> getRecentEats() {
+		return this.recentEats.stream()
+				.map(itemId -> new ItemStack(Item.getItemById(itemId)))
+				.collect(Collectors.toList());
+	}
+	
 	public EntityVillagerTek getVillagerEntity() {
 		if (entityList != null && entityList.size() > 0) {
 			return (EntityVillagerTek) entityList.stream()
@@ -307,6 +317,7 @@ public class ResidentData extends EntityData {
 		this.aiFilters = new LinkedHashMap<String, Boolean>(); 
 		this.recipes = null;
 		this.inventory = null;
+		this.recentEats = new ArrayList<Integer>();
 	}
 	
 	protected void populateData(EntityVillagerTek villager) {
@@ -441,6 +452,8 @@ public class ResidentData extends EntityData {
 					this.inventory.add(inventory.getStackInSlot(slot).copy());
 				}
 			}
+			
+			this.recentEats.addAll(TektopiaUtils.getVillagerRecentEats(villager));
 		}
 	}
 	
@@ -565,6 +578,18 @@ public class ResidentData extends EntityData {
 			}
 		}
 		
+		if (nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTRECENTEATSCOUNT)) {
+			int count = nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTRECENTEATSCOUNT);
+			
+			for (int index = 0; index < count; index++) {
+				String key = NBTTAG_VILLAGE_RESIDENTRECENTEATS + "@" + index;
+				
+				if (nbtTag.hasKey(key)) {
+					this.recentEats.add(nbtTag.getInteger(key));
+				}
+			}
+		}
+		
 		if (originalProfessionType != null) {
 			if (entityList != null && entityList.size() > 0) {
 				Entity entity = entityList.stream()
@@ -663,6 +688,16 @@ public class ResidentData extends EntityData {
 					
 					nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTINVENTORY + "@" + index, value);
 				}
+				index++;
+			}
+		}
+		
+		if (this.recentEats != null && !this.recentEats.isEmpty()) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTRECENTEATSCOUNT, this.recentEats.size());
+			
+			int index = 0;
+			for (Integer itemId : this.recentEats) {				
+				nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTRECENTEATS + "@" + index, itemId);
 				index++;
 			}
 		}

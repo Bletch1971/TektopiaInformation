@@ -39,7 +39,10 @@ import bletch.tektopiainformation.network.data.VillageData;
 import bletch.tektopiainformation.utils.TektopiaUtils;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -164,7 +167,7 @@ public class GuiTektopiaBook extends GuiScreen {
 	private static final int LABEL_TRAILINGSPACE_X = 10;
 
 	private static final int LINE_SPACE_Y = 2;
-	private static final int LINE_SPACE_Y_HEADER = 5;
+	private static final int LINE_SPACE_Y_HEADER = 4;
 	private static final int LINE_SPACE_Y_IMAGE = 6;
 
 	private static final int STRUCTURETYPES_PER_PAGE = 24;
@@ -184,6 +187,7 @@ public class GuiTektopiaBook extends GuiScreen {
 	private static final int STATSTRUCTURES_PER_PAGE = 20;
 	private static final int RESIDENTVENDORLIST_PER_PAGE = 15;
 	private static final int SALESHISTORY_PER_PAGE = 16;
+	private static final int RECENTEATS_PER_PAGE = 5;
 	private static final int ADDITIONALPROFESSIONS_PER_PAGE = 4;
 	private static final int AIFILTERLIST_PER_PAGE = 24;
 
@@ -4173,6 +4177,67 @@ public class GuiTektopiaBook extends GuiScreen {
 				y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y + LINE_SPACE_Y_HEADER;
 
 				if (!resident.isVendor()) {
+					String recentEats = TextUtils.translate("tektopiaBook.residents.recenteats");
+
+					if (!StringUtils.isNullOrWhitespace(recentEats)) {
+						recentEats = TextFormatting.DARK_BLUE + recentEats;
+
+						if (guiPage.isLeftPage()) {
+							Font.small.printLeft(recentEats, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X, y); 
+						}
+
+						if (guiPage.isRightPage()) {
+							Font.small.printLeft(recentEats, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X, y); 
+						}
+
+						y += Font.small.fontRenderer.FONT_HEIGHT;
+
+						tXL = this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX;
+						tXR = this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX;
+						tY = y;
+						
+						int index = 1;
+						for (ItemStack recentEat : resident.getRecentEats()) {
+							if (index > RECENTEATS_PER_PAGE) {
+								// only display the top recent eats
+								break;
+							}
+							
+							if (recentEat != null && recentEat != ItemStack.EMPTY) {
+								List<String> tooltip = recentEat.getTooltip(null, TooltipFlags.NORMAL);
+								if (recentEat.isItemEnchanted() && tooltip != null && tooltip.size() > 0) {
+									tooltip.set(0, TextFormatting.AQUA + tooltip.get(0));
+								}
+
+								if (guiPage.isLeftPage() && (!this.isSubPageOpen() || index < 4)) {
+									RenderUtils.renderItemAndEffectIntoGUI(recentEat, tXL, tY);
+									RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, recentEat, tXL, tY, null);
+									if (!this.isSubPageOpen() && tooltip != null && tooltip.size() > 0) {
+										this.tooltips.add(new GuiTooltip(tXL, tY, 16, 16, tooltip));
+									}
+								}
+
+								if (guiPage.isRightPage() && !this.isSubPageOpen()) {
+									RenderUtils.renderItemAndEffectIntoGUI(recentEat, tXR, tY);
+									RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, recentEat, tXR, tY, null);
+									if (!this.isSubPageOpen() && tooltip != null && tooltip.size() > 0) {
+										this.tooltips.add(new GuiTooltip(tXR, tY, 16, 16, tooltip));
+									}
+								}
+							}
+							
+							tXL += 20;
+							tXR += 20;
+							
+							index++;
+						}
+						
+						y += 20;
+						
+					} else {
+						y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y + 20;
+					}
+					
 					String additionalProfessions = TextUtils.translate("tektopiaBook.residents.additionalprofessions");
 
 					if (!StringUtils.isNullOrWhitespace(additionalProfessions)) {

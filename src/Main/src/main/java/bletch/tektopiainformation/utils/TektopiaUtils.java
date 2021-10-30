@@ -98,25 +98,7 @@ public class TektopiaUtils {
 				.filter(t -> t.isHome() || t == VillageStructureType.BARRACKS)
 				.sorted((c1, c2) -> c1.name().compareTo(c2.name()))
 				.collect(Collectors.toList());
-	}
-	
-//	public static Map<VillageStructureType, List<VillageStructure>> getHomeStructures(Village village) {
-//		if (village == null) {
-//			return new HashMap<VillageStructureType, List<VillageStructure>>(); 
-//		}
-//		
-//		HashMap<VillageStructureType, List<VillageStructure>> structuresList = new HashMap<VillageStructureType, List<VillageStructure>>(); 
-//
-//		for (VillageStructureType structureType : getHomeStructureTypes()) {
-//			List<VillageStructure> structures = village.getStructures(structureType);
-//			if (structures == null) {
-//				structures = new ArrayList<VillageStructure>();
-//			}
-//			structuresList.put(structureType, structures);
-//		}
-//		
-//		return structuresList;
-//	}    
+	}   
 	
 	public static ProfessionType getProfessionType(String professionTypeName) {
     	if (professionTypeName == null || professionTypeName.trim().isEmpty()) {
@@ -325,6 +307,32 @@ public class TektopiaUtils {
 		}
 		
 		return 0;
+	}
+	
+	public static List<Integer> getVillagerRecentEats(EntityVillagerTek villager) {
+		if (villager == null) {
+			return null;
+		}
+		
+		try {
+			Field field = EntityVillagerTek.class.getDeclaredField("recentEats");
+			if (field != null) {
+				field.setAccessible(true);
+				
+				Object fieldValue = field.get(villager);
+				if (fieldValue != null && fieldValue instanceof LinkedList<?>) {
+					return ((LinkedList<?>)fieldValue).stream()
+							.filter(v -> v instanceof Integer)
+							.map(iv -> (Integer)iv)
+							.collect(Collectors.toList());
+				}
+			}
+		}
+		catch (Exception ex) {
+			//do nothing if an error was encountered
+		}
+		
+		return null;
 	}
 
 	public static long fixTime(long time) {
