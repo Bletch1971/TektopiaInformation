@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import bletch.common.utils.Font;
 import bletch.common.utils.LoggerUtils;
@@ -393,16 +394,88 @@ public class GuiTektopiaBook extends GuiScreen {
 		// note to self(signum returns +1 for positive numbers and -1 for negative numbers, 0 for 0..)
 		int pageScroll = Integer.signum(Mouse.getEventDWheel());
 		if (pageScroll != 0) {
-			
+
 			if (this.isSubPageOpen()) {
 				setSubPageIndex(this.subPageIndex + -pageScroll);
 			} else {
 				setLeftPageIndex(this.leftPageIndex + -(pageScroll * 2));
 			}
-			
+
 			this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
-			
+
 		}
+	}
+
+	/**
+	 * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of
+	 * KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl Keyboard key code)
+	 */
+	protected void keyTyped(char typedChar, int keyCode) throws IOException {
+		this.keyHandled = false;
+
+		// close book if the inventory key is pressed
+		if(mc.gameSettings.keyBindInventory.getKeyCode() == keyCode) {
+			super.keyTyped(typedChar, Keyboard.KEY_ESCAPE);
+			return;
+		}
+
+		switch (keyCode) {
+		case Keyboard.KEY_ESCAPE:
+			if (this.isSubPageOpen()) {
+				this.setSubPage(null);
+				this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+				this.keyHandled = true;
+			}
+			break;
+		case Keyboard.KEY_LEFT:
+		case Keyboard.KEY_UP:
+		case Keyboard.KEY_A:
+		case Keyboard.KEY_W:
+			if (this.isSubPageOpen()) {
+				this.movePreviousSubPage();
+			} else {
+				this.movePreviousPage();
+			}
+			break;
+		case Keyboard.KEY_RIGHT:
+		case Keyboard.KEY_DOWN:
+		case Keyboard.KEY_S:
+		case Keyboard.KEY_D:
+			if (this.isSubPageOpen()) {
+				this.moveNextSubPage();
+			} else {
+				this.moveNextPage();
+			}
+			break;
+		case Keyboard.KEY_HOME:
+			if (this.isSubPageOpen()) {
+				this.moveFirstSubPage();
+			} else {
+				this.moveFirstPage();
+			}
+			break;
+		case Keyboard.KEY_END:
+			if (this.isSubPageOpen()) {
+				this.moveLastSubPage();
+			} else {
+				this.moveLastPage();
+			}
+			break;
+		case Keyboard.KEY_PRIOR:
+			this.movePreviousBookmark();
+			break;
+		case Keyboard.KEY_NEXT:
+			this.moveNextBookmark();
+			break;
+		case Keyboard.KEY_BACK:
+			if (!this.isSubPageOpen()) {
+				movePreviousPageHistory();
+			}
+			break;
+		}
+
+		if (!this.keyHandled)
+			super.keyTyped(typedChar, keyCode);
 	}
 
 	/**
@@ -418,10 +491,6 @@ public class GuiTektopiaBook extends GuiScreen {
 
 				// check if we have clicked on one of the bookmarks
 				if (bookmark != null && bookmark.withinBounds(mouseX, mouseY, this.scale)) {
-					actionPerformed(bookmark);
-					break;
-				}
-				else if (bookmark != null && bookmark.withinBounds(mouseX, mouseY, this.scale)) {
 					actionPerformed(bookmark);
 					break;
 				}
@@ -1480,7 +1549,7 @@ public class GuiTektopiaBook extends GuiScreen {
 						enemyTask += getAiTaskName(enemy.getCurrentTask());
 						enemyTaskShort += Font.small.trimStringToWidth(enemyTask, maxTaskLength, true);
 						enemyPosition += formatBlockPos(enemy.getCurrentPosition());
-						
+
 						if (guiPage.isLeftPage()) {
 							Font.small.printLeft(enemyName, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y, this.zLevel);
 							Font.small.printLeft(enemyTaskShort, this.x + PAGE_LEFTPAGE_LEFTCENTER_X + indentX + indentX, y, this.zLevel);
@@ -1506,7 +1575,7 @@ public class GuiTektopiaBook extends GuiScreen {
 						if (!this.isSubPageOpen()) {
 							toolTip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, enemyTask);
 							this.tooltips.add(toolTip);
-							
+
 							button = new GuiHyperlink(BUTTON_KEY_MAPLINK, getHyperlinkData(GuiPageType.ENEMY, getResidentDetailPageKey(enemy.getId())));
 							button.setIcon(x3, y, x4 - x3, Font.small.fontRenderer.FONT_HEIGHT);
 							this.buttons.add(button);
@@ -1681,7 +1750,7 @@ public class GuiTektopiaBook extends GuiScreen {
 					if (guiPage.isLeftPage()) {
 						Font.small.printLeft(framePositionLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y, this.zLevel); 
 						Font.small.printLeft(framePositionText, this.x + PAGE_LEFTPAGE_CENTER_X, y, this.zLevel); 
-						
+
 						x1 = this.x + PAGE_LEFTPAGE_CENTER_X;
 						x2 = x1 + Font.small.getStringWidth(framePositionText);
 					}
@@ -1689,7 +1758,7 @@ public class GuiTektopiaBook extends GuiScreen {
 					if (guiPage.isRightPage()) {
 						Font.small.printLeft(framePositionLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y, this.zLevel);
 						Font.small.printLeft(framePositionText, this.x + PAGE_RIGHTPAGE_CENTER_X, y, this.zLevel); 
-						
+
 						x1 = this.x + PAGE_RIGHTPAGE_CENTER_X;
 						x2 = x1 + Font.small.getStringWidth(framePositionText);
 					}
@@ -1825,7 +1894,7 @@ public class GuiTektopiaBook extends GuiScreen {
 					if (!StringUtils.isNullOrWhitespace(currentBedsLabel)) {
 						currentBedsText += "" + homeData.getBedCount();
 						maxBedsText += " / " + homeData.getMaxBeds();
-						
+
 						if (guiPage.isLeftPage()) {
 							Font.small.printLeft(currentBedsLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y, this.zLevel);
 							Font.small.printRight(currentBedsText, this.x + PAGE_LEFTPAGE_CENTER_X + indentX, y, this.zLevel); 
@@ -2255,7 +2324,7 @@ public class GuiTektopiaBook extends GuiScreen {
 
 						toolTip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, TextUtils.translate("tektopiaBook.links.homedetails"));
 						this.tooltips.add(toolTip);
-						
+
 						button = new GuiHyperlink(BUTTON_KEY_MAPLINK, getHyperlinkData(GuiPageType.HOME, getStructureDetailPageKey(home.getHomeId())));
 						button.setIcon(x3, y, x4 - x3, Font.small.fontRenderer.FONT_HEIGHT);
 						this.buttons.add(button);
@@ -2309,7 +2378,7 @@ public class GuiTektopiaBook extends GuiScreen {
 			int tooltipSize = MAP_TOOLTIP_SIZE_STRUCTURE;
 			int tooltipOffset = 0;
 			int priority = 1;
-			
+
 			// check if this structure has been selected
 			if (this.villageData.getStructureId() > 0 && this.villageData.getStructureId() == townHallStructure.getStructureId()) {
 				markerSize *= MAP_MARKER_SELECTED_SCALE;
@@ -2366,7 +2435,7 @@ public class GuiTektopiaBook extends GuiScreen {
 				int tooltipSize = MAP_TOOLTIP_SIZE_STRUCTURE;
 				int tooltipOffset = 0;
 				int priority = 1;
-				
+
 				// check if this structure has been selected
 				if (this.villageData.getStructureId() > 0 && this.villageData.getStructureId() == home.getHomeId()) {
 					markerSize *= MAP_MARKER_SELECTED_SCALE;
@@ -2429,7 +2498,7 @@ public class GuiTektopiaBook extends GuiScreen {
 				int tooltipSize = MAP_TOOLTIP_SIZE_STRUCTURE;
 				int tooltipOffset = 0;
 				int priority = 1;
-				
+
 				// check if this structure has been selected
 				if (this.villageData.getStructureId() > 0 && this.villageData.getStructureId() == structure.getStructureId()) {
 					markerSize *= MAP_MARKER_SELECTED_SCALE;
@@ -2504,7 +2573,7 @@ public class GuiTektopiaBook extends GuiScreen {
 				int tooltipSize = MAP_TOOLTIP_SIZE_ENTITY;
 				int tooltipOffset = 0;
 				int priority = 1;
-				
+
 				// check if this entity has been selected
 				if (this.villageData.getEntityId() > 0 && this.villageData.getEntityId() == resident.getId()) {
 					markerSize *= MAP_MARKER_SELECTED_SCALE;
@@ -2571,7 +2640,7 @@ public class GuiTektopiaBook extends GuiScreen {
 				int tooltipSize = MAP_TOOLTIP_SIZE_ENTITY;
 				int tooltipOffset = 0;
 				int priority = 1;
-				
+
 				// check if this entity has been selected
 				if (this.villageData.getEntityId() > 0 && this.villageData.getEntityId() == visitor.getId()) {
 					markerSize *= MAP_MARKER_SELECTED_SCALE;
@@ -2621,7 +2690,7 @@ public class GuiTektopiaBook extends GuiScreen {
 				int tooltipSize = MAP_TOOLTIP_SIZE_ENTITY;
 				int tooltipOffset = 0;
 				int priority = 1;
-				
+
 				// check if this entity has been selected
 				if (this.villageData.getEntityId() > 0 && this.villageData.getEntityId() == enemy.getId()) {
 					markerSize *= MAP_MARKER_SELECTED_SCALE;
@@ -2908,7 +2977,7 @@ public class GuiTektopiaBook extends GuiScreen {
 			Font.normal.printLeft(filterText, x, y + 1, this.zLevel);
 			y -= Font.normal.fontRenderer.FONT_HEIGHT;
 		}
-		
+
 		y -= LINE_SPACE_Y + LINE_SPACE_Y_HEADER;
 
 		filterText = TextFormatting.DARK_BLUE + TextUtils.translate("tektopiaBook.map.options.showselectedalways");
@@ -3606,7 +3675,7 @@ public class GuiTektopiaBook extends GuiScreen {
 							this.tooltips.add(aiFilterToolTip);
 						}
 					}
-					
+
 					String inventoryText = TextUtils.translate("tektopiaBook.residents.viewinventory");
 
 					if (!StringUtils.isNullOrWhitespace(inventoryText)) {
@@ -3921,7 +3990,7 @@ public class GuiTektopiaBook extends GuiScreen {
 					if (!StringUtils.isNullOrWhitespace(workTimeLabel)) {
 						LocalTime startTimeValue = java.time.LocalTime.of(6, 0).plusSeconds(resident.getWorkStartSeconds());
 						LocalTime finishTimeValue = java.time.LocalTime.of(6, 0).plusSeconds(resident.getWorkFinishSeconds());
-						
+
 						workTimeText += startTimeValue.format(DateTimeFormatter.ofPattern("HH:mm:ss")) 
 								+ " - " + finishTimeValue.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 
@@ -3947,13 +4016,13 @@ public class GuiTektopiaBook extends GuiScreen {
 					if (!StringUtils.isNullOrWhitespace(sleepTimeLabel)) {
 						LocalTime startTimeValue = java.time.LocalTime.of(6, 0).plusSeconds(resident.getSleepStartSeconds());
 						LocalTime finishTimeValue = java.time.LocalTime.of(6, 0).plusSeconds(resident.getSleepFinishSeconds());
-						
+
 						sleepTimeText += startTimeValue.format(DateTimeFormatter.ofPattern("HH:mm:ss"))
 								+ " - " + finishTimeValue.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 
 						if (TektopiaUtils.isTimeOfDay(this.villageData.getVillageTicks(), resident.getSleepStartTicks(), resident.getSleepFinishTicks()))
 							sleepTimeText = TextFormatting.DARK_AQUA + sleepTimeText;
-						
+
 						if (guiPage.isLeftPage()) {
 							Font.small.printLeft(sleepTimeLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y, this.zLevel); 
 							Font.small.printLeft(sleepTimeText, this.x + PAGE_LEFTPAGE_LEFTCENTER_X + indentX, y, this.zLevel);  
@@ -3966,7 +4035,7 @@ public class GuiTektopiaBook extends GuiScreen {
 					}
 
 					y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
-					
+
 					String taskLabel = TextUtils.translate("tektopiaBook.residents.task");
 					String taskText = "";
 
@@ -3988,7 +4057,7 @@ public class GuiTektopiaBook extends GuiScreen {
 
 					y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
 					y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
-					
+
 				}
 
 				y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y + LINE_SPACE_Y_HEADER;
@@ -4024,7 +4093,7 @@ public class GuiTektopiaBook extends GuiScreen {
 					}
 
 					textLength = Font.small.getStringWidth(homeStructureText);
-					
+
 					if (guiPage.isLeftPage()) {
 						Font.small.printLeft(homeStructureLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y, this.zLevel); 
 						Font.small.printLeft(homeStructureText, this.x + PAGE_LEFTPAGE_CENTER_X - indentX, y, this.zLevel); 
@@ -4054,7 +4123,7 @@ public class GuiTektopiaBook extends GuiScreen {
 
 						toolTip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, TextUtils.translate("tektopiaBook.links.homedetails"));
 						this.tooltips.add(toolTip);
-						
+
 						button = new GuiHyperlink(BUTTON_KEY_MAPLINK, getHyperlinkData(GuiPageType.HOME, getStructureDetailPageKey(structureId)));
 						button.setIcon(x3, y, x4 - x3, Font.small.fontRenderer.FONT_HEIGHT);
 						this.buttons.add(button);
@@ -4152,7 +4221,7 @@ public class GuiTektopiaBook extends GuiScreen {
 
 						toolTip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, TextUtils.translate("tektopiaBook.links.structuredetails"));
 						this.tooltips.add(toolTip);
-						
+
 						button = new GuiHyperlink(BUTTON_KEY_MAPLINK, getHyperlinkData(GuiPageType.STRUCTURE, getStructureDetailPageKey(structureId)));
 						button.setIcon(x3, y, x4 - x3, Font.small.fontRenderer.FONT_HEIGHT);
 						this.buttons.add(button);
@@ -4217,14 +4286,14 @@ public class GuiTektopiaBook extends GuiScreen {
 						tXL = this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX;
 						tXR = this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX;
 						tY = y;
-						
+
 						int index = 1;
 						for (ItemStack recentEat : resident.getRecentEats()) {
 							if (index > RECENTEATS_PER_PAGE) {
 								// only display the top recent eats
 								break;
 							}
-							
+
 							if (recentEat != null && recentEat != ItemStack.EMPTY) {
 								List<String> tooltip = recentEat.getTooltip(null, TooltipFlags.NORMAL);
 								if (recentEat.isItemEnchanted() && tooltip != null && tooltip.size() > 0) {
@@ -4247,19 +4316,19 @@ public class GuiTektopiaBook extends GuiScreen {
 									}
 								}
 							}
-							
+
 							tXL += 20;
 							tXR += 20;
-							
+
 							index++;
 						}
-						
+
 						y += 20;
-						
+
 					} else {
 						y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y + 20;
 					}
-					
+
 					String additionalProfessions = TextUtils.translate("tektopiaBook.residents.additionalprofessions");
 
 					if (!StringUtils.isNullOrWhitespace(additionalProfessions)) {
@@ -5093,7 +5162,7 @@ public class GuiTektopiaBook extends GuiScreen {
 			}
 
 			StructureData structureData = structuresData.getStructureById(structureId);
-			
+
 			if (structureData != null) {
 
 				String header = structureData.getStructureTypeName();
@@ -5261,7 +5330,7 @@ public class GuiTektopiaBook extends GuiScreen {
 					if (!StringUtils.isNullOrWhitespace(overcrowdedLabel)) {
 						overcrowdedText += "" + (structureData.isOvercrowdedCurrent() 
 								? TextFormatting.DARK_RED + "Yes" 
-								: TextFormatting.DARK_GREEN + "No");
+										: TextFormatting.DARK_GREEN + "No");
 
 						if (guiPage.isLeftPage()) {
 							Font.small.printLeft(overcrowdedLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y, this.zLevel);
@@ -5281,7 +5350,7 @@ public class GuiTektopiaBook extends GuiScreen {
 					y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
 
 				}
-				
+
 				y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y + LINE_SPACE_Y_HEADER;
 
 				String occupantsText = TextUtils.translate("tektopiaBook.structures.occupants");
@@ -5373,18 +5442,18 @@ public class GuiTektopiaBook extends GuiScreen {
 						}
 
 						if (!this.isSubPageOpen()) {
-							
+
 							if (occupant.isVisitor()) {
-								
+
 								button = new GuiHyperlink(BUTTON_KEY_VISITORLINK, getHyperlinkData(GuiPageType.VISITOR, getResidentDetailPageKey(occupant.getId())));
 								button.setIcon(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT);
 								this.buttons.add(button);
 
 								toolTip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, TextUtils.translate("tektopiaBook.links.visitordetails"));
 								this.tooltips.add(toolTip);
-								
+
 							} else {
-								
+
 								button = new GuiHyperlink(BUTTON_KEY_RESIDENTLINK, getHyperlinkData(GuiPageType.RESIDENT, getResidentDetailPageKey(occupant.getId())));
 								button.setIcon(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT);
 								this.buttons.add(button);
@@ -5575,7 +5644,7 @@ public class GuiTektopiaBook extends GuiScreen {
 
 						toolTip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, TextUtils.translate("tektopiaBook.links.structuredetails"));
 						this.tooltips.add(toolTip);
-						
+
 						button = new GuiHyperlink(BUTTON_KEY_MAPLINK, getHyperlinkData(GuiPageType.STRUCTURE, getStructureDetailPageKey(structure.getStructureId())));
 						button.setIcon(x3, y, x4 - x3, Font.small.fontRenderer.FONT_HEIGHT);
 						this.buttons.add(button);
@@ -5803,20 +5872,20 @@ public class GuiTektopiaBook extends GuiScreen {
 			dataName = TextUtils.translate("tektopiaBook.headers.summary");
 
 			String villageDaysLabel = TextUtils.translate("tektopiaBook.village.days");
-			
+
 			if (!StringUtils.isNullOrWhitespace(villageDaysLabel)) {
 				long villageDays = this.villageData.getVillageDays();
-				
+
 				dataInformation.add(villageDaysLabel 
 						+ "|" + villageDays);
 			}
 
-			
+
 			String villageTimeLabel = TextUtils.translate("tektopiaBook.village.time");
-			
+
 			if (!StringUtils.isNullOrWhitespace(villageTimeLabel)) {
 				LocalTime villageTimeValue = java.time.LocalTime.of(6, 0).plusSeconds(this.villageData.getVillageSeconds());
-				
+
 				dataInformation.add(villageTimeLabel 
 						+ "|" + villageTimeValue.format(DateTimeFormatter.ofPattern("HH:mm:ss")) 
 						+ "|" + (ModConfig.debug.enableDebug ? "village ticks: " + this.villageData.getVillageTicks() : "")
@@ -5866,7 +5935,7 @@ public class GuiTektopiaBook extends GuiScreen {
 
 				for (int lineIndex = 0; lineIndex < textLines.size(); lineIndex++) {
 					Font.small.printCentered(textLines.get(lineIndex), this.x + PAGE_LEFTPAGE_CENTER_X, y, this.zLevel);
-					
+
 					y += Font.small.fontRenderer.FONT_HEIGHT;
 				}
 			}
@@ -5901,7 +5970,7 @@ public class GuiTektopiaBook extends GuiScreen {
 		if (dataInformation != null && dataInformation.size() > 0) {
 			int x1 = 0;
 			int x2 = 0;
-			
+
 			for (String dataLine : dataInformation) {
 				if (!StringUtils.isNullOrWhitespace(dataLine)) {
 					String[] parts = dataLine.split("[|]");
@@ -5913,27 +5982,27 @@ public class GuiTektopiaBook extends GuiScreen {
 							Font.small.printRight(parts[1], this.x + PAGE_LEFTPAGE_CENTER_X + indentX, y, this.zLevel);
 						if (parts.length > 2 && !StringUtils.isNullOrWhitespace(parts[2]))
 							Font.small.printRight(parts[2], this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y, this.zLevel);
-						
+
 						if (parts.length > 3 && !StringUtils.isNullOrWhitespace(parts[3])) {
 							x1 = this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX;
 							x2 = x1 + Font.small.getStringWidth(StringUtils.isNullOrWhitespace(parts[0]) ? parts[3] : parts[0]);
-							
+
 							GuiTooltip tooltip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, parts[3]);
 							this.tooltips.add(tooltip);
 						}
-						
+
 						if (parts.length > 4 && !StringUtils.isNullOrWhitespace(parts[4])) {
 							x2 = this.x + PAGE_LEFTPAGE_CENTER_X + indentX;
 							x1 = x2 - Font.small.getStringWidth(StringUtils.isNullOrWhitespace(parts[1]) ? parts[4] : parts[1]);
-							
+
 							GuiTooltip tooltip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, parts[4]);
 							this.tooltips.add(tooltip);
 						}
-						
+
 						if (parts.length > 5 && !StringUtils.isNullOrWhitespace(parts[5])) {
 							x2 = this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X;
 							x1 = x2 - Font.small.getStringWidth(StringUtils.isNullOrWhitespace(parts[2]) ? parts[5] : parts[2]);
-							
+
 							GuiTooltip tooltip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, parts[5]);
 							this.tooltips.add(tooltip);
 						}
@@ -5946,27 +6015,27 @@ public class GuiTektopiaBook extends GuiScreen {
 							Font.small.printRight(parts[1], this.x + PAGE_RIGHTPAGE_CENTER_X + indentX, y, this.zLevel);
 						if (parts.length > 2 && !StringUtils.isNullOrWhitespace(parts[2]))
 							Font.small.printRight(parts[2], this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y, this.zLevel);
-						
+
 						if (parts.length > 3 && !StringUtils.isNullOrWhitespace(parts[3])) {
 							x1 = this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX;
 							x2 = x1 + Font.small.getStringWidth(StringUtils.isNullOrWhitespace(parts[0]) ? parts[3] : parts[0]);
-							
+
 							GuiTooltip tooltip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, parts[3]);
 							this.tooltips.add(tooltip);
 						}
-						
+
 						if (parts.length > 4 && !StringUtils.isNullOrWhitespace(parts[4])) {
 							x2 = this.x + PAGE_RIGHTPAGE_CENTER_X + indentX;
 							x1 = x2 - Font.small.getStringWidth(StringUtils.isNullOrWhitespace(parts[1]) ? parts[4] : parts[1]);
-							
+
 							GuiTooltip tooltip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, parts[4]);
 							this.tooltips.add(tooltip);
 						}
-						
+
 						if (parts.length > 5 && !StringUtils.isNullOrWhitespace(parts[5])) {
 							x2 = this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X;
 							x1 = x2 - Font.small.getStringWidth(StringUtils.isNullOrWhitespace(parts[2]) ? parts[5] : parts[2]);
-							
+
 							GuiTooltip tooltip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, parts[5]);
 							this.tooltips.add(tooltip);
 						}
@@ -6401,7 +6470,7 @@ public class GuiTektopiaBook extends GuiScreen {
 
 							toolTip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, TextUtils.translate("tektopiaBook.links.visitordetails"));
 							this.tooltips.add(toolTip);
-							
+
 							button = new GuiHyperlink(BUTTON_KEY_MAPLINK, getHyperlinkData(GuiPageType.VISITOR, getResidentDetailPageKey(visitor.getId())));
 							button.setIcon(x3, y, x4 - x3, Font.small.fontRenderer.FONT_HEIGHT);
 							this.buttons.add(button);
@@ -6576,14 +6645,14 @@ public class GuiTektopiaBook extends GuiScreen {
 					}
 
 					y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
-					
+
 					String workTimeLabel = TextUtils.translate("tektopiaBook.residents.worktime");
 					String workTimeText = "";
 
 					if (!StringUtils.isNullOrWhitespace(workTimeLabel)) {
 						LocalTime startTimeValue = java.time.LocalTime.of(6, 0).plusSeconds(visitor.getWorkStartSeconds());
 						LocalTime finishTimeValue = java.time.LocalTime.of(6, 0).plusSeconds(visitor.getWorkFinishSeconds());
-						
+
 						workTimeText += startTimeValue.format(DateTimeFormatter.ofPattern("HH:mm:ss")) 
 								+ " - " + finishTimeValue.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
 
@@ -6632,7 +6701,7 @@ public class GuiTektopiaBook extends GuiScreen {
 						if (guiPage.isLeftPage()) {
 							Font.small.printLeft(currentPositionLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y, this.zLevel); 
 							Font.small.printLeft(currentPositionText, this.x + PAGE_LEFTPAGE_CENTER_X - indentX, y, this.zLevel);
-							
+
 							x1 = this.x + PAGE_LEFTPAGE_CENTER_X - indentX;
 							x2 = x1 + Font.small.getStringWidth(currentPositionText);
 						}
@@ -6640,11 +6709,11 @@ public class GuiTektopiaBook extends GuiScreen {
 						if (guiPage.isRightPage()) {
 							Font.small.printLeft(currentPositionLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y, this.zLevel); 
 							Font.small.printLeft(currentPositionText, this.x + PAGE_RIGHTPAGE_CENTER_X - indentX, y, this.zLevel); 
-							
+
 							x1 = this.x + PAGE_RIGHTPAGE_CENTER_X - indentX;
 							x2 = x1 + Font.small.getStringWidth(currentPositionText);
 						}
-						
+
 						if (!isSubPageOpen()) {
 							button = new GuiHyperlink(BUTTON_KEY_MAPLINK, getHyperlinkData(GuiPageType.VISITOR, getResidentDetailPageKey(visitor.getId())));
 							button.setIcon(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT);
@@ -6674,7 +6743,7 @@ public class GuiTektopiaBook extends GuiScreen {
 								structureId = structureData.getStructureId();
 							}
 						}
-						
+
 						textLength = Font.small.getStringWidth(currentStructureText);
 
 						if (guiPage.isLeftPage()) {
@@ -6706,7 +6775,7 @@ public class GuiTektopiaBook extends GuiScreen {
 
 							toolTip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, TextUtils.translate("tektopiaBook.links.structuredetails"));
 							this.tooltips.add(toolTip);
-							
+
 							button = new GuiHyperlink(BUTTON_KEY_MAPLINK, getHyperlinkData(GuiPageType.STRUCTURE, getStructureDetailPageKey(structureId)));
 							button.setIcon(x3, y, x4 - x3, Font.small.fontRenderer.FONT_HEIGHT);
 							this.buttons.add(button);
@@ -6970,7 +7039,7 @@ public class GuiTektopiaBook extends GuiScreen {
 		}
 
 		y += Font.small.fontRenderer.FONT_HEIGHT + (LINE_SPACE_Y * 10);
-		
+
 		if (!StringUtils.isNullOrWhitespace(bookInformation)) {
 
 			if (guiPage.isLeftPage()) {
@@ -7000,9 +7069,9 @@ public class GuiTektopiaBook extends GuiScreen {
 	protected void drawSubPages(int mouseX, int mouseY, float partialTicks) {
 		if (!this.isSubPageOpen())
 			return;
-		
+
 		float oldZLevel = this.setZLevel(10.0F);
-		
+
 		String[] subKeyParts = getSubPageKeyParts(this.subPageKey);
 
 		switch (subKeyParts[0]) {
@@ -7013,14 +7082,14 @@ public class GuiTektopiaBook extends GuiScreen {
 			drawSubPageInventory(mouseX, mouseY, partialTicks);
 			break;
 		}
-		
+
 		this.setZLevel(oldZLevel);
 	}
 
 	protected void drawSubPageLandscapeBackground(int mouseX, int mouseY, float partialTicks) {
 		RenderUtils.drawModalRectWithCustomSizedTextureWithZLevel(page_landscape, this.zLevel, this.xPageLandscape, this.yPageLandscape, 0, 0, PAGE_LANDSCAPE_WIDTH, PAGE_LANDSCAPE_HEIGHT, PAGE_LANDSCAPE_WIDTH, PAGE_LANDSCAPE_HEIGHT);
 	}
-	
+
 	protected void drawSubPageLandscapeHeader(int mouseX, int mouseY, float partialTicks) {
 		// close button
 		GuiButton closeButton = new GuiButton(BUTTON_KEY_CLOSE);
@@ -7030,11 +7099,11 @@ public class GuiTektopiaBook extends GuiScreen {
 		GuiTooltip closeToolTip = new GuiTooltip(this.xPageLandscape + SUBPAGE_LANDSCAPE_RIGHT_X - 13, this.yPageLandscape + SUBPAGE_LANDSCAPE_TOP_Y - 4, 24, 24, TextUtils.translate("button.close.name"));
 		this.tooltips.add(closeToolTip);
 	}
-	
+
 	protected void drawSubPageLandscapeFooter(int mouseX, int mouseY, float partialTicks) {
 		Font.small.printCentered(this.subPageIndex, this.xPageLandscape + SUBPAGE_LANDSCAPE_CENTER_X, this.yPageLandscape + SUBPAGE_LANDSCAPE_BOTTOM_Y - 2, this.zLevel);
 	}
-	
+
 	protected void drawSubPageLandscapePageArrows(int mouseX, int mouseY, float partialTicks) {
 		if (this.subPageCount > 1 && this.subPageIndex > 1) {
 			GuiButton previousButton = new GuiButton(BUTTON_KEY_PREVIOUSSUBPAGE);
@@ -7062,7 +7131,7 @@ public class GuiTektopiaBook extends GuiScreen {
 	protected void drawSubPagePortraitBackground(int mouseX, int mouseY, float partialTicks) {
 		RenderUtils.drawModalRectWithCustomSizedTextureWithZLevel(page_portrait, this.zLevel, this.xPagePortrait, this.yPagePortrait, 0, 0, PAGE_PORTRAIT_WIDTH, PAGE_PORTRAIT_HEIGHT, PAGE_PORTRAIT_WIDTH, PAGE_PORTRAIT_HEIGHT);
 	}
-	
+
 	protected void drawSubPagePortraitHeader(int mouseX, int mouseY, float partialTicks) {
 		// close button
 		GuiButton closeButton = new GuiButton(BUTTON_KEY_CLOSE);
@@ -7072,11 +7141,11 @@ public class GuiTektopiaBook extends GuiScreen {
 		GuiTooltip closeToolTip = new GuiTooltip(this.xPagePortrait + SUBPAGE_PORTRAIT_RIGHT_X - 8, this.yPagePortrait + SUBPAGE_PORTRAIT_TOP_Y - 4, 24, 24, TextUtils.translate("button.close.name"));
 		this.tooltips.add(closeToolTip);
 	}
-	
+
 	protected void drawSubPagePortraitFooter(int mouseX, int mouseY, float partialTicks) {
 		Font.small.printCentered(this.subPageIndex, this.xPagePortrait + SUBPAGE_PORTRAIT_CENTER_X, this.yPagePortrait + SUBPAGE_PORTRAIT_BOTTOM_Y - 2, this.zLevel); 
 	}
-	
+
 	protected void drawSubPagePortraitPageArrows(int mouseX, int mouseY, float partialTicks) {
 		if (this.subPageCount > 1 && this.subPageIndex > 1) {
 			GuiButton previousButton = new GuiButton(BUTTON_KEY_PREVIOUSSUBPAGE);
@@ -7128,7 +7197,7 @@ public class GuiTektopiaBook extends GuiScreen {
 			pages++;
 		}
 		setSubPageCount(pages);
-		
+
 		drawSubPagePortraitPageArrows(mouseX, mouseY, partialTicks);
 
 		int y = this.yPagePortrait + SUBPAGE_PORTRAIT_TOP_Y + 10;
@@ -7152,7 +7221,7 @@ public class GuiTektopiaBook extends GuiScreen {
 
 		if (!StringUtils.isNullOrWhitespace(professionLabel)) {
 			professionText += getTypeName(resident.getProfessionType());
-			
+
 			int professionLabelLength = Font.small.getStringWidth(professionLabel) + indentX;
 
 			Font.small.printLeft(professionLabel, this.xPagePortrait + SUBPAGE_PORTRAIT_LEFT_X + indentX, y, this.zLevel); 
@@ -7190,7 +7259,7 @@ public class GuiTektopiaBook extends GuiScreen {
 		if (resident.getAiFiltersCount() > 0) {
 
 			for (Entry<String, Boolean> aiFilter : resident.getAiFilters().entrySet()) {
-				
+
 				if (index >= startIndex && index < startIndex + AIFILTERLIST_PER_PAGE) {
 					String aiFilterName = getAiFilterName(aiFilter.getKey());
 					String aiFilterValue = aiFilter.getValue() ? TextUtils.SYMBOL_GREENTICK : TextUtils.SYMBOL_REDCROSS;
@@ -7204,12 +7273,12 @@ public class GuiTektopiaBook extends GuiScreen {
 			}
 		}
 	}
-	
+
 	protected void drawSubPageInventory(int mouseX, int mouseY, float partialTicks) {
 		drawSubPagePortraitBackground(mouseX, mouseY, partialTicks);
 		drawSubPagePortraitHeader(mouseX, mouseY, partialTicks);
 		drawSubPagePortraitFooter(mouseX, mouseY, partialTicks);
-		
+
 		RenderUtils.drawModalRectWithCustomSizedTextureWithZLevel(inventory, this.zLevel, this.xPagePortrait + SUBPAGE_PORTRAIT_CENTER_X - 89, this.yPagePortrait + 90, 0, 0, 178, 69, 178, 69);
 
 		String[] subPageKeyParts = getSubPageKeyParts(this.subPageKey);
@@ -7235,7 +7304,7 @@ public class GuiTektopiaBook extends GuiScreen {
 			pages++;
 		}
 		setSubPageCount(pages);
-		
+
 		drawSubPagePortraitPageArrows(mouseX, mouseY, partialTicks);
 
 		int y = this.yPagePortrait + SUBPAGE_PORTRAIT_TOP_Y + 10;
@@ -7259,7 +7328,7 @@ public class GuiTektopiaBook extends GuiScreen {
 
 		if (!StringUtils.isNullOrWhitespace(professionLabel)) {
 			professionText += getTypeName(resident.getProfessionType());
-			
+
 			int professionLabelLength = Font.small.getStringWidth(professionLabel) + indentX;
 
 			Font.small.printLeft(professionLabel, this.xPagePortrait + SUBPAGE_PORTRAIT_LEFT_X + indentX, y, this.zLevel); 
@@ -7281,21 +7350,21 @@ public class GuiTektopiaBook extends GuiScreen {
 		int page = this.subPageIndex - 1;
 		int startIndex = page * INVENTORYLINES_PER_PAGE * INVENTORY_PER_LINE;
 		int index = 0;
-		
+
 		if (resident.getInventoryCount() > 0) {
 
 			int tX = this.xPagePortrait + SUBPAGE_PORTRAIT_LEFT_X + ((SUBPAGE_PORTRAIT_WIDTH - (INVENTORY_PER_LINE * 18)) / 2) + 1;
 			int tY = y + 27;
-						
+
 			for (ItemStack item : resident.getInventory()) {
-				
+
 				if (index >= startIndex && index < startIndex + (INVENTORYLINES_PER_PAGE * INVENTORY_PER_LINE)) {
-					
+
 					if (index > startIndex && index % INVENTORY_PER_LINE == 0) {
 						tX = this.xPagePortrait + SUBPAGE_PORTRAIT_LEFT_X + indentX;
 						tY += 18;
 					}
-					
+
 					if (item != null && item != ItemStack.EMPTY && item.getItem() != Items.AIR) {
 						List<String> tooltip = item.getTooltip(null, TooltipFlags.NORMAL);
 						if (item.isItemEnchanted() && tooltip != null && tooltip.size() > 0) {
@@ -7308,7 +7377,7 @@ public class GuiTektopiaBook extends GuiScreen {
 							this.tooltips.add(new GuiTooltip(tX, tY, 16, 16, tooltip));
 						}
 					}
-					
+
 					tX += 18;
 				}
 
@@ -7336,47 +7405,35 @@ public class GuiTektopiaBook extends GuiScreen {
 
 		switch (button.getKey()) {
 		case BUTTON_KEY_BACK:
-			setSubPage(null);
-			setLeftPageIndex(popPageHistory());
-			this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+			this.movePreviousPageHistory();
 			return;
 		case BUTTON_KEY_PREVIOUSPAGE:
-			setSubPage(null);
-			setLeftPageIndex(this.leftPageIndex - 2);
-			this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+			this.movePreviousPage();
 			return;
 		case BUTTON_KEY_NEXTPAGE:
-			setSubPage(null);
-			setLeftPageIndex(this.leftPageIndex + 2);
-			this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+			this.moveNextPage();
 			return;
 		case BUTTON_KEY_STARTBOOK:
-			setSubPage(null);
-			setLeftPageIndex(0);
-			this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+			this.moveFirstPage();
 			return;
 		case BUTTON_KEY_ENDBOOK:
-			setSubPage(null);
-			setLeftPageIndex(this.pages.size());
-			this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+			this.moveLastPage();
 			return;
 
 		case BUTTON_KEY_CLOSE:
-			setSubPage(null);
+			this.setSubPage(null);
 			this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
 			return;
 		case BUTTON_KEY_PREVIOUSSUBPAGE:
-			setSubPageIndex(this.subPageIndex - 1);
-			this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+			this.movePreviousSubPage();
 			return;
 		case BUTTON_KEY_NEXTSUBPAGE:
-			setSubPageIndex(this.subPageIndex + 1);
-			this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+			this.moveNextSubPage();
 			return;
 
 		case BUTTON_KEY_AIFILTER:
 		case BUTTON_KEY_INVENTORY:
-			setSubPage(button.getButtonData());
+			this.setSubPage(button.getButtonData());
 			this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
 			return;
 
@@ -7410,7 +7467,7 @@ public class GuiTektopiaBook extends GuiScreen {
 		case BUTTON_KEY_SHOWMAPSELECTEDALWAYS:
 			this.showSelectedAlways = !this.showSelectedAlways;
 			return;
-			
+
 		case BUTTON_KEY_CLEARSELECTION:
 			this.villageData.ClearAssignments();
 			this.showSelectedOnly = false;
@@ -7418,7 +7475,7 @@ public class GuiTektopiaBook extends GuiScreen {
 		default:
 			break;
 		}
-		
+
 		if (button instanceof GuiHyperlink) {
 			GuiHyperlink hyperlink = (GuiHyperlink)button;
 
@@ -7427,7 +7484,7 @@ public class GuiTektopiaBook extends GuiScreen {
 			switch (button.getKey()) {
 			case BUTTON_KEY_MAPLINK:
 				linkData = getHyperlinkDataParts(hyperlink.getLinkData());
-				
+
 				for (GuiPage page : this.pages) {
 					if (page.getGuiPageType() == GuiPageType.MAP) {
 						if (linkData[0].equals(GuiPageType.RESIDENT.name()) || linkData[0].equals(GuiPageType.VISITOR.name()) || linkData[0].equals(GuiPageType.ENEMY.name())) {
@@ -7439,7 +7496,7 @@ public class GuiTektopiaBook extends GuiScreen {
 							this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
 							break;
 						}
-						
+
 						if (linkData[0].equals(GuiPageType.STRUCTURE.name()) || linkData[0].equals(GuiPageType.HOME.name())) {
 							pushPageHistory();
 							String[] pageData = getPageKeyParts(linkData[1]);
@@ -7926,44 +7983,98 @@ public class GuiTektopiaBook extends GuiScreen {
 			subPageIndex = 1;
 		if (subPageIndex > this.subPageCount)
 			subPageIndex = this.subPageCount;
-		
+
 		this.subPageIndex = subPageIndex;
 	}
-	
+
 	protected void setSubPageCount(int subPageCount) {
 		if (subPageCount < 1)
 			subPageCount = 1;
-		
+
 		this.subPageCount = subPageCount;
-		
+
 		if (subPageIndex > this.subPageCount)
 			subPageIndex = this.subPageCount;
 	}
-	
+
 	protected float setZLevel(float zLevel) {
 		float oldZLevel = super.zLevel;
 		super.zLevel = zLevel;
 		super.itemRender.zLevel = zLevel;
 		return oldZLevel;
 	}
-	
-//	protected void drawModalRectWithCustomSizedTextureWithZLevel(ResourceLocation resource, int x, int y, float u, float v, int width, int height, float textureWidth, float textureHeight) {
-//		GlStateManager.pushMatrix();
-//		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-//		
-//		mc.getTextureManager().bindTexture(resource);
-//		
-//        float f = 1.0F / textureWidth;
-//        float f1 = 1.0F / textureHeight;
-//        Tessellator tessellator = Tessellator.getInstance();
-//        BufferBuilder bufferbuilder = tessellator.getBuffer();
-//        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
-//        bufferbuilder.pos((double)x, (double)(y + height), (double)this.zLevel).tex((double)(u * f), (double)((v + (float)height) * f1)).endVertex();
-//        bufferbuilder.pos((double)(x + width), (double)(y + height), (double)this.zLevel).tex((double)((u + (float)width) * f), (double)((v + (float)height) * f1)).endVertex();
-//        bufferbuilder.pos((double)(x + width), (double)y, (double)this.zLevel).tex((double)((u + (float)width) * f), (double)(v * f1)).endVertex();
-//        bufferbuilder.pos((double)x, (double)y, (double)this.zLevel).tex((double)(u * f), (double)(v * f1)).endVertex();
-//        tessellator.draw();
-//        
-//        GlStateManager.popMatrix();
-//    }
+
+	protected void moveNextBookmark() {
+		for (int index = 0; index < this.bookmarks.size(); index++) {
+			if (this.bookmarks.get(index).getPageIndex() > this.leftPageIndex) {
+				this.actionPerformed(this.bookmarks.get(index));
+				return;
+			}
+		}
+
+		this.moveLastPage();
+	}
+
+	protected void movePreviousBookmark() {
+		for (int index = this.bookmarks.size() - 1; index >= 0; index--) {
+			if (this.bookmarks.get(index).getPageIndex() < this.leftPageIndex) {
+				this.actionPerformed(this.bookmarks.get(index));
+				return;
+			}
+		}
+
+		this.moveFirstPage();
+	}
+
+	protected void moveFirstPage() {
+		this.setSubPage(null);
+		this.setLeftPageIndex(0);
+		this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+	}
+
+	protected void moveNextPage() {
+		this.setSubPage(null);
+		this.setLeftPageIndex(this.leftPageIndex + 2);
+		this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+	}
+
+	protected void movePreviousPage() {
+		this.setSubPage(null);
+		this.setLeftPageIndex(this.leftPageIndex - 2);
+		this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+	}
+
+	protected void moveLastPage() {
+		this.setSubPage(null);
+		this.setLeftPageIndex(this.pages.size());
+		this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+	}
+
+	protected void moveFirstSubPage() {
+		this.setSubPageIndex(0);
+		this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+	}
+
+	protected void moveNextSubPage() {
+		this.setSubPageIndex(this.subPageIndex + 1);
+		this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+	}
+
+	protected void movePreviousSubPage() {
+		this.setSubPageIndex(this.subPageIndex - 1);
+		this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+	}
+
+	protected void moveLastSubPage() {
+		this.setSubPageIndex(this.subPageCount);
+		this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+	}
+
+	protected void movePreviousPageHistory() {
+		if (!this.pageHistory.empty()) {
+			setSubPage(null);
+			setLeftPageIndex(popPageHistory());
+			this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+		}
+	}
 }

@@ -1,8 +1,8 @@
 {
   "homepage": "https://minecraft.curseforge.com/projects/tektopia-information",
   "promos": {
-    "1.12.2-latest": "1.8.0",
-    "1.12.2-recommended": "1.8.0"
+    "1.12.2-latest": "1.9.0",
+    "1.12.2-recommended": "1.9.0"
   },
   "1.12.2":{
     "0.1.1": "Initial alpha release.",
@@ -15,6 +15,7 @@
     "1.5.0": "Cleaned up the book's display. Added new maps at the end of the book. Added more information into the book.",
     "1.6.0": "Added AI Filter page to Resident pages. Replaced Sleeping line with Task, so you can now see what the villager is currently doing.\nAdded Overcrowding to Structures and Statistics pages.\nAdded mouse click links to most page types to navigate around and a back button.\nFixed the Resident Count on specific pages.",
     "1.7.0": "Added coordinate links to open the map.\nAdded additional options to the map.\nFixed Visitor link on Structure detail page.\nAdded current structure to Visitor page.\nAdded tile information to Home detail page.\nChanged tooltip text when link is for the Home page, not a Structure page.\nMore clean-up of the books pages.",
-    "1.8.0": "Added work and sleep times to the resident and visitor details page.\nAdded task name to the Enemy list.\nAdded config option to prevent enemies showing in the book.\nAdded days and time to book village summary.\nAdded config option to pause game when open in singleplayer."
+    "1.8.0": "Added work and sleep times to the resident and visitor details page.\nAdded task name to the Enemy list.\nAdded config option to prevent enemies showing in the book.\nAdded days and time to book village summary.\nAdded config option to pause game when open in singleplayer.",
+    "1.9.0": "Added inventory button to resident page, to display the resident's inventory.\nAdded keyboard navigation to the book."
   }	
 }
