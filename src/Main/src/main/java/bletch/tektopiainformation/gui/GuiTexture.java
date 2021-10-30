@@ -6,6 +6,7 @@ import net.minecraft.util.math.BlockPos;
 public class GuiTexture {
 	
 	private ResourceLocation texture;
+	private float zLevel = 0;
 	
 	private int left = 0;
 	private int top = 0;
@@ -17,8 +18,9 @@ public class GuiTexture {
 	private int textureWidth = 0;
 	private int textureHeight = 0;
 	
-	public GuiTexture(ResourceLocation texture, int left, int top, int width, int height, int textureLeft, int textureTop, int textureWidth, int textureHeight) {
+	public GuiTexture(ResourceLocation texture, float zLevel, int left, int top, int width, int height, int textureLeft, int textureTop, int textureWidth, int textureHeight) {
 		this.texture = texture;
+		this.zLevel = zLevel;
 		
 		this.left = left;
 		this.top = top;
@@ -40,6 +42,10 @@ public class GuiTexture {
 	
 	public ResourceLocation getTexture() {
 		return this.texture;
+	}
+	
+	public float getZLevel() {
+		return this.zLevel;
 	}
 	
 	public int getLeft() {

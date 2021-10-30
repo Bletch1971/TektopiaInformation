@@ -268,6 +268,10 @@ public class ResidentData extends EntityData {
 		return this.inventory;
 	}
 	
+	public int getInventoryCount() {
+		return this.inventory == null ? 0 : this.inventory.size();
+	}
+	
 	public List<ItemStack> getRecentEats() {
 		return this.recentEats.stream()
 				.map(itemId -> new ItemStack(Item.getItemById(itemId)))

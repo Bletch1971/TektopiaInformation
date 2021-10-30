@@ -45,8 +45,8 @@ public class GuiButton {
 		this.icon = icon;
 	}
 	
-	public void setIcon(ResourceLocation texture, int left, int top, int width, int height, int textureLeft, int textureTop, int textureWidth, int textureHeight) {
-		this.icon = new GuiTexture(texture, left, top, width, height, textureLeft, textureTop, textureWidth, textureHeight);
+	public void setIcon(ResourceLocation texture, float zLevel, int left, int top, int width, int height, int textureLeft, int textureTop, int textureWidth, int textureHeight) {
+		this.icon = new GuiTexture(texture, zLevel, left, top, width, height, textureLeft, textureTop, textureWidth, textureHeight);
 	}
 	
 	public void setButtonData(String buttonData) {

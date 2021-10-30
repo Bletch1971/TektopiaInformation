@@ -4,8 +4,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -77,15 +80,24 @@ public class RenderUtils {
 
 	@SideOnly(Side.CLIENT)
 	public static void renderItemAndEffectIntoGUI(ItemStack stack, int x, int y) {
-		renderItemAndEffectIntoGUI(Minecraft.getMinecraft().getRenderItem(), stack, x, y);
+		renderItemAndEffectIntoGUI(Minecraft.getMinecraft().getRenderItem(), stack, x, y, false);
 	}
 
 	@SideOnly(Side.CLIENT)
 	public static void renderItemAndEffectIntoGUI(RenderItem renderItem, ItemStack stack, int x, int y) {
+		renderItemAndEffectIntoGUI(renderItem, stack, x, y, false);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void renderItemAndEffectIntoGUI(RenderItem renderItem, ItemStack stack, int x, int y, Boolean resetZLevel) {
+		if (resetZLevel)
+			renderItem.zLevel -= 150.0F;
 		GlStateManager.pushMatrix();
 		renderItem.renderItemAndEffectIntoGUI(stack, x, y);
 		GlStateManager.disableLighting();
 		GlStateManager.popMatrix();
+		if (resetZLevel)
+			renderItem.zLevel += 150.0F;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -125,5 +137,29 @@ public class RenderUtils {
 		GlStateManager.disableLighting();
 		GlStateManager.popMatrix();
 	}
+
+	public static void drawModalRectWithCustomSizedTextureWithZLevel(ResourceLocation resource, float zLevel, int x, int y, float u, float v, int width, int height, float textureWidth, float textureHeight) {
+		drawModalRectWithCustomSizedTextureWithZLevel(Minecraft.getMinecraft().getTextureManager(), resource, zLevel, x, y, u, v, width, height, textureWidth, textureHeight);
+	}
+	
+	public static void drawModalRectWithCustomSizedTextureWithZLevel(TextureManager textureManager, ResourceLocation resource, float zLevel, int x, int y, float u, float v, int width, int height, float textureWidth, float textureHeight) {
+		GlStateManager.pushMatrix();
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		
+		Minecraft.getMinecraft().getTextureManager().bindTexture(resource);
+		
+        float f = 1.0F / textureWidth;
+        float f1 = 1.0F / textureHeight;
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+        bufferbuilder.pos((double)x, (double)(y + height), (double)zLevel).tex((double)(u * f), (double)((v + (float)height) * f1)).endVertex();
+        bufferbuilder.pos((double)(x + width), (double)(y + height), (double)zLevel).tex((double)((u + (float)width) * f), (double)((v + (float)height) * f1)).endVertex();
+        bufferbuilder.pos((double)(x + width), (double)y, (double)zLevel).tex((double)((u + (float)width) * f), (double)(v * f1)).endVertex();
+        bufferbuilder.pos((double)x, (double)y, (double)zLevel).tex((double)(u * f), (double)(v * f1)).endVertex();
+        tessellator.draw();
+        
+        GlStateManager.popMatrix();
+    }
 
 }

@@ -264,6 +264,8 @@ tektopiaBook.hometypes.totalhomes=Total Homes:
 tektopiaBook.hometypes.totalresidents=Total Residents:
 tektopiaBook.hometypes.residents=Residents
 
+tektopiaBook.inventory.header=Inventory
+
 tektopiaBook.map.quadrantnortheast=North East
 tektopiaBook.map.quadrantnorthwest=North West
 tektopiaBook.map.quadrantsoutheast=South East
@@ -316,6 +318,7 @@ tektopiaBook.residents.structure=Current Structure:
 tektopiaBook.residents.recenteats=Recent Eats (last 5)
 tektopiaBook.residents.additionalprofessions=Additional Professions (top 4)
 tektopiaBook.residents.viewaifilters=View AI Filters
+tektopiaBook.residents.viewinventory=View Inventory
 
 tektopiaBook.statistics.happinessheader=Happiness Statistics
 tektopiaBook.statistics.hungerheader=Hunger Statistics

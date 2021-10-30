@@ -8,6 +8,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 
@@ -29,46 +30,55 @@ public class Font {
         return fontRenderer.getStringWidth(text);
     }
 
-    public void printLeft(Object o, int x, int y) {
-    	printLeft(o, x, y, Color.BLACK.getRGB(), false);
+    public void printLeft(Object o, int x, int y, float z) {
+    	printLeft(o, x, y, z, Color.BLACK.getRGB(), false);
     }
 
-    public void printLeft(Object o, int x, int y, int color) {
-    	printLeft(o, x, y, color, false);
+    public void printLeft(Object o, int x, int y, float z, int color) {
+    	printLeft(o, x, y, z, color, false);
     }
 
-    public void printLeft(Object o, int x, int y, int color, boolean shadow) {
+    public void printLeft(Object o, int x, int y, float z, int color, boolean shadow) {
+    	GlStateManager.pushMatrix();
+    	GlStateManager.translate((float)1, (float)1, z + 1.0F);
         fontRenderer.drawString(String.valueOf(o), x, y, color, shadow);
+        GlStateManager.popMatrix();
     }
     
-    public void printCentered(Object o, int x, int y) {
-    	printCentered(o, x, y, Color.BLACK.getRGB(), false);
+    public void printCentered(Object o, int x, int y, float z) {
+    	printCentered(o, x, y, z, Color.BLACK.getRGB(), false);
     }
     
-    public void printCentered(Object o, int x, int y, int color) {
-    	printCentered(o, x, y, color, false);
+    public void printCentered(Object o, int x, int y, float z, int color) {
+    	printCentered(o, x, y, z, color, false);
     }
     
-    public void printCentered(Object o, int x, int y, int color, boolean shadow) {
+    public void printCentered(Object o, int x, int y, float z, int color, boolean shadow) {
     	int width = getStringWidth(String.valueOf(o));
     	int newX = x - (width / 2);
     	
+    	GlStateManager.pushMatrix();
+    	GlStateManager.translate((float)1, (float)1, z + 1.0F);
     	fontRenderer.drawString(String.valueOf(o), newX, y, color, shadow);
+        GlStateManager.popMatrix();
     }
     
-    public void printRight(Object o, int x, int y) {
-    	printRight(o, x, y, Color.BLACK.getRGB(), false);
+    public void printRight(Object o, int x, int y, float z) {
+    	printRight(o, x, y, z, Color.BLACK.getRGB(), false);
     }
     
-    public void printRight(Object o, int x, int y, int color) {
-    	printRight(o, x, y, color, false);
+    public void printRight(Object o, int x, int y, float z, int color) {
+    	printRight(o, x, y, z, color, false);
     }
     
-    public void printRight(Object o, int x, int y, int color, boolean shadow) {
+    public void printRight(Object o, int x, int y, float z, int color, boolean shadow) {
     	int width = getStringWidth(String.valueOf(o));
     	int newX = x - width;
     	
+    	GlStateManager.pushMatrix();
+    	GlStateManager.translate((float)1, (float)1, z + 1.0F);
     	fontRenderer.drawString(String.valueOf(o), newX, y, color, shadow);
+        GlStateManager.popMatrix();
     }
     
     public String trimStringToWidth(String text, int width, boolean addElipse) {

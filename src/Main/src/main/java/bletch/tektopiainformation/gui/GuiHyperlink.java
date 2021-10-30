@@ -20,7 +20,7 @@ public class GuiHyperlink extends GuiButton {
 	}
 	
 	public void setIcon(int left, int top, int width, int height) {
-		this.icon = new GuiTexture(BUTTON_INVISIBLE, left, top, width, height, 0, 0, width, height);
+		this.icon = new GuiTexture(BUTTON_INVISIBLE, 0.0F, left, top, width, height, 0, 0, width, height);
 	}
 
 }

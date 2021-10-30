@@ -39,8 +39,8 @@ public class GuiBookmark extends GuiButton {
 		this.background = texture;
 	}
 	
-	public void setBackground(ResourceLocation texture, int left, int top, int width, int height, int textureLeft, int textureTop, int textureWidth, int textureHeight) {
-		this.background = new GuiTexture(texture, left, top, width, height, textureLeft, textureTop, textureWidth, textureHeight);
+	public void setBackground(ResourceLocation texture, float zLevel, int left, int top, int width, int height, int textureLeft, int textureTop, int textureWidth, int textureHeight) {
+		this.background = new GuiTexture(texture, zLevel, left, top, width, height, textureLeft, textureTop, textureWidth, textureHeight);
 	}
 	
 	public boolean withinBounds(int x, int y, float scale) {
