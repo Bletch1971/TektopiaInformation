@@ -1,5 +1,6 @@
 package bletch.tektopiainformation.network.data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -64,6 +65,8 @@ public class ResidentData extends EntityData {
 	private static final String NBTTAG_VILLAGE_RESIDENTAIFILTERCOUNT = "villageresidentaifiltercount";
 	private static final String NBTTAG_VILLAGE_RESIDENTAIFILTER = "villageresidentaifilter";
 	private static final String NBTTAG_VILLAGE_RESIDENTRECIPES = "villageresidentrecipes";
+	private static final String NBTTAG_VILLAGE_RESIDENTINVENTORYCOUNT = "villageresidentinventorycount";
+	private static final String NBTTAG_VILLAGE_RESIDENTINVENTORY = "villageresidentinventory";
 
 	@SuppressWarnings("rawtypes")
 	private static final List<Class> toolItemClasses = Arrays.asList(ItemAxe.class, ItemHoe.class, ItemSword.class, ItemPickaxe.class, ItemShears.class);
@@ -97,6 +100,7 @@ public class ResidentData extends EntityData {
 	private Map<String, Integer> additionalProfessions;
 	private Map<String, Boolean> aiFilters;
 	private MerchantRecipeList recipes;
+	private List<ItemStack> inventory;
 	
 	public ResidentData() {
 		super();
@@ -256,6 +260,10 @@ public class ResidentData extends EntityData {
 		return this.recipes;
 	}
 	
+	public List<ItemStack> getInventory() {
+		return this.inventory;
+	}
+	
 	public EntityVillagerTek getVillagerEntity() {
 		if (entityList != null && entityList.size() > 0) {
 			return (EntityVillagerTek) entityList.stream()
@@ -298,6 +306,7 @@ public class ResidentData extends EntityData {
 		this.additionalProfessions = new LinkedHashMap<String, Integer>();
 		this.aiFilters = new LinkedHashMap<String, Boolean>(); 
 		this.recipes = null;
+		this.inventory = null;
 	}
 	
 	protected void populateData(EntityVillagerTek villager) {
@@ -423,6 +432,15 @@ public class ResidentData extends EntityData {
 			
 			// remove any invalid items from the equipment list - DO NOT do this for the armor, we need
 			this.equipment.removeIf((p) -> p == null || p == ItemStack.EMPTY || p.getItem() == Items.AIR);
+			
+			int inventorySize = inventory.getSizeInventory();
+			if (inventorySize > 0) {
+				this.inventory = new ArrayList<ItemStack>(inventorySize);
+				
+				for (int slot = 0; slot < inventorySize; slot++) {
+					this.inventory.add(inventory.getStackInSlot(slot).copy());
+				}
+			}
 		}
 	}
 	
@@ -531,6 +549,22 @@ public class ResidentData extends EntityData {
 			this.recipes.readRecipiesFromTags(nbtTag.getCompoundTag(NBTTAG_VILLAGE_RESIDENTRECIPES));
 		}
 		
+		if (nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTINVENTORYCOUNT)) {
+			int count = nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTINVENTORYCOUNT);			
+			this.inventory = new ArrayList<ItemStack>(count);
+			
+			for (int index = 0; index < count; index++) {
+				String key = NBTTAG_VILLAGE_RESIDENTINVENTORY + "@" + index;
+				
+				if (nbtTag.hasKey(key)) {
+					NBTTagCompound value = nbtTag.getCompoundTag(key);
+					ItemStack itemStack = new ItemStack(value);
+					
+					this.inventory.add(itemStack);
+				}
+			}
+		}
+		
 		if (originalProfessionType != null) {
 			if (entityList != null && entityList.size() > 0) {
 				Entity entity = entityList.stream()
@@ -616,6 +650,21 @@ public class ResidentData extends EntityData {
 		
 		if (this.recipes != null && !this.recipes.isEmpty()) {
 			nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTRECIPES, this.recipes.getRecipiesAsTags());
+		}
+		
+		if (this.inventory != null && !this.inventory.isEmpty()) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTINVENTORYCOUNT, this.inventory.size());
+			
+			int index = 0;
+			for (ItemStack itemStack : this.inventory) {
+				if (itemStack != null) {
+					NBTTagCompound value = new NBTTagCompound();
+					value = itemStack.writeToNBT(value);
+					
+					nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTINVENTORY + "@" + index, value);
+				}
+				index++;
+			}
 		}
 	}
 	
