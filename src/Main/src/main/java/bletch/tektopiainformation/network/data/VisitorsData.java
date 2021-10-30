@@ -33,8 +33,10 @@ public class VisitorsData {
 	
 	public List<VisitorData> getVisitors() {
 		return Collections.unmodifiableList(this.visitors == null ? new ArrayList<VisitorData>() : this.visitors.stream()
-				.sorted((c1 , c2) -> c1.getProfessionType().compareTo(c2.getProfessionType()))
-				.sorted((c1 , c2) -> c1.getName().compareTo(c2.getName()))
+				.sorted((c1 , c2) -> {
+					int compare = c1.getProfessionType().compareTo(c2.getProfessionType());
+					return compare != 0 ? compare : c1.getName().compareTo(c2.getName());
+				})
 				.collect(Collectors.toList()));
 	}
 	

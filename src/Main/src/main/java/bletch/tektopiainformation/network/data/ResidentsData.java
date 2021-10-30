@@ -150,10 +150,7 @@ public class ResidentsData {
 			if (entry != null) {
 				entry.getValue().sort((c1, c2) -> {
 					int compare = Integer.compare(c1.getHappy(), c2.getHappy());
-					if (compare == 0) {
-						compare = c1.getName().compareTo(c2.getName());
-					}
-					return compare;
+					return compare != 0 ? compare : c1.getName().compareTo(c2.getName());
 				});
 			}
 		}
@@ -188,10 +185,7 @@ public class ResidentsData {
 			if (entry != null) {
 				entry.getValue().sort((c1, c2) -> {
 					int compare = Integer.compare(c1.getHunger(), c2.getHunger());
-					if (compare == 0) {
-						compare = c1.getName().compareTo(c2.getName());
-					}
-					return compare;
+					return compare != 0 ? compare : c1.getName().compareTo(c2.getName());
 				});
 			}
 		}
