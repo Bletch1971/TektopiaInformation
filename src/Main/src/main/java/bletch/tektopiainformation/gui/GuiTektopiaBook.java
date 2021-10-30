@@ -3625,11 +3625,11 @@ public class GuiTektopiaBook extends GuiScreen {
 					GlStateManager.popMatrix();  	
 				}
 
-				tXL = this.x + PAGE_LEFTPAGE_CENTER_X;
-				tXR = this.x + PAGE_RIGHTPAGE_CENTER_X;
-				tY = y + 10;
-
 				if (!this.isSubPageOpen()) {
+
+					tXL = this.x + PAGE_LEFTPAGE_CENTER_X;
+					tXR = this.x + PAGE_RIGHTPAGE_CENTER_X;
+					tY = y + 10;
 
 					// draw equipment slots
 					for (ItemStack piece : resident.getEquipment()) {
@@ -3660,9 +3660,9 @@ public class GuiTektopiaBook extends GuiScreen {
 
 					tXL += 20;
 					tXR += 20;
-					tY = y + 70;
+					tY = y + 10;
 
-					// draw armor slots (armor stored backwards)
+					// draw armor slots
 					for (ItemStack piece : resident.getArmor()) {
 						if (piece != null && piece != ItemStack.EMPTY) {
 							List<String> tooltip = piece.getTooltip(null, TooltipFlags.NORMAL);
@@ -3686,7 +3686,7 @@ public class GuiTektopiaBook extends GuiScreen {
 								}
 							}
 						}
-						tY -= 20;
+						tY += 20;
 					}
 				}              
 

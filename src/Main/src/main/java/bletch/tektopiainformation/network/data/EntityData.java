@@ -202,6 +202,8 @@ public class EntityData {
 					this.armor.add(index, ItemStack.EMPTY);
 				}
 			}
+			
+			Collections.reverse(this.armor);
 		}
 		
 		if (nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYEQUIPMENTCOUNT)) {
@@ -253,8 +255,8 @@ public class EntityData {
 					piece.writeToNBT(nbtTagPiece);
 					
 					nbtTag.setTag(NBTTAG_VILLAGE_ENTITYARMOR + "@" + index, nbtTagPiece);
-					index++;
 				}
+				index++;
 			}
 		}
 		
@@ -268,8 +270,8 @@ public class EntityData {
 					piece.writeToNBT(nbtTagPiece);
 					
 					nbtTag.setTag(NBTTAG_VILLAGE_ENTITYEQUIPMENT + "@" + index, nbtTagPiece);
-					index++;
 				}
+				index++;
 			}
 		}
 	}
