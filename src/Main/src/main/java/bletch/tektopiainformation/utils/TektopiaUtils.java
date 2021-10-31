@@ -90,15 +90,7 @@ public class TektopiaUtils {
         		.map(i -> i.getClass())
         		.sorted((c1, c2) -> c1.getTypeName().compareTo(c2.getTypeName()))
         		.collect(Collectors.toList());
-    }
-	
-	public static List<VillageStructureType> getHomeStructureTypes() {
-		return StreamSupport.stream(Arrays.spliterator(VillageStructureType.values()), false)
-				.distinct()
-				.filter(t -> t.isHome() || t == VillageStructureType.BARRACKS)
-				.sorted((c1, c2) -> c1.name().compareTo(c2.name()))
-				.collect(Collectors.toList());
-	}   
+    }   
 	
 	public static ProfessionType getProfessionType(String professionTypeName) {
     	if (professionTypeName == null || professionTypeName.trim().isEmpty()) {
@@ -113,15 +105,17 @@ public class TektopiaUtils {
 		}
     }
 	
-	public static List<String> getProfessionTypeNames() {
+	public static List<String> getProfessionTypeNames(Boolean includeAdditionals) {
 		List<String> results = StreamSupport.stream(Arrays.spliterator(ProfessionType.values()), false)
 			.distinct()
 			.filter(p -> p != ProfessionType.NOMAD)
 			.map(t -> t.name())
 			.collect(Collectors.toList());
 		
-		results.add(PROFESSIONTYPE_ARCHITECT);
-		results.add(PROFESSIONTYPE_TRADESMAN);
+		if (includeAdditionals) {
+			results.add(PROFESSIONTYPE_ARCHITECT);
+			results.add(PROFESSIONTYPE_TRADESMAN);
+		}
 		
 		return results.stream()
 				.sorted((c1, c2) -> c1.compareTo(c2))
@@ -136,11 +130,37 @@ public class TektopiaUtils {
 			.collect(Collectors.toList());
 	}
 	
+	public static List<VillageStructureType> getVillageHomeTypes() {
+		return StreamSupport.stream(Arrays.spliterator(VillageStructureType.values()), false)
+				.distinct()
+				.filter(t -> t.isHome() || t == VillageStructureType.BARRACKS)
+				.sorted((c1, c2) -> c1.name().compareTo(c2.name()))
+				.collect(Collectors.toList());
+	}
+	
 	public static List<VillageStructureType> getVillageStructureTypes() {
 		return StreamSupport.stream(Arrays.spliterator(VillageStructureType.values()), false)
 				.distinct()
 				.sorted((c1, c2) -> c1.name().compareTo(c2.name()))
 				.collect(Collectors.toList());
+	}
+	
+	public static Map<VillageStructureType, List<VillageStructure>> getVillageHomes(Village village) {
+		if (village == null) {
+			return new HashMap<VillageStructureType, List<VillageStructure>>(); 
+		}
+		
+		HashMap<VillageStructureType, List<VillageStructure>> structuresList = new HashMap<VillageStructureType, List<VillageStructure>>(); 
+
+		for (VillageStructureType structureType : getVillageHomeTypes()) {
+			List<VillageStructure> structures = village.getStructures(structureType);
+			if (structures == null) {
+				structures = new ArrayList<VillageStructure>();
+			}
+			structuresList.put(structureType, structures);
+		}
+		
+		return structuresList;
 	}
 	
 	public static Map<VillageStructureType, List<VillageStructure>> getVillageStructures(Village village) {

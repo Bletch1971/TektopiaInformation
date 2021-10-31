@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.tangotek.tektopia.Village;
 import net.tangotek.tektopia.VillagerRole;
@@ -14,9 +15,8 @@ import net.tangotek.tektopia.entities.EntityVillageNavigator;
 public class EnemiesData {
 	
 	private static final String NBTTAG_VILLAGE_ENEMIES = "villageenemies";
-	private static final String NBTTAG_VILLAGE_ENEMIESCOUNT = "villageenemiescount";
+	private static final String NBTTAG_VILLAGE_ENEMIESLIST = "villageenemieslist";
 	
-	private int enemiesCount;
 	private List<EnemyData> enemies;
 
 	public EnemiesData() {
@@ -28,13 +28,15 @@ public class EnemiesData {
 	}
 	
 	public int getEnemiesCount() {
-		return this.enemiesCount;
+		return this.enemies.size();
 	}
 	
 	public List<EnemyData> getEnemies() {
-		return Collections.unmodifiableList(this.enemies == null ? new ArrayList<EnemyData>() : this.enemies.stream()
-				.sorted((c1 , c2) -> c1.getName().compareTo(c2.getName()))
-				.collect(Collectors.toList()));
+		return this.enemies == null
+				? Collections.unmodifiableList(new ArrayList<EnemyData>())
+				: Collections.unmodifiableList(this.enemies.stream()
+						.sorted((c1 , c2) -> c1.getName().compareTo(c2.getName()))
+						.collect(Collectors.toList()));
 	}
 	
 	public EnemyData getEnemy(int index) {
@@ -42,14 +44,14 @@ public class EnemiesData {
 	}
 	
 	public EnemyData getEnemyById(int id) {
-		return this.enemies == null ? null : this.enemies.stream()
-				.filter(m -> m.getId() == id)
-				.findFirst().orElse(null);
+		return this.enemies == null 
+				? null 
+				: this.enemies.stream()
+						.filter(m -> m.getId() == id)
+						.findFirst().orElse(null);
 	}
 	
 	private void clearData() {
-		this.enemiesCount = 0;
-		
 		this.enemies = new ArrayList<EnemyData>();
 	}
 	
@@ -69,8 +71,6 @@ public class EnemiesData {
 				
 				this.enemies.add(new EnemyData(entity));
 			}
-			
-			this.enemiesCount = this.enemies.size();
 		}
 	}
 	
@@ -83,16 +83,14 @@ public class EnemiesData {
 		
 		if (nbtTag.hasKey(NBTTAG_VILLAGE_ENEMIES)) {
 			NBTTagCompound nbtEnemiesData = nbtTag.getCompoundTag(NBTTAG_VILLAGE_ENEMIES);
-			
-			this.enemiesCount = nbtEnemiesData.hasKey(NBTTAG_VILLAGE_ENEMIESCOUNT) ? nbtEnemiesData.getInteger(NBTTAG_VILLAGE_ENEMIESCOUNT) : 0;
-
-			for (int enemyIndex = 0; enemyIndex < this.enemiesCount; enemyIndex++) {
-				String key = getEnemyKey(enemyIndex);
+		
+			if (nbtEnemiesData.hasKey(NBTTAG_VILLAGE_ENEMIESLIST)) {
+				NBTTagList nbtTagListEnemies = nbtEnemiesData.getTagList(NBTTAG_VILLAGE_ENEMIESLIST, 10);
 				
-				if (nbtEnemiesData.hasKey(key)) {
-					EnemyData enemy = new EnemyData();
-					enemy.readNBT(nbtEnemiesData.getCompoundTag(key));
-					this.enemies.add(enemy);
+				for (int index = 0; index < nbtTagListEnemies.tagCount(); index++) {
+					NBTTagCompound nbtTagEnemy = nbtTagListEnemies.getCompoundTagAt(index);
+					
+					this.enemies.add(new EnemyData(nbtTagEnemy));
 				}
 			}
 		}
@@ -104,23 +102,21 @@ public class EnemiesData {
 		}	
 		
 		NBTTagCompound nbtEnemiesData = new NBTTagCompound();
-
-		nbtEnemiesData.setInteger(NBTTAG_VILLAGE_ENEMIESCOUNT, this.enemiesCount);
 		
 		if (this.enemies != null) {
-			int enemyIndex = 0;
+			NBTTagList nbtTagListEnemies = new NBTTagList();
+			
 			for (EnemyData enemy : this.enemies) {
-				NBTTagCompound nbtEnemyData = new NBTTagCompound();
-				enemy.writeNBT(nbtEnemyData);
-				nbtEnemiesData.setTag(getEnemyKey(enemyIndex++), nbtEnemyData);
+				NBTTagCompound nbtEnemy = new NBTTagCompound();
+				enemy.writeNBT(nbtEnemy);
+				
+				nbtTagListEnemies.appendTag(nbtEnemy);
 			}
+			
+			nbtEnemiesData.setTag(NBTTAG_VILLAGE_ENEMIESLIST, nbtTagListEnemies);
 		}
 
 		nbtTag.setTag(NBTTAG_VILLAGE_ENEMIES, nbtEnemiesData);
-	}
-
-	public static String getEnemyKey(int enemyIndex) {
-		return "enemy@" + enemyIndex;
 	}
 
 }

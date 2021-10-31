@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import bletch.tektopiainformation.utils.TektopiaUtils;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.tangotek.tektopia.Village;
 import net.tangotek.tektopia.structures.VillageStructure;
@@ -17,9 +18,11 @@ import net.tangotek.tektopia.structures.VillageStructureType;
 public class HomesData {
 	
 	private static final String NBTTAG_VILLAGE_HOMES = "villagehomes";
-	private static final String NBTTAG_VILLAGE_HOMESCOUNT = "villagehomescount";
+	private static final String NBTTAG_VILLAGE_HOMESLIST = "villagehomeslist";
+	private static final String NBTTAG_VILLAGE_HOMETYPECOUNTS = "villagehometypecounts";
+	private static final String NBTTAG_VILLAGE_HOMETYPENAME = "villagehometypename";
+	private static final String NBTTAG_VILLAGE_HOMETYPECOUNT = "villagehometypecount";
 	
-	private int homesCount;
 	private List<HomeData> homes;
 	private Map<VillageStructureType, Integer> homeTypeCounts;
 	
@@ -32,53 +35,71 @@ public class HomesData {
 	}
 	
 	public int getHomesCount() {
-		return this.homesCount;
+		return this.homes == null 
+				? 0 
+				: this.homes.size();
 	}
 	
 	public List<HomeData> getHomes() {
-		return Collections.unmodifiableList(this.homes == null ? new ArrayList<HomeData>() : this.homes.stream()
-				.sorted((c1 , c2) -> {
-					int compare = c1.getStructureType().name().compareTo(c2.getStructureType().name());
-					return compare != 0 ? compare : c1.getFramePosition().compareTo(c2.getFramePosition());
-				})
-				.collect(Collectors.toList()));
+		return this.homes == null
+				? Collections.unmodifiableList(new ArrayList<HomeData>())
+				: Collections.unmodifiableList(this.homes.stream()
+						.sorted((c1 , c2) -> {
+							int compare = c1.getStructureType().name().compareTo(c2.getStructureType().name());
+							return compare != 0 ? compare : c1.getFramePosition().compareTo(c2.getFramePosition());
+						})
+						.collect(Collectors.toList()));
 	}
 	
 	public List<HomeData> getHomesByType(VillageStructureType structureType) {
-		return this.homes == null ? new ArrayList<HomeData>() :  Collections.unmodifiableList(this.homes.stream()
-				.filter(h -> structureType != null && h.getStructureType().equals(structureType))
-				.sorted((c1 , c2) -> c1.getFramePosition().compareTo(c2.getFramePosition()))
-				.collect(Collectors.toList()));
+		return this.homes == null 
+				? Collections.unmodifiableList(new ArrayList<HomeData>())
+				: Collections.unmodifiableList(this.homes.stream()
+						.filter(h -> structureType != null && h.getStructureType().equals(structureType))
+						.sorted((c1 , c2) -> c1.getFramePosition().compareTo(c2.getFramePosition()))
+						.collect(Collectors.toList()));
 	}
 	
 	public HomeData getHome(int index) {
-		return this.homes == null ? null : this.homes.get(index);
+		return this.homes == null 
+				? null 
+				: this.homes.get(index);
 	}
 	
 	public HomeData getHomeById(int homeId) {
-		return this.homes == null ? null : this.homes.stream()
-				.filter(r -> homeId > 0 && homeId == r.getHomeId())
-				.findFirst().orElse(null);
+		return this.homes == null 
+				? null 
+				: this.homes.stream()
+						.filter(r -> homeId > 0 && homeId == r.getHomeId())
+						.findFirst().orElse(null);
 	}
 	
 	public HomeData getHomeByBedPosition(BlockPos bedPosition) {
-		return this.homes == null ? null : this.homes.stream()
-				.filter(h -> bedPosition != null && h.getBedPositions().contains(bedPosition))
-				.findFirst().orElse(null);
+		return this.homes == null 
+				? null 
+				: this.homes.stream()
+						.filter(h -> bedPosition != null && h.getBedPositions().contains(bedPosition))
+						.findFirst().orElse(null);
 	}
 	
 	public HomeData getHomeByFramePosition(BlockPos framePosition) {
-		return this.homes == null ? null : this.homes.stream()
-				.filter(h -> framePosition != null && framePosition.equals(h.getFramePosition()))
-				.findFirst().orElse(null);
+		return this.homes == null 
+				? null 
+				: this.homes.stream()
+						.filter(h -> framePosition != null && framePosition.equals(h.getFramePosition()))
+						.findFirst().orElse(null);
 	}
 	
 	public Map<VillageStructureType, Integer> getHomeTypeCounts() {
-		return this.homeTypeCounts == null ? new HashMap<VillageStructureType, Integer>() : Collections.unmodifiableMap(this.homeTypeCounts);
+		return this.homeTypeCounts == null 
+				? Collections.unmodifiableMap(new HashMap<VillageStructureType, Integer>())
+				: Collections.unmodifiableMap(this.homeTypeCounts);
 	}	
 	
 	public int getHomeTypeCount(VillageStructureType structureType) {
-		return this.homeTypeCounts != null && structureType != null && this.homeTypeCounts.containsKey(structureType) ? this.homeTypeCounts.get(structureType) : 0;
+		return this.homeTypeCounts != null && structureType != null && this.homeTypeCounts.containsKey(structureType) 
+				? this.homeTypeCounts.get(structureType) 
+				: 0;
 	}
 	
 	public int getResidentCountByType(VillageStructureType structureType) {
@@ -110,8 +131,6 @@ public class HomesData {
 	}
 	
 	private void clearData() {
-		this.homesCount = 0;
-		
 		this.homes = new ArrayList<HomeData>();
 		this.homeTypeCounts = new HashMap<VillageStructureType, Integer>();
 	}
@@ -121,28 +140,14 @@ public class HomesData {
 		
 		if (village != null) {
 			
-			Map<VillageStructureType, List<VillageStructure>> structuresList = TektopiaUtils.getVillageStructures(village); 
-			List<VillageStructureType> homeTypes = TektopiaUtils.getHomeStructureTypes();
+			Map<VillageStructureType, List<VillageStructure>> homesList = TektopiaUtils.getVillageHomes(village);
 			
-			final int[] totalHomeCount = { 0 };
-			structuresList.entrySet().stream()
-				.filter(s -> homeTypes != null && homeTypes.contains(s.getKey()))
-				.forEach(s -> totalHomeCount[0] += s.getValue().size());
+			for (Entry<VillageStructureType, List<VillageStructure>> entry : homesList.entrySet()) {
+				List<VillageStructure> structures = homesList.get(entry.getKey());
+				this.homeTypeCounts.put(entry.getKey(), structures.size());
 
-			this.homesCount = totalHomeCount[0];
-			
-			for (VillageStructureType structureType : TektopiaUtils.getVillageStructureTypes()) {
-				if (homeTypes != null && homeTypes.contains(structureType)) {
-					this.homeTypeCounts.put(structureType, 0);
-					
-					if (structuresList.containsKey(structureType)) {
-						List<VillageStructure> structures = structuresList.get(structureType);
-						this.homeTypeCounts.put(structureType, structures.size());
-
-						for (VillageStructure structure : structures) {
-							this.homes.add(new HomeData(structure));
-						}
-					}
+				for (VillageStructure structure : structures) {
+					this.homes.add(new HomeData(structure));
 				}
 			}
 		}
@@ -158,24 +163,24 @@ public class HomesData {
 		if (nbtTag.hasKey(NBTTAG_VILLAGE_HOMES)) {
 			NBTTagCompound nbtHomesData = nbtTag.getCompoundTag(NBTTAG_VILLAGE_HOMES);
 			
-			this.homesCount = nbtHomesData.hasKey(NBTTAG_VILLAGE_HOMESCOUNT) ? nbtHomesData.getInteger(NBTTAG_VILLAGE_HOMESCOUNT) : 0;
-			
-			List<VillageStructureType> homeTypes = TektopiaUtils.getHomeStructureTypes();
-
-			for (VillageStructureType structureType : TektopiaUtils.getVillageStructureTypes()) {
-				if (homeTypes != null && homeTypes.contains(structureType)) {
-					String key = getHomeTypeKey(structureType);
-					this.homeTypeCounts.put(structureType, nbtHomesData.hasKey(key) ? nbtHomesData.getInteger(key) : 0);
-				}
+			if (nbtHomesData.hasKey(NBTTAG_VILLAGE_HOMETYPECOUNTS)) {
+				NBTTagList nbtTagHomeCounts = nbtHomesData.getTagList(NBTTAG_VILLAGE_HOMETYPECOUNTS, 10);
+				
+				for (int index = 0; index < nbtTagHomeCounts.tagCount(); index++) {
+					NBTTagCompound nbtTagHomeCount = nbtTagHomeCounts.getCompoundTagAt(index);
+					VillageStructureType homeType = VillageStructureType.valueOf(nbtTagHomeCount.getString(NBTTAG_VILLAGE_HOMETYPENAME));
+					
+					this.homeTypeCounts.put(homeType, nbtTagHomeCount.getInteger(NBTTAG_VILLAGE_HOMETYPECOUNT));
+				}	
 			}
 			
-			for (int homeIndex = 0; homeIndex < this.homesCount; homeIndex++) {
-				String key = getHomeKey(homeIndex);
+			if (nbtHomesData.hasKey(NBTTAG_VILLAGE_HOMESLIST)) {
+				NBTTagList nbtTagListHomes = nbtHomesData.getTagList(NBTTAG_VILLAGE_HOMESLIST, 10);
 				
-				if (nbtHomesData.hasKey(key)) {
-					HomeData home = new HomeData();
-					home.readNBT(nbtHomesData.getCompoundTag(key));
-					this.homes.add(home);
+				for (int index = 0; index < nbtTagListHomes.tagCount(); index++) {
+					NBTTagCompound nbtTagHome = nbtTagListHomes.getCompoundTagAt(index);
+					
+					this.homes.add(new HomeData(nbtTagHome));
 				}
 			}
 		}
@@ -187,33 +192,35 @@ public class HomesData {
 		}	
 		
 		NBTTagCompound nbtHomesData = new NBTTagCompound();
-	
-		nbtHomesData.setInteger(NBTTAG_VILLAGE_HOMESCOUNT, this.homesCount);
 
 		if (this.homeTypeCounts != null) {
-			for (Entry<VillageStructureType, Integer> structureType : this.homeTypeCounts.entrySet()) {
-				nbtHomesData.setInteger(getHomeTypeKey(structureType.getKey()), structureType.getValue());
+			NBTTagList nbtTagListHomeCounts = new NBTTagList();
+			
+			for (Entry<VillageStructureType, Integer> homeType : this.homeTypeCounts.entrySet()) {
+				NBTTagCompound nbtTagHomeCount = new NBTTagCompound();
+				nbtTagHomeCount.setString(NBTTAG_VILLAGE_HOMETYPENAME, homeType.getKey().name());
+				nbtTagHomeCount.setInteger(NBTTAG_VILLAGE_HOMETYPECOUNT, homeType.getValue());
+				
+				nbtTagListHomeCounts.appendTag(nbtTagHomeCount);
 			}
+			
+			nbtHomesData.setTag(NBTTAG_VILLAGE_HOMETYPECOUNTS, nbtTagListHomeCounts);
 		}
 		
 		if (this.homes != null) {
-			int homeIndex = 0;
+			NBTTagList nbtTagListHomes = new NBTTagList();
+
 			for (HomeData structure : this.homes) {
-				NBTTagCompound nbtHomeData = new NBTTagCompound();
-				structure.writeNBT(nbtHomeData);
-				nbtHomesData.setTag(getHomeKey(homeIndex++), nbtHomeData);
+				NBTTagCompound nbtHome = new NBTTagCompound();
+				structure.writeNBT(nbtHome);
+				
+				nbtTagListHomes.appendTag(nbtHome);
 			}
+			
+			nbtHomesData.setTag(NBTTAG_VILLAGE_HOMESLIST, nbtTagListHomes);
 		}
 		
 		nbtTag.setTag(NBTTAG_VILLAGE_HOMES, nbtHomesData);
-	}
-	
-	public static String getHomeTypeKey(VillageStructureType structureType) {
-		return structureType.name();
-	}
-
-	public static String getHomeKey(int homeIndex) {
-		return "home@" + homeIndex;
 	}
 	
 }

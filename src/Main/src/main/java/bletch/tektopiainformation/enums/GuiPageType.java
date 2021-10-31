@@ -18,4 +18,5 @@ public enum GuiPageType {
 	MAP,
 	VISITOR,
 	ENEMY,
+	AIFILTER,
 }

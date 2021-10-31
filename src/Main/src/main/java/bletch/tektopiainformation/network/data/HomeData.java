@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import bletch.tektopiainformation.utils.TektopiaUtils;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.tangotek.tektopia.entities.EntityVillagerTek;
 import net.tangotek.tektopia.structures.VillageStructure;
@@ -25,10 +26,9 @@ public class HomeData {
 	private static final String NBTTAG_VILLAGE_HOMEFLOORTILECOUNT = "villagehomefloortilecount";
 	private static final String NBTTAG_VILLAGE_HOMETILESPERVILLAGER = "villagehometilespervillager";
 	private static final String NBTTAG_VILLAGE_HOMEMAXBEDS = "villagehomemaxbeds";
-	private static final String NBTTAG_VILLAGE_HOMERESIDENTSCOUNT = "villagehomeresidentscount";
-	private static final String NBTTAG_VILLAGE_HOMEFULL = "villagehomefull";
 	private static final String NBTTAG_VILLAGE_HOMERESIDENTS = "villagehomeresidents";
-	private static final String NBTTAG_VILLAGE_HOMEBEDPOSITIONCOUNT = "villagehomebedpositioncount";
+	private static final String NBTTAG_VILLAGE_HOMEBEDPOSITIONS = "villagehomebedpositions";
+	private static final String NBTTAG_VILLAGE_HOMEBEDPOSITION = "villagehomebedposition";
 	
 	private static Random rand = new Random();
 
@@ -39,8 +39,6 @@ public class HomeData {
 	private int floorTileCount;
 	private int maxBeds;
 	private int tilesPerVillager;
-	private int residentsCount;
-	private boolean isFull;
 
 	private List<ResidentData> residents;
 	private List<BlockPos> bedPositions;
@@ -53,6 +51,10 @@ public class HomeData {
 		populateData(structure);
 	}
 	
+	public HomeData(NBTTagCompound nbtTag) {
+		readNBT(nbtTag);
+	}
+	
 	public int getHomeId() {
 		return this.homeId;
 	}
@@ -62,7 +64,9 @@ public class HomeData {
 	}
 	
 	public String getStructureTypeName() {
-		return this.structureType != null && this.structureType.itemStack != null ? this.structureType.itemStack.getDisplayName() : "";
+		return this.structureType != null && this.structureType.itemStack != null 
+				? this.structureType.itemStack.getDisplayName() 
+				: "";
 	}
 	
 	public BlockPos getFramePosition() {
@@ -86,31 +90,41 @@ public class HomeData {
 	}
 	
 	public int getResidentsCount() {
-		return this.residentsCount;
+		return this.residents == null 
+				? 0 
+				: this.residents.size();
 	}
 	
 	public boolean isFull() {
-		return this.isFull;
+		return this.residents.size() >= this.maxBeds;
 	}
 	
 	public List<ResidentData> getResidents() {
-		return Collections.unmodifiableList(this.residents != null ? this.residents : new ArrayList<ResidentData>());
+		return this.residents == null
+				? Collections.unmodifiableList(new ArrayList<ResidentData>())
+				: Collections.unmodifiableList(this.residents);
 	}
 	
 	public ResidentData getResidentByBedPosition(BlockPos bedPosition) {
-		return this.residents == null ? null : this.residents.stream()
-				.filter(r -> bedPosition != null && bedPosition.equals(r.getBedPosition()))
-				.findFirst().orElse(null);
+		return this.residents == null 
+				? null 
+				: this.residents.stream()
+						.filter(r -> bedPosition != null && bedPosition.equals(r.getBedPosition()))
+						.findFirst().orElse(null);
 	}
 	
 	public int getBedCount() {
-		return this.bedPositions != null ? this.bedPositions.size() : 0;
+		return this.bedPositions == null 
+				? 0 
+				: this.bedPositions.size();
 	}
 	
 	public List<BlockPos> getBedPositions() {
-		return this.bedPositions == null ? new ArrayList<BlockPos>() : Collections.unmodifiableList(this.bedPositions.stream()
-				.sorted((c1 , c2) -> c1.compareTo(c2))
-				.collect(Collectors.toList()));
+		return this.bedPositions == null 
+				? new ArrayList<BlockPos>() 
+				: Collections.unmodifiableList(this.bedPositions.stream()
+						.sorted((c1 , c2) -> c1.compareTo(c2))
+						.collect(Collectors.toList()));
 	}
 	
 	public boolean hasBedPosition(BlockPos bedPosition) {
@@ -119,27 +133,35 @@ public class HomeData {
 	}
 	
 	public int getAdultCount() {
-		return this.residents == null ? 0 : (int)this.residents.stream()
-				.filter(r -> !r.isChild())
-				.count();
+		return this.residents == null 
+				? 0 
+				: (int)this.residents.stream()
+						.filter(r -> !r.isChild())
+						.count();
 	}
 	
 	public int getChildCount() {
-		return this.residents == null ? 0 : (int)this.residents.stream()
-				.filter(r -> r.isChild())
-				.count();
+		return this.residents == null 
+				? 0 
+				: (int)this.residents.stream()
+						.filter(r -> r.isChild())
+						.count();
 	}
 	
 	public int getMaleCount() {
-		return this.residents == null ? 0 : (int)this.residents.stream()
-				.filter(r -> r.isMale())
-				.count();
+		return this.residents == null 
+				? 0 
+				: (int)this.residents.stream()
+						.filter(r -> r.isMale())
+						.count();
 	}
 	
 	public int getFemaleCount() {
-		return this.residents == null ? 0 : (int)this.residents.stream()
-				.filter(r -> !r.isMale())
-				.count();
+		return this.residents == null 
+				? 0 
+				: (int)this.residents.stream()
+						.filter(r -> !r.isMale())
+						.count();
 	}
 	
 	public int getDensityRatio() {
@@ -165,8 +187,6 @@ public class HomeData {
 		this.floorTileCount = 0;
 		this.maxBeds = 0;
 		this.tilesPerVillager = 0;
-		this.residentsCount = 0;
-		this.isFull = this.residentsCount >= this.maxBeds;
 		
 		this.residents = new ArrayList<ResidentData>();
 		this.bedPositions = new ArrayList<BlockPos>();
@@ -175,7 +195,7 @@ public class HomeData {
 	public void populateData(VillageStructure structure) {
 		clearData();
 		
-		List<VillageStructureType> homeTypes = TektopiaUtils.getHomeStructureTypes();
+		List<VillageStructureType> homeTypes = TektopiaUtils.getVillageHomeTypes();
 
 		if (structure != null && homeTypes != null && homeTypes.contains(structure.type)) {
 			this.homeId = structure.getItemFrame().getEntityId();
@@ -192,8 +212,6 @@ public class HomeData {
 				VillageStructureBarracks barracks = (VillageStructureBarracks)structure;
 				
 				this.maxBeds = TektopiaUtils.getStructureMaxBeds(barracks);
-				this.residentsCount = barracks.getCurResidents();
-				this.isFull = barracks.isFull();
 				
 				for (EntityVillagerTek resident : barracks.getResidents()) {
 					this.residents.add(new ResidentData(resident));
@@ -205,8 +223,6 @@ public class HomeData {
 				VillageStructureHome home = (VillageStructureHome)structure;
 				
 				this.maxBeds = TektopiaUtils.getStructureMaxBeds(home);
-				this.residentsCount = home.getCurResidents();
-				this.isFull = home.isFull();
 				
 				for (EntityVillagerTek resident : home.getResidents()) {
 					this.residents.add(new ResidentData(resident));
@@ -231,30 +247,24 @@ public class HomeData {
 		this.floorTileCount = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEFLOORTILECOUNT) ? nbtTag.getInteger(NBTTAG_VILLAGE_HOMEFLOORTILECOUNT) : 0;
 		this.tilesPerVillager = nbtTag.hasKey(NBTTAG_VILLAGE_HOMETILESPERVILLAGER) ? nbtTag.getInteger(NBTTAG_VILLAGE_HOMETILESPERVILLAGER) : 0;
 		this.maxBeds = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEMAXBEDS) ? nbtTag.getInteger(NBTTAG_VILLAGE_HOMEMAXBEDS) : 0;
-		this.residentsCount = nbtTag.hasKey(NBTTAG_VILLAGE_HOMERESIDENTSCOUNT) ? nbtTag.getInteger(NBTTAG_VILLAGE_HOMERESIDENTSCOUNT) : 0;
-		this.isFull = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEFULL) ? nbtTag.getBoolean(NBTTAG_VILLAGE_HOMEFULL) : false;
 
 		if (nbtTag.hasKey(NBTTAG_VILLAGE_HOMERESIDENTS)) {
-			NBTTagCompound nbtResidentsData = nbtTag.getCompoundTag(NBTTAG_VILLAGE_HOMERESIDENTS);
-
-			for (int residentIndex = 0; residentIndex < this.residentsCount; residentIndex++) {
-				String key = getResidentKey(residentIndex);
+			NBTTagList nbtTagListResidents = nbtTag.getTagList(NBTTAG_VILLAGE_HOMERESIDENTS, 10);
+			
+			for (int index = 0; index < nbtTagListResidents.tagCount(); index++) {
+				NBTTagCompound nbtTagResident = nbtTagListResidents.getCompoundTagAt(index);
 				
-				if (nbtResidentsData.hasKey(key)) {
-					ResidentData resident = new ResidentData();
-					resident.readNBT(nbtResidentsData.getCompoundTag(key));
-					this.residents.add(resident);
-				}
+				this.residents.add(new ResidentData(nbtTagResident));
 			}
 		}
 		
-		if (nbtTag.hasKey(NBTTAG_VILLAGE_HOMEBEDPOSITIONCOUNT)) {
-			int bedCount = nbtTag.getInteger(NBTTAG_VILLAGE_HOMEBEDPOSITIONCOUNT);
+		if (nbtTag.hasKey(NBTTAG_VILLAGE_HOMEBEDPOSITIONS)) {
+			NBTTagList nbtTagListBedPositions = nbtTag.getTagList(NBTTAG_VILLAGE_HOMEBEDPOSITIONS, 10);
 			
-			for (int bedIndex = 0; bedIndex < bedCount; bedIndex++) {
-				if (nbtTag.hasKey(getBedPositionKey(bedIndex))) {
-					this.bedPositions.add(BlockPos.fromLong(nbtTag.getLong(getBedPositionKey(bedIndex))));
-				}
+			for (int index = 0; index < nbtTagListBedPositions.tagCount(); index++) {
+				NBTTagCompound nbtTagBedPosition = nbtTagListBedPositions.getCompoundTagAt(index);
+				
+				this.bedPositions.add(BlockPos.fromLong(nbtTagBedPosition.getLong(NBTTAG_VILLAGE_HOMEBEDPOSITION)));
 			}
 		}
 	}
@@ -274,43 +284,35 @@ public class HomeData {
 		nbtTag.setBoolean(NBTTAG_VILLAGE_HOMEVALID, this.isValid);
 		nbtTag.setInteger(NBTTAG_VILLAGE_HOMEFLOORTILECOUNT, this.floorTileCount);
 		nbtTag.setInteger(NBTTAG_VILLAGE_HOMETILESPERVILLAGER, this.tilesPerVillager);
-
 		nbtTag.setInteger(NBTTAG_VILLAGE_HOMEMAXBEDS, this.maxBeds);
-		nbtTag.setInteger(NBTTAG_VILLAGE_HOMERESIDENTSCOUNT, this.residentsCount);
-		nbtTag.setBoolean(NBTTAG_VILLAGE_HOMEFULL, this.isFull);
 		
 		if (this.residents != null) {
-			NBTTagCompound nbtResidentsData = new NBTTagCompound();
+			NBTTagList nbtTagListResidents = new NBTTagList();
 			
-			int residentIndex = 0;
 			for (ResidentData resident : this.residents) {
 				NBTTagCompound nbtResidentData = new NBTTagCompound();
 				resident.writeNBT(nbtResidentData);
-				nbtResidentsData.setTag(getResidentKey(residentIndex++), nbtResidentData);
+				
+				nbtTagListResidents.appendTag(nbtResidentData);
 			}
 			
-			nbtTag.setTag(NBTTAG_VILLAGE_HOMERESIDENTS, nbtResidentsData);
+			nbtTag.setTag(NBTTAG_VILLAGE_HOMERESIDENTS, nbtTagListResidents);
 		}
 		
 		if (this.bedPositions != null) {
-			nbtTag.setInteger(NBTTAG_VILLAGE_HOMEBEDPOSITIONCOUNT, this.bedPositions.size());
+			NBTTagList nbtTagListBedPositions = new NBTTagList();
 			
-			int bedIndex = 0;
 			for (BlockPos bedPosition : this.bedPositions) {
 				if (bedPosition != null) {
-					nbtTag.setLong(getBedPositionKey(bedIndex), bedPosition.toLong());
-					bedIndex++;
+					NBTTagCompound nbtTagBedPosition = new NBTTagCompound();
+					nbtTagBedPosition.setLong(NBTTAG_VILLAGE_HOMEBEDPOSITION, bedPosition.toLong());
+					
+					nbtTagListBedPositions.appendTag(nbtTagBedPosition);
 				}
 			}
+			
+			nbtTag.setTag(NBTTAG_VILLAGE_HOMEBEDPOSITIONS, nbtTagListBedPositions);
 		}
-	}
-
-	public static String getBedPositionKey(int bedIndex) {
-		return "bed@" + bedIndex;
-	}
-	
-	public static String getResidentKey(int residentIndex) {
-		return "resident@" + residentIndex;
 	}
 	
 }

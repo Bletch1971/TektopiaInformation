@@ -23,6 +23,12 @@ public class EnemyData extends EntityData {
 		populateData(enemy);
 	}
 	
+	public EnemyData(NBTTagCompound nbtTag) {
+		super();
+		
+		readNBT(nbtTag);
+	}
+	
 	public String getEnemyType() {
 		return this.enemyType;
 	}

@@ -13,6 +13,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.tangotek.tektopia.entities.EntityVillageNavigator;
 import net.tangotek.tektopia.entities.EntityVillagerTek;
@@ -29,10 +30,8 @@ public class EntityData {
 	private static final String NBTTAG_VILLAGE_ENTITYMAXHEALTH = "villageentitymaxhealth";
 	private static final String NBTTAG_VILLAGE_ENTITYHOMEPOSITION = "villageentityhomeposition";
 	private static final String NBTTAG_VILLAGE_ENTITYCURRENTPOSITION = "villageentitycurrentposition";
-	private static final String NBTTAG_VILLAGE_ENTITYTOTALARMOR = "villageentitytotslarmor";
-	private static final String NBTTAG_VILLAGE_ENTITYARMORCOUNT = "villageentityarmorcount";
+	private static final String NBTTAG_VILLAGE_ENTITYTOTALARMOR = "villageentitytotalarmor";
 	private static final String NBTTAG_VILLAGE_ENTITYARMOR = "villageentityarmor";
-	private static final String NBTTAG_VILLAGE_ENTITYEQUIPMENTCOUNT = "villageentityequipmentcount";
 	private static final String NBTTAG_VILLAGE_ENTITYEQUIPMENT = "villageentityequipment";
 
 	protected static List<Entity> entityList = null;
@@ -61,6 +60,10 @@ public class EntityData {
 		
 		if (populateEntity)
 			populateData(entity);
+	}
+	
+	protected EntityData(NBTTagCompound nbtTag) {
+		readNBT(nbtTag);
 	}
 	
 	public int getId() {
@@ -187,39 +190,27 @@ public class EntityData {
 		this.currentPosition = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYCURRENTPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_ENTITYCURRENTPOSITION)) : null;
 		this.totalArmorValue = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYTOTALARMOR) ? nbtTag.getInteger(NBTTAG_VILLAGE_ENTITYTOTALARMOR) : 0; 
 		
-		if (nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYARMORCOUNT)) {
-			int count = nbtTag.getInteger(NBTTAG_VILLAGE_ENTITYARMORCOUNT);
+		if (nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYARMOR)) {
+			NBTTagList nbtTagListArmor = nbtTag.getTagList(NBTTAG_VILLAGE_ENTITYARMOR, 10);
+			this.armor = new ArrayList<ItemStack>(nbtTagListArmor.tagCount());
 			
-			this.armor = new ArrayList<ItemStack>(count);
-			
-			for (int index = 0; index < count; index++) {
-				String key = NBTTAG_VILLAGE_ENTITYARMOR + "@" + index;
+			for (int index = 0; index < nbtTagListArmor.tagCount(); index++) {
+				NBTTagCompound nbtTagArmor = nbtTagListArmor.getCompoundTagAt(index);
 				
-				if (nbtTag.hasKey(key)) {
-					NBTTagCompound value = nbtTag.getCompoundTag(key);
-					this.armor.add(index, new ItemStack(value));
-				} else {
-					this.armor.add(index, ItemStack.EMPTY);
-				}
+				this.armor.add(new ItemStack(nbtTagArmor));
 			}
 			
 			Collections.reverse(this.armor);
 		}
 		
-		if (nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYEQUIPMENTCOUNT)) {
-			int count = nbtTag.getInteger(NBTTAG_VILLAGE_ENTITYEQUIPMENTCOUNT);
+		if (nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYEQUIPMENT)) {
+			NBTTagList nbtTagListEquipment = nbtTag.getTagList(NBTTAG_VILLAGE_ENTITYEQUIPMENT, 10);
+			this.equipment = new ArrayList<ItemStack>(nbtTagListEquipment.tagCount());
 			
-			this.equipment = new ArrayList<ItemStack>(count);
-			
-			for (int index = 0; index < count; index++) {
-				String key = NBTTAG_VILLAGE_ENTITYEQUIPMENT + "@" + index;
+			for (int index = 0; index < nbtTagListEquipment.tagCount(); index++) {
+				NBTTagCompound nbtTagEquipment = nbtTagListEquipment.getCompoundTagAt(index);
 				
-				if (nbtTag.hasKey(key)) {
-					NBTTagCompound value = nbtTag.getCompoundTag(key);
-					this.equipment.add(index, new ItemStack(value));
-				} else {
-					this.equipment.add(index, ItemStack.EMPTY);
-				}
+				this.equipment.add(new ItemStack(nbtTagEquipment));
 			}
 		}
 	}
@@ -246,33 +237,33 @@ public class EntityData {
 		nbtTag.setInteger(NBTTAG_VILLAGE_ENTITYTOTALARMOR, this.totalArmorValue);
 		
 		if (this.armor != null && this.armor.size() > 0) {
-			nbtTag.setInteger(NBTTAG_VILLAGE_ENTITYARMORCOUNT, this.armor.size());
+			NBTTagList nbtTagListArmor = new NBTTagList();
 			
-			int index = 0;
-			for (ItemStack piece : this.armor) {
-				if (piece != null && piece != ItemStack.EMPTY && piece.getItem() != Items.AIR) {
-					NBTTagCompound nbtTagPiece = new NBTTagCompound();
-					piece.writeToNBT(nbtTagPiece);
+			for (ItemStack itemStack : this.armor) {
+				if (itemStack != null) {
+					NBTTagCompound nbtTagArmor = new NBTTagCompound();
+					nbtTagArmor = itemStack.writeToNBT(nbtTagArmor);
 					
-					nbtTag.setTag(NBTTAG_VILLAGE_ENTITYARMOR + "@" + index, nbtTagPiece);
+					nbtTagListArmor.appendTag(nbtTagArmor);
 				}
-				index++;
 			}
+			
+			nbtTag.setTag(NBTTAG_VILLAGE_ENTITYARMOR, nbtTagListArmor);
 		}
 		
 		if (this.equipment != null && this.equipment.size() > 0) {
-			nbtTag.setInteger(NBTTAG_VILLAGE_ENTITYEQUIPMENTCOUNT, this.equipment.size());
+			NBTTagList nbtTagListEquipment = new NBTTagList();
 			
-			int index = 0;
-			for (ItemStack piece : this.equipment) {
-				if (piece != null && piece != ItemStack.EMPTY && piece.getItem() != Items.AIR) {
-					NBTTagCompound nbtTagPiece = new NBTTagCompound();
-					piece.writeToNBT(nbtTagPiece);
+			for (ItemStack itemStack : this.equipment) {
+				if (itemStack != null) {
+					NBTTagCompound nbtTagEquipment = new NBTTagCompound();
+					nbtTagEquipment = itemStack.writeToNBT(nbtTagEquipment);
 					
-					nbtTag.setTag(NBTTAG_VILLAGE_ENTITYEQUIPMENT + "@" + index, nbtTagPiece);
+					nbtTagListEquipment.appendTag(nbtTagEquipment);
 				}
-				index++;
 			}
+			
+			nbtTag.setTag(NBTTAG_VILLAGE_ENTITYEQUIPMENT, nbtTagListEquipment);
 		}
 	}
 	

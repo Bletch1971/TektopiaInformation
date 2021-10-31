@@ -180,6 +180,7 @@ button.close.name=Close
 button.previoussubpage.name=Previous Page
 button.nextsubpage.name=Next Page
 
+bookmark.aifilters.name=AI Filters
 bookmark.economy.name=Economy
 bookmark.enemies.name=Enemies
 bookmark.homes.name=Homes
@@ -191,6 +192,7 @@ bookmark.structures.name=Structures
 bookmark.village.name=Village
 bookmark.visitors.name=Visitors
 
+bookmark.aifilters.information=Information related to the AI Filters for all the residents in the village.
 bookmark.economy.information=Information related to the village economy.
 bookmark.enemies.information=Information relating to all the enemies in the village.
 bookmark.homes.information=Information relating to all the homes and barracks in the village.
@@ -377,6 +379,7 @@ tektopiaBook.visitors.visitortype=Type:
 tektopiaBook.visitors.vendoritems=Items
 tektopiaBook.visitors.professions=Professions (top 4)
 
+tektopiaBook.links.aifilterdetails=Click to view profession AI filter details
 tektopiaBook.links.mapdetails=Click to view map location
 tektopiaBook.links.homedetails=Click to view home details
 tektopiaBook.links.professiondetails=Click to view profession details

@@ -22,6 +22,7 @@ import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.village.MerchantRecipeList;
 import net.tangotek.tektopia.ProfessionType;
@@ -61,15 +62,16 @@ public class ResidentData extends EntityData {
 	private static final String NBTTAG_VILLAGE_RESIDENTBEDPOSITION = "villageresidentbedposition";
 	private static final String NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE = "villageresidentcurrentstructure";
 	private static final String NBTTAG_VILLAGE_RESIDENTCURRENTTASK = "villageresidentcurrenttask";
-	private static final String NBTTAG_VILLAGE_RESIDENTADDPROFCOUNT = "villageresidentaddprofcount";
 	private static final String NBTTAG_VILLAGE_RESIDENTADDPROF = "villageresidentaddprof";
-	private static final String NBTTAG_VILLAGE_RESIDENTAIFILTERCOUNT = "villageresidentaifiltercount";
+	private static final String NBTTAG_VILLAGE_RESIDENTADDPROFNAME = "villageresidentaddprofname";
+	private static final String NBTTAG_VILLAGE_RESIDENTADDPROFLEVEL = "villageresidentaddproflevel";
 	private static final String NBTTAG_VILLAGE_RESIDENTAIFILTER = "villageresidentaifilter";
+	private static final String NBTTAG_VILLAGE_RESIDENTAIFILTERNAME = "villageresidentaifiltername";
+	private static final String NBTTAG_VILLAGE_RESIDENTAIFILTERENABLED = "villageresidentaifilterenabled";
 	private static final String NBTTAG_VILLAGE_RESIDENTRECIPES = "villageresidentrecipes";
-	private static final String NBTTAG_VILLAGE_RESIDENTINVENTORYCOUNT = "villageresidentinventorycount";
 	private static final String NBTTAG_VILLAGE_RESIDENTINVENTORY = "villageresidentinventory";
-	private static final String NBTTAG_VILLAGE_RESIDENTRECENTEATSCOUNT = "villageresidentrecenteatscount";
 	private static final String NBTTAG_VILLAGE_RESIDENTRECENTEATS = "villageresidentrecenteats";
+	private static final String NBTTAG_VILLAGE_RESIDENTRECENTEATSID = "villageresidentrecenteatsid";
 
 	@SuppressWarnings("rawtypes")
 	private static final List<Class> toolItemClasses = Arrays.asList(ItemAxe.class, ItemHoe.class, ItemSword.class, ItemPickaxe.class, ItemShears.class);
@@ -114,6 +116,19 @@ public class ResidentData extends EntityData {
 		super(villager, false);
 		
 		populateData(villager);
+	}
+	
+	protected ResidentData(EntityVillagerTek villager, Boolean populateVillager) {
+		super(villager, false);
+		
+		if (populateVillager)
+			populateData(villager);
+	}
+	
+	public ResidentData(NBTTagCompound nbtTag) {
+		super();
+		
+		readNBT(nbtTag);
 	}
 	
 	public String getProfessionType() {
@@ -245,7 +260,9 @@ public class ResidentData extends EntityData {
 	}
 	
 	public int getAdditionalProfessionsCount() {
-		return this.additionalProfessions == null ? 0 : this.additionalProfessions.size();
+		return this.additionalProfessions == null 
+				? 0 
+				: this.additionalProfessions.size();
 	}
 	
 	public Map<String, Boolean> getAiFilters() {
@@ -257,7 +274,9 @@ public class ResidentData extends EntityData {
 	}
 	
 	public int getAiFiltersCount() {
-		return this.aiFilters == null ? 0 : this.aiFilters.size();
+		return this.aiFilters == null 
+				? 0 
+				: this.aiFilters.size();
 	}
 	
 	public MerchantRecipeList getRecipeList() {
@@ -378,7 +397,7 @@ public class ResidentData extends EntityData {
 				}
 			}
 			
-			for (String professionType : TektopiaUtils.getProfessionTypeNames()) {
+			for (String professionType : TektopiaUtils.getProfessionTypeNames(false)) {
 				if (professionType == this.professionType) {
 					// do not include the villagers main profession
 					continue;
@@ -507,56 +526,23 @@ public class ResidentData extends EntityData {
 			this.professionType = ProfessionType.CHILD.name();
 		} 
 
-		if (nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTADDPROFCOUNT)) {
-			int count = nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTADDPROFCOUNT);
+		if (nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTADDPROF)) {
+			NBTTagList nbtTagListProfessions = nbtTag.getTagList(NBTTAG_VILLAGE_RESIDENTADDPROF, 10);
 			
-			for (int index = 0; index < count; index++) {
-				String key = NBTTAG_VILLAGE_RESIDENTADDPROF + "@" + index;
+			for (int index = 0; index < nbtTagListProfessions.tagCount(); index++) {
+				NBTTagCompound nbtTagProfession = nbtTagListProfessions.getCompoundTagAt(index);
 				
-				if (nbtTag.hasKey(key)) {
-					String value = nbtTag.getString(key);
-					
-					if (value != null && value.contains("@")) {
-						String[] valueParts = value.split("@");
-						
-						if (valueParts.length == 2) {
-							try {
-								ProfessionType professionType = ProfessionType.valueOf(valueParts[0]);
-								int level = Integer.parseInt(valueParts[1]);
-								this.additionalProfessions.put(professionType.name(), level);
-							}
-							catch (Exception ex) {
-								// do nothing if conversion error
-							}
-						}
-					}
-				}
+				this.additionalProfessions.put(nbtTagProfession.getString(NBTTAG_VILLAGE_RESIDENTADDPROFNAME), nbtTagProfession.getInteger(NBTTAG_VILLAGE_RESIDENTADDPROFLEVEL));
 			}
 		}
 		
-		if (nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTAIFILTERCOUNT)) {
-			int count = nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTAIFILTERCOUNT);
+		if (nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTAIFILTER)) {
+			NBTTagList nbtTagListAIFilters = nbtTag.getTagList(NBTTAG_VILLAGE_RESIDENTAIFILTER, 10);
 			
-			for (int index = 0; index < count; index++) {
-				String key = NBTTAG_VILLAGE_RESIDENTAIFILTER + "@" + index;
+			for (int index = 0; index < nbtTagListAIFilters.tagCount(); index++) {
+				NBTTagCompound nbtTagAIFilter = nbtTagListAIFilters.getCompoundTagAt(index);
 				
-				if (nbtTag.hasKey(key)) {
-					String value = nbtTag.getString(key);
-					
-					if (value != null && value.contains("@")) {
-						String[] valueParts = value.split("@");
-						
-						if (valueParts.length == 2) {
-							try {
-								Boolean enabled = Boolean.parseBoolean(valueParts[1]);
-								this.aiFilters.put(valueParts[0], enabled);
-							}
-							catch (Exception ex) {
-								// do nothing if conversion error
-							}
-						}
-					}
-				}
+				this.aiFilters.put(nbtTagAIFilter.getString(NBTTAG_VILLAGE_RESIDENTAIFILTERNAME), nbtTagAIFilter.getBoolean(NBTTAG_VILLAGE_RESIDENTAIFILTERENABLED));
 			}
 		}
 		
@@ -566,31 +552,24 @@ public class ResidentData extends EntityData {
 			this.recipes.readRecipiesFromTags(nbtTag.getCompoundTag(NBTTAG_VILLAGE_RESIDENTRECIPES));
 		}
 		
-		if (nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTINVENTORYCOUNT)) {
-			int count = nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTINVENTORYCOUNT);			
-			this.inventory = new ArrayList<ItemStack>(count);
+		if (nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTINVENTORY)) {
+			NBTTagList nbtTagListInventory = nbtTag.getTagList(NBTTAG_VILLAGE_RESIDENTINVENTORY, 10);		
+			this.inventory = new ArrayList<ItemStack>(nbtTagListInventory.tagCount());
 			
-			for (int index = 0; index < count; index++) {
-				String key = NBTTAG_VILLAGE_RESIDENTINVENTORY + "@" + index;
+			for (int index = 0; index < nbtTagListInventory.tagCount(); index++) {
+				NBTTagCompound nbtTagInventory = nbtTagListInventory.getCompoundTagAt(index);
 				
-				if (nbtTag.hasKey(key)) {
-					NBTTagCompound value = nbtTag.getCompoundTag(key);
-					ItemStack itemStack = new ItemStack(value);
-					
-					this.inventory.add(itemStack);
-				}
+				this.inventory.add(new ItemStack(nbtTagInventory));
 			}
 		}
 		
-		if (nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTRECENTEATSCOUNT)) {
-			int count = nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTRECENTEATSCOUNT);
+		if (nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTRECENTEATS)) {
+			NBTTagList nbtTagListRecentEats = nbtTag.getTagList(NBTTAG_VILLAGE_RESIDENTRECENTEATS, 10);
 			
-			for (int index = 0; index < count; index++) {
-				String key = NBTTAG_VILLAGE_RESIDENTRECENTEATS + "@" + index;
+			for (int index = 0; index < nbtTagListRecentEats.tagCount(); index++) {
+				NBTTagCompound nbtTagRecentEat = nbtTagListRecentEats.getCompoundTagAt(index);
 				
-				if (nbtTag.hasKey(key)) {
-					this.recentEats.add(nbtTag.getInteger(key));
-				}
+				this.recentEats.add(nbtTagRecentEat.getInteger(NBTTAG_VILLAGE_RESIDENTRECENTEATSID));
 			}
 		}
 		
@@ -654,27 +633,35 @@ public class ResidentData extends EntityData {
 		}
 		
 		if (this.additionalProfessions != null && this.additionalProfessions.size() > 0) {
-			int index = 0;
+			NBTTagList nbtTagListProfessions = new NBTTagList();
+			
 			for (Entry<String, Integer> additionalProfession : this.additionalProfessions.entrySet()) {
 				if (additionalProfession != null) {
-					nbtTag.setString(NBTTAG_VILLAGE_RESIDENTADDPROF + "@" + index, additionalProfession.getKey() + "@" + additionalProfession.getValue());
-					index++;
+					NBTTagCompound nbtTagProfession = new NBTTagCompound();
+					nbtTagProfession.setString(NBTTAG_VILLAGE_RESIDENTADDPROFNAME, additionalProfession.getKey());
+					nbtTagProfession.setInteger(NBTTAG_VILLAGE_RESIDENTADDPROFLEVEL, additionalProfession.getValue());
+					
+					nbtTagListProfessions.appendTag(nbtTagProfession);
 				}
 			}
 			
-			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTADDPROFCOUNT, index);
+			nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTADDPROF, nbtTagListProfessions);
 		}
 		
 		if (this.aiFilters != null && this.aiFilters.size() > 0) {
-			int index = 0;
+			NBTTagList nbtTagListAIFilters = new NBTTagList();
+			
 			for (Entry<String, Boolean> aiFilter : this.aiFilters.entrySet()) {
 				if (aiFilter != null) {
-					nbtTag.setString(NBTTAG_VILLAGE_RESIDENTAIFILTER + "@" + index, aiFilter.getKey() + "@" + aiFilter.getValue());
-					index++;
+					NBTTagCompound nbtTagAIFilter = new NBTTagCompound();
+					nbtTagAIFilter.setString(NBTTAG_VILLAGE_RESIDENTAIFILTERNAME, aiFilter.getKey());
+					nbtTagAIFilter.setBoolean(NBTTAG_VILLAGE_RESIDENTAIFILTERENABLED, aiFilter.getValue());
+					
+					nbtTagListAIFilters.appendTag(nbtTagAIFilter);
 				}
 			}
 			
-			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTAIFILTERCOUNT, index);
+			nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTAIFILTER, nbtTagListAIFilters);
 		}
 		
 		if (this.recipes != null && !this.recipes.isEmpty()) {
@@ -682,28 +669,31 @@ public class ResidentData extends EntityData {
 		}
 		
 		if (this.inventory != null && !this.inventory.isEmpty()) {
-			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTINVENTORYCOUNT, this.inventory.size());
+			NBTTagList nbtTagListInventory = new NBTTagList();
 			
-			int index = 0;
 			for (ItemStack itemStack : this.inventory) {
 				if (itemStack != null) {
-					NBTTagCompound value = new NBTTagCompound();
-					value = itemStack.writeToNBT(value);
+					NBTTagCompound nbtTagInventory = new NBTTagCompound();
+					nbtTagInventory = itemStack.writeToNBT(nbtTagInventory);
 					
-					nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTINVENTORY + "@" + index, value);
+					nbtTagListInventory.appendTag(nbtTagInventory);
 				}
-				index++;
 			}
+			
+			nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTINVENTORY, nbtTagListInventory);
 		}
 		
 		if (this.recentEats != null && !this.recentEats.isEmpty()) {
-			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTRECENTEATSCOUNT, this.recentEats.size());
+			NBTTagList nbtTagListRecentEats = new NBTTagList();
 			
-			int index = 0;
-			for (Integer itemId : this.recentEats) {				
-				nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTRECENTEATS + "@" + index, itemId);
-				index++;
+			for (Integer itemId : this.recentEats) {			
+				NBTTagCompound nbtTagRecentEats = new NBTTagCompound();
+				nbtTagRecentEats.setInteger(NBTTAG_VILLAGE_RESIDENTRECENTEATSID, itemId);
+				
+				nbtTagListRecentEats.appendTag(nbtTagRecentEats);
 			}
+			
+			nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTRECENTEATS, nbtTagListRecentEats);
 		}
 	}
 	

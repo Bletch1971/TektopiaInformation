@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.tangotek.tektopia.Village;
 import net.tangotek.tektopia.VillagerRole;
@@ -14,9 +15,8 @@ import net.tangotek.tektopia.entities.EntityVillagerTek;
 public class VisitorsData {
 	
 	private static final String NBTTAG_VILLAGE_VISITORS = "villagevisitors";
-	private static final String NBTTAG_VILLAGE_VISITORSCOUNT = "villagevisitorscount";
+	private static final String NBTTAG_VILLAGE_VISITORSLIST = "villagevisitorslist";
 	
-	private int visitorsCount;
 	private List<VisitorData> visitors;
 
 	public VisitorsData() {
@@ -28,31 +28,37 @@ public class VisitorsData {
 	}
 	
 	public int getVisitorsCount() {
-		return this.visitorsCount;
+		return this.visitors == null
+				? 0
+				: this.visitors.size();
 	}
 	
 	public List<VisitorData> getVisitors() {
-		return Collections.unmodifiableList(this.visitors == null ? new ArrayList<VisitorData>() : this.visitors.stream()
-				.sorted((c1 , c2) -> {
-					int compare = c1.getProfessionType().compareTo(c2.getProfessionType());
-					return compare != 0 ? compare : c1.getName().compareTo(c2.getName());
-				})
-				.collect(Collectors.toList()));
+		return this.visitors == null
+				? Collections.unmodifiableList(new ArrayList<VisitorData>())
+				: Collections.unmodifiableList(this.visitors.stream()
+						.sorted((c1 , c2) -> {
+							int compare = c1.getProfessionType().compareTo(c2.getProfessionType());
+							return compare != 0 ? compare : c1.getName().compareTo(c2.getName());
+						})
+						.collect(Collectors.toList()));
 	}
 	
 	public VisitorData getVisitor(int index) {
-		return this.visitors == null ? null : this.visitors.get(index);
+		return this.visitors == null 
+				? null 
+				: this.visitors.get(index);
 	}
 	
 	public VisitorData getVisitorById(int visitorId) {
-		return this.visitors == null ? null : this.visitors.stream()
-				.filter(m -> m.getId() == visitorId)
-				.findFirst().orElse(null);
+		return this.visitors == null 
+				? null 
+				: this.visitors.stream()
+						.filter(m -> m.getId() == visitorId)
+						.findFirst().orElse(null);
 	}
 	
 	private void clearData() {
-		this.visitorsCount = 0;
-		
 		this.visitors = new ArrayList<VisitorData>();
 	}
 	
@@ -72,8 +78,6 @@ public class VisitorsData {
 				
 				this.visitors.add(new VisitorData(entity));
 			}
-			
-			this.visitorsCount = this.visitors.size();
 		}
 	}
 	
@@ -87,15 +91,13 @@ public class VisitorsData {
 		if (nbtTag.hasKey(NBTTAG_VILLAGE_VISITORS)) {
 			NBTTagCompound nbtVisitorsData = nbtTag.getCompoundTag(NBTTAG_VILLAGE_VISITORS);
 			
-			this.visitorsCount = nbtVisitorsData.hasKey(NBTTAG_VILLAGE_VISITORSCOUNT) ? nbtVisitorsData.getInteger(NBTTAG_VILLAGE_VISITORSCOUNT) : 0;
-
-			for (int visitorIndex = 0; visitorIndex < this.visitorsCount; visitorIndex++) {
-				String key = getVisitorKey(visitorIndex);
+			if (nbtVisitorsData.hasKey(NBTTAG_VILLAGE_VISITORSLIST)) {
+				NBTTagList nbtTagListVisitors = nbtVisitorsData.getTagList(NBTTAG_VILLAGE_VISITORSLIST, 10);
 				
-				if (nbtVisitorsData.hasKey(key)) {
-					VisitorData visitor = new VisitorData();
-					visitor.readNBT(nbtVisitorsData.getCompoundTag(key));
-					this.visitors.add(visitor);
+				for (int index = 0; index < nbtTagListVisitors.tagCount(); index++) {
+					NBTTagCompound nbtTagVisitor = nbtTagListVisitors.getCompoundTagAt(index);
+					
+					this.visitors.add(new VisitorData(nbtTagVisitor));
 				}
 			}
 		}
@@ -107,23 +109,21 @@ public class VisitorsData {
 		}	
 		
 		NBTTagCompound nbtVisitorsData = new NBTTagCompound();
-
-		nbtVisitorsData.setInteger(NBTTAG_VILLAGE_VISITORSCOUNT, this.visitorsCount);
 		
 		if (this.visitors != null) {
-			int visitorIndex = 0;
+			NBTTagList nbtTagListVisitors = new NBTTagList();
+			
 			for (VisitorData visitor : this.visitors) {
-				NBTTagCompound nbtVisitorData = new NBTTagCompound();
-				visitor.writeNBT(nbtVisitorData);
-				nbtVisitorsData.setTag(getVisitorKey(visitorIndex++), nbtVisitorData);
+				NBTTagCompound nbtVisitor = new NBTTagCompound();
+				visitor.writeNBT(nbtVisitor);
+				
+				nbtTagListVisitors.appendTag(nbtVisitor);
 			}
+			
+			nbtVisitorsData.setTag(NBTTAG_VILLAGE_VISITORSLIST, nbtTagListVisitors);
 		}
 
 		nbtTag.setTag(NBTTAG_VILLAGE_VISITORS, nbtVisitorsData);
-	}
-
-	public static String getVisitorKey(int visitorIndex) {
-		return "visitor@" + visitorIndex;
 	}
 
 }

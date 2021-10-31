@@ -83,47 +83,69 @@ public class VillageData {
 	}
 	
 	public BlockPos getVillageNorthWestCorner() {
-		return this.villageOrigin != null ? this.villageOrigin.north(this.villageSize).west(this.villageSize) : null;
+		return this.villageOrigin != null 
+				? this.villageOrigin.north(this.villageSize).west(this.villageSize) 
+				: null;
 	}
 	
 	public BlockPos getVillageNorthEastCorner() {
-		return this.villageOrigin != null ? this.villageOrigin.north(this.villageSize).east(this.villageSize) : null;
+		return this.villageOrigin != null 
+				? this.villageOrigin.north(this.villageSize).east(this.villageSize) 
+				: null;
 	}
 	
 	public BlockPos getVillageSouthWestCorner() {
-		return this.villageOrigin != null ? this.villageOrigin.south(this.villageSize).west(this.villageSize) : null;
+		return this.villageOrigin != null 
+				? this.villageOrigin.south(this.villageSize).west(this.villageSize) 
+				: null;
 	}
 	
 	public BlockPos getVillageSouthEastCorner() {
-		return this.villageOrigin != null ? this.villageOrigin.south(this.villageSize).east(this.villageSize) : null;
+		return this.villageOrigin != null 
+				? this.villageOrigin.south(this.villageSize).east(this.villageSize) 
+				: null;
 	}
 	
 	public StructureData getTownHall() {
-		return this.structuresData == null ? null : this.structuresData.getTownHall();
+		return this.structuresData == null 
+				? null 
+				: this.structuresData.getTownHall();
 	}
 	
 	public StructuresData getStructuresData() {
-		return this.structuresData == null ? new StructuresData() : this.structuresData;
+		return this.structuresData == null 
+				? new StructuresData() 
+				: this.structuresData;
 	}	
 
 	public HomesData getHomesData() {
-		return this.structuresData == null ? new HomesData() : this.homesData;
+		return this.structuresData == null 
+				? new HomesData() 
+				: this.homesData;
 	}
 	
 	public ResidentsData getResidentsData() {
-		return this.structuresData == null ? new ResidentsData() : this.residentsData;
+		return this.structuresData == null 
+				? new ResidentsData() 
+				: this.residentsData;
 	}
 
 	public EconomyData getEconomyData() {
-		return this.structuresData == null ? new EconomyData() : this.economyData;
+		return this.structuresData == null 
+				? new EconomyData() 
+				: this.economyData;
 	}
 
 	public VisitorsData getVisitorsData() {
-		return this.visitorsData == null ? new VisitorsData() : this.visitorsData;
+		return this.visitorsData == null 
+				? new VisitorsData() 
+				: this.visitorsData;
 	}
 
 	public EnemiesData getEnemiesData() {
-		return this.enemiesData == null ? new EnemiesData() : this.enemiesData;
+		return this.enemiesData == null 
+				? new EnemiesData() 
+				: this.enemiesData;
 	}
 	
 	public int getEntityId() {
