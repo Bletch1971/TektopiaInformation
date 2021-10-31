@@ -52,7 +52,9 @@ public class ResidentsData {
 	}
 	
 	public int getResidentsCount() {
-		return this.residents.size();
+		return (int)this.residents.stream()
+				.filter(r -> !r.getProfessionType().equals(TektopiaUtils.PROFESSIONTYPE_ARCHITECT) && !r.getProfessionType().equals(TektopiaUtils.PROFESSIONTYPE_TRADESMAN))
+				.count();
 	}
 	
 	public int getResidentsCountAll() {
@@ -103,19 +105,19 @@ public class ResidentsData {
 						.findFirst().orElse(null);
 	}
 	
-	public Map<String, Integer> getAllProfessionTypeCounts() {
-		return this.professionTypeCounts == null 
-				? Collections.unmodifiableMap(new LinkedHashMap<String, Integer>())
-				: Collections.unmodifiableMap(this.professionTypeCounts.entrySet().stream()
-						.sorted((c1 , c2) -> c1.getKey().compareTo(c2.getKey()))
-						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new)));
-	}
-	
 	public Map<String, Integer> getProfessionTypeCounts() {
 		return this.professionTypeCounts == null 
 				? Collections.unmodifiableMap(new LinkedHashMap<String, Integer>())
 				: Collections.unmodifiableMap(this.professionTypeCounts.entrySet().stream()
 						.filter(e -> e.getValue() > 0 && !e.getKey().equals(TektopiaUtils.PROFESSIONTYPE_ARCHITECT) && !e.getKey().equals(TektopiaUtils.PROFESSIONTYPE_TRADESMAN))
+						.sorted((c1 , c2) -> c1.getKey().compareTo(c2.getKey()))
+						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new)));
+	}
+	
+	public Map<String, Integer> getProfessionTypeCountsAll() {
+		return this.professionTypeCounts == null 
+				? Collections.unmodifiableMap(new LinkedHashMap<String, Integer>())
+				: Collections.unmodifiableMap(this.professionTypeCounts.entrySet().stream()
 						.sorted((c1 , c2) -> c1.getKey().compareTo(c2.getKey()))
 						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new)));
 	}	

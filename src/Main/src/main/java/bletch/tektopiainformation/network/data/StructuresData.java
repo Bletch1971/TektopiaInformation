@@ -2,7 +2,7 @@ package bletch.tektopiainformation.network.data;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -94,8 +94,10 @@ public class StructuresData {
 	
 	public Map<VillageStructureType, Integer> getStructureTypeCounts() {
 		return this.structureTypeCounts == null
-				? Collections.unmodifiableMap(new HashMap<VillageStructureType, Integer>())
-				: Collections.unmodifiableMap(this.structureTypeCounts);
+				? Collections.unmodifiableMap(new LinkedHashMap<VillageStructureType, Integer>())
+				: Collections.unmodifiableMap(this.structureTypeCounts.entrySet().stream()
+						.sorted((c1 , c2) -> c1.getKey().name().compareTo(c2.getKey().name()))
+						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new)));
 	}	
 	
 	public int getStructureTypeCount(VillageStructureType structureType) {
@@ -114,7 +116,7 @@ public class StructuresData {
 	
 	private void clearData() {		
 		this.structures = new ArrayList<StructureData>();
-		this.structureTypeCounts = new HashMap<VillageStructureType, Integer>();
+		this.structureTypeCounts = new LinkedHashMap<VillageStructureType, Integer>();
 	}
 	
 	public void populateData(Village village) {
