@@ -14,17 +14,18 @@ import net.tangotek.tektopia.entities.EntityVillagerTek;
 
 public class VisitorsData {
 	
-	private static final String NBTTAG_VILLAGE_VISITORS = "villagevisitors";
-	private static final String NBTTAG_VILLAGE_VISITORSLIST = "villagevisitorslist";
-	
-	private List<VisitorData> visitors;
+	protected static final String NBTTAG_VILLAGE_VISITORS = "villagevisitors";
+	protected static final String NBTTAG_VILLAGE_VISITORSLIST = "villagevisitorslist";
+
+	protected VillageData villageData;
+	protected List<VisitorData> visitors;
 
 	public VisitorsData() {
-		populateData(null);
+		populateData(null, null);
 	}
 	
-	public VisitorsData(Village village) {
-		populateData(village);
+	protected VillageData getVillageData() {
+		return this.villageData;
 	}
 	
 	public int getVisitorsCount() {
@@ -58,12 +59,14 @@ public class VisitorsData {
 						.findFirst().orElse(null);
 	}
 	
-	private void clearData() {
+	protected void clearData() {
 		this.visitors = new ArrayList<VisitorData>();
 	}
 	
-	public void populateData(Village village) {
+	public void populateData(VillageData villageData, Village village) {
 		clearData();
+		
+		this.villageData = villageData;
 		
 		if (village != null) {
 			
@@ -81,12 +84,14 @@ public class VisitorsData {
 		}
 	}
 	
-	public void readNBT(NBTTagCompound nbtTag) {
+	public void readNBT(VillageData villageData, NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
 		}
 		
 		clearData();
+		
+		this.villageData = villageData;
 		
 		if (nbtTag.hasKey(NBTTAG_VILLAGE_VISITORS)) {
 			NBTTagCompound nbtVisitorsData = nbtTag.getCompoundTag(NBTTAG_VILLAGE_VISITORS);
@@ -95,15 +100,13 @@ public class VisitorsData {
 				NBTTagList nbtTagListVisitors = nbtVisitorsData.getTagList(NBTTAG_VILLAGE_VISITORSLIST, 10);
 				
 				for (int index = 0; index < nbtTagListVisitors.tagCount(); index++) {
-					NBTTagCompound nbtTagVisitor = nbtTagListVisitors.getCompoundTagAt(index);
-					
-					this.visitors.add(new VisitorData(nbtTagVisitor));
+					this.visitors.add(new VisitorData(nbtTagListVisitors.getCompoundTagAt(index)));
 				}
 			}
 		}
 	}
 	
-	public void writeNBT(NBTTagCompound nbtTag) {
+	public NBTTagCompound writeNBT(NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
 		}	
@@ -114,16 +117,15 @@ public class VisitorsData {
 			NBTTagList nbtTagListVisitors = new NBTTagList();
 			
 			for (VisitorData visitor : this.visitors) {
-				NBTTagCompound nbtVisitor = new NBTTagCompound();
-				visitor.writeNBT(nbtVisitor);
-				
-				nbtTagListVisitors.appendTag(nbtVisitor);
+				nbtTagListVisitors.appendTag(visitor.writeNBT(new NBTTagCompound()));
 			}
 			
 			nbtVisitorsData.setTag(NBTTAG_VILLAGE_VISITORSLIST, nbtTagListVisitors);
 		}
 
 		nbtTag.setTag(NBTTAG_VILLAGE_VISITORS, nbtVisitorsData);
+		
+		return nbtTag;
 	}
 
 }

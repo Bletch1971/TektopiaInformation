@@ -5,10 +5,6 @@ import net.tangotek.tektopia.entities.EntityVillagerTek;
 
 public class VisitorData extends ResidentData {
 	
-	public VisitorData() {
-		super();
-	}
-	
 	public VisitorData(EntityVillagerTek visitor) {
 		super(visitor, false);
 		
@@ -38,11 +34,13 @@ public class VisitorData extends ResidentData {
 		super.readNBT(nbtTag);
 	}
 	
-	public void writeNBT(NBTTagCompound nbtTag) {
+	public NBTTagCompound writeNBT(NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
 		}
 		
-		super.writeNBT(nbtTag);
+		nbtTag = super.writeNBT(nbtTag);
+		
+		return nbtTag;
 	}
 }

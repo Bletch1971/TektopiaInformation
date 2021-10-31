@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 import bletch.tektopiainformation.utils.TektopiaUtils;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.tangotek.tektopia.VillagerRole;
@@ -15,36 +16,40 @@ import net.tangotek.tektopia.structures.VillageStructureType;
 
 public class StructureData {
 	
-	private static final String NBTTAG_VILLAGE_STRUCTUREID = "villagestructureid";
-	private static final String NBTTAG_VILLAGE_STRUCTURETYPE = "villagestructuretype";
-	private static final String NBTTAG_VILLAGE_STRUCTUREPOSITION = "villagestructureposition";
-	private static final String NBTTAG_VILLAGE_STRUCTUREVALID = "villagestructurevalid";
-	private static final String NBTTAG_VILLAGE_STRUCTUREFLOORTILECOUNT = "villagestructurefloortilecount";
-	private static final String NBTTAG_VILLAGE_STRUCTURETILESPERVILLAGER = "villagestructuretilespervillager";
-	private static final String NBTTAG_VILLAGE_STRUCTUREOCCUPANTS = "villagestructureoccupants";
-	private static final String NBTTAG_VILLAGE_STRUCTUREOCCUPANTCLASS = "villagestructureoccupantclass";
+	protected static final String NBTTAG_VILLAGE_STRUCTUREID = "villagestructureid";
+	protected static final String NBTTAG_VILLAGE_STRUCTURETYPE = "villagestructuretype";
+	protected static final String NBTTAG_VILLAGE_STRUCTUREPOSITION = "villagestructureposition";
+	protected static final String NBTTAG_VILLAGE_STRUCTUREVALID = "villagestructurevalid";
+	protected static final String NBTTAG_VILLAGE_STRUCTUREFLOORTILECOUNT = "villagestructurefloortilecount";
+	protected static final String NBTTAG_VILLAGE_STRUCTURETILESPERVILLAGER = "villagestructuretilespervillager";
+	protected static final String NBTTAG_VILLAGE_STRUCTUREOCCUPANTS = "villagestructureoccupants";
 	
-	private static Random rand = new Random();
+	protected static final Random rand = new Random();
+	protected VillageData villageData;
 
-	private int structureId;
-	private VillageStructureType structureType;
-	private BlockPos framePosition;
-	private boolean isValid;
-	private int floorTileCount;
-	private int tilesPerVillager;
+	protected int structureId;
+	protected VillageStructureType structureType;
+	protected BlockPos framePosition;
+	protected boolean isValid;
+	protected int floorTileCount;
+	protected int tilesPerVillager;
 	
-	private List<ResidentData> occupants;
+	protected List<ResidentData> occupants;
 	
-	public StructureData() {
-		populateData(null);
-	}
-	
-	public StructureData(VillageStructure structure) {
+	public StructureData(VillageData villageData, VillageStructure structure) {
+		this.villageData = villageData;
+		
 		populateData(structure);
 	}
 	
-	public StructureData(NBTTagCompound nbtTag) {
+	public StructureData(VillageData villageData, NBTTagCompound nbtTag) {
+		this.villageData = villageData;
+		
 		readNBT(nbtTag);
+	}
+	
+	protected VillageData getVillageData() {
+		return this.villageData;
 	}
 	
 	public int getStructureId() {
@@ -104,7 +109,7 @@ public class StructureData {
 		return (densityRatio < this.tilesPerVillager);
 	}
 	
-	private void clearData() {
+	protected void clearData() {
 		this.structureId = rand.nextInt();
 		this.structureType = null;
 		this.framePosition = null;
@@ -115,7 +120,7 @@ public class StructureData {
 		this.occupants = new ArrayList<ResidentData>();
 	}
 	
-	public void populateData(VillageStructure structure) {
+	protected void populateData(VillageStructure structure) {
 		clearData();
 		
 		if (structure != null) {
@@ -155,26 +160,26 @@ public class StructureData {
 		this.tilesPerVillager = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTURETILESPERVILLAGER) ? nbtTag.getInteger(NBTTAG_VILLAGE_STRUCTURETILESPERVILLAGER) : 0;
 
 		if (nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTUREOCCUPANTS)) {
-			NBTTagList nbtTagListOccupants = nbtTag.getTagList(NBTTAG_VILLAGE_STRUCTUREOCCUPANTS, 10);
+			NBTTagList nbtTagListOccupants = nbtTag.getTagList(NBTTAG_VILLAGE_STRUCTUREOCCUPANTS, 3);
 			
 			for (int index = 0; index < nbtTagListOccupants.tagCount(); index++) {
-				NBTTagCompound nbtTagOccupant = nbtTagListOccupants.getCompoundTagAt(index);
+				int nbtTagId = nbtTagListOccupants.getIntAt(index);
 				
-				if (nbtTagOccupant.hasKey(NBTTAG_VILLAGE_STRUCTUREOCCUPANTCLASS)) {
-					String className = nbtTagOccupant.getString(NBTTAG_VILLAGE_STRUCTUREOCCUPANTCLASS);
+				if (this.villageData != null) {
+					ResidentData occupant = this.villageData.getResidentsData().getResidentById(nbtTagId);
+					if (occupant == null) {
+						occupant = this.villageData.getVisitorsData().getVisitorById(nbtTagId);
+					}
 					
-					if (className.equals(VisitorData.class.getSimpleName())) {
-						this.occupants.add(new VisitorData(nbtTagOccupant));
-					} else {
-						this.occupants.add(new ResidentData(nbtTagOccupant));
+					if (occupant != null) {
+						this.occupants.add(occupant);
 					}
 				}
-				
 			}
 		}
 	}
 	
-	public void writeNBT(NBTTagCompound nbtTag) {
+	public NBTTagCompound writeNBT(NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
 		}
@@ -194,21 +199,13 @@ public class StructureData {
 			NBTTagList nbtTagListOccupants = new NBTTagList();
 			
 			for (ResidentData occupant : this.occupants) {
-				NBTTagCompound nbtOccupant = new NBTTagCompound();
-				
-				if (occupant instanceof VisitorData) {
-					((VisitorData)occupant).writeNBT(nbtOccupant);
-					nbtOccupant.setString(NBTTAG_VILLAGE_STRUCTUREOCCUPANTCLASS, VisitorData.class.getSimpleName());
-				} else {
-					occupant.writeNBT(nbtOccupant);
-					nbtOccupant.setString(NBTTAG_VILLAGE_STRUCTUREOCCUPANTCLASS, ResidentData.class.getSimpleName());
-				}
-				
-				nbtTagListOccupants.appendTag(nbtOccupant);
+				nbtTagListOccupants.appendTag(new NBTTagInt(occupant.getId()));
 			}
 			
 			nbtTag.setTag(NBTTAG_VILLAGE_STRUCTUREOCCUPANTS, nbtTagListOccupants);
 		}
+		
+		return nbtTag;
 	}
 	
 }

@@ -7,15 +7,11 @@ import net.tangotek.tektopia.entities.EntityVillageNavigator;
 
 public class EnemyData extends EntityData {
 
-	private static final String NBTTAG_VILLAGE_ENEMYTYPE = "villageenemytype";
-	private static final String NBTTAG_VILLAGE_ENEMYCURRENTTASK = "villageenemycurrenttask";
+	protected static final String NBTTAG_VILLAGE_ENEMYTYPE = "villageenemytype";
+	protected static final String NBTTAG_VILLAGE_ENEMYCURRENTTASK = "villageenemycurrenttask";
 	
 	protected String enemyType;
-	private String currentTask;
-	
-	public EnemyData() {
-		super();
-	}
+	protected String currentTask;
 	
 	public EnemyData(EntityVillageNavigator enemy) {
 		super(enemy, false);
@@ -77,12 +73,12 @@ public class EnemyData extends EntityData {
 		this.currentTask = nbtTag.hasKey(NBTTAG_VILLAGE_ENEMYCURRENTTASK) ? nbtTag.getString(NBTTAG_VILLAGE_ENEMYCURRENTTASK) : null;
 	}
 	
-	public void writeNBT(NBTTagCompound nbtTag) {
+	public NBTTagCompound writeNBT(NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
 		}
 		
-		super.writeNBT(nbtTag);
+		nbtTag = super.writeNBT(nbtTag);
 		
 		if (this.enemyType != null && this.enemyType.trim() != "") {
 			nbtTag.setString(NBTTAG_VILLAGE_ENEMYTYPE, this.enemyType);
@@ -90,5 +86,7 @@ public class EnemyData extends EntityData {
 		if (this.currentTask != null) {
 			nbtTag.setString(NBTTAG_VILLAGE_ENEMYCURRENTTASK, this.currentTask);
 		}
+		
+		return nbtTag;
 	}
 }

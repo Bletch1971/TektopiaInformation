@@ -20,35 +20,35 @@ import net.tangotek.tektopia.entities.EntityVillagerTek;
 
 public class EntityData {
 
-	private static final String NBTTAG_VILLAGE_ENTITYID = "villageentityid";
-	private static final String NBTTAG_VILLAGE_ENTITYCLASSNAME = "villageentityclassname";
-	private static final String NBTTAG_VILLAGE_ENTITYMODID = "villageentitymodid";
-	private static final String NBTTAG_VILLAGE_ENTITYMODNAME = "villageentitymodname";
-	private static final String NBTTAG_VILLAGE_ENTITYNAME = "villageentityname";
-	private static final String NBTTAG_VILLAGE_ENTITYLEVEL = "villageentitylevel";
-	private static final String NBTTAG_VILLAGE_ENTITYHEALTH = "villageentityhealth";
-	private static final String NBTTAG_VILLAGE_ENTITYMAXHEALTH = "villageentitymaxhealth";
-	private static final String NBTTAG_VILLAGE_ENTITYHOMEPOSITION = "villageentityhomeposition";
-	private static final String NBTTAG_VILLAGE_ENTITYCURRENTPOSITION = "villageentitycurrentposition";
-	private static final String NBTTAG_VILLAGE_ENTITYTOTALARMOR = "villageentitytotalarmor";
-	private static final String NBTTAG_VILLAGE_ENTITYARMOR = "villageentityarmor";
-	private static final String NBTTAG_VILLAGE_ENTITYEQUIPMENT = "villageentityequipment";
+	protected static final String NBTTAG_VILLAGE_ENTITYID = "villageentityid";
+	protected static final String NBTTAG_VILLAGE_ENTITYCLASSNAME = "villageentityclassname";
+	protected static final String NBTTAG_VILLAGE_ENTITYMODID = "villageentitymodid";
+	protected static final String NBTTAG_VILLAGE_ENTITYMODNAME = "villageentitymodname";
+	protected static final String NBTTAG_VILLAGE_ENTITYNAME = "villageentityname";
+	protected static final String NBTTAG_VILLAGE_ENTITYLEVEL = "villageentitylevel";
+	protected static final String NBTTAG_VILLAGE_ENTITYHEALTH = "villageentityhealth";
+	protected static final String NBTTAG_VILLAGE_ENTITYMAXHEALTH = "villageentitymaxhealth";
+	protected static final String NBTTAG_VILLAGE_ENTITYHOMEPOSITION = "villageentityhomeposition";
+	protected static final String NBTTAG_VILLAGE_ENTITYCURRENTPOSITION = "villageentitycurrentposition";
+	protected static final String NBTTAG_VILLAGE_ENTITYTOTALARMOR = "villageentitytotalarmor";
+	protected static final String NBTTAG_VILLAGE_ENTITYARMOR = "villageentityarmor";
+	protected static final String NBTTAG_VILLAGE_ENTITYEQUIPMENT = "villageentityequipment";
 
 	protected static List<Entity> entityList = null;
 	
-	private int id;
-	private String className;
-	private String modId;
-	private String modName;
+	protected int id;
+	protected String className;
+	protected String modId;
+	protected String modName;
 	protected String name;
 	protected int level;
-	private float health;
-	private float maxHealth;
+	protected float health;
+	protected float maxHealth;
 	protected BlockPos homePosition;
-	private BlockPos currentPosition;	
-	private int totalArmorValue;
+	protected BlockPos currentPosition;	
+	protected int totalArmorValue;
 	
-	private List<ItemStack> armor = null;
+	protected List<ItemStack> armor = null;
 	protected List<ItemStack> equipment = null;
 	
 	protected EntityData() {
@@ -195,9 +195,7 @@ public class EntityData {
 			this.armor = new ArrayList<ItemStack>(nbtTagListArmor.tagCount());
 			
 			for (int index = 0; index < nbtTagListArmor.tagCount(); index++) {
-				NBTTagCompound nbtTagArmor = nbtTagListArmor.getCompoundTagAt(index);
-				
-				this.armor.add(new ItemStack(nbtTagArmor));
+				this.armor.add(new ItemStack(nbtTagListArmor.getCompoundTagAt(index)));
 			}
 			
 			Collections.reverse(this.armor);
@@ -208,14 +206,12 @@ public class EntityData {
 			this.equipment = new ArrayList<ItemStack>(nbtTagListEquipment.tagCount());
 			
 			for (int index = 0; index < nbtTagListEquipment.tagCount(); index++) {
-				NBTTagCompound nbtTagEquipment = nbtTagListEquipment.getCompoundTagAt(index);
-				
-				this.equipment.add(new ItemStack(nbtTagEquipment));
+				this.equipment.add(new ItemStack(nbtTagListEquipment.getCompoundTagAt(index)));
 			}
 		}
 	}
 	
-	public void writeNBT(NBTTagCompound nbtTag) {
+	public NBTTagCompound writeNBT(NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
 		}
@@ -241,10 +237,7 @@ public class EntityData {
 			
 			for (ItemStack itemStack : this.armor) {
 				if (itemStack != null) {
-					NBTTagCompound nbtTagArmor = new NBTTagCompound();
-					nbtTagArmor = itemStack.writeToNBT(nbtTagArmor);
-					
-					nbtTagListArmor.appendTag(nbtTagArmor);
+					nbtTagListArmor.appendTag(itemStack.writeToNBT(new NBTTagCompound()));
 				}
 			}
 			
@@ -255,16 +248,15 @@ public class EntityData {
 			NBTTagList nbtTagListEquipment = new NBTTagList();
 			
 			for (ItemStack itemStack : this.equipment) {
-				if (itemStack != null) {
-					NBTTagCompound nbtTagEquipment = new NBTTagCompound();
-					nbtTagEquipment = itemStack.writeToNBT(nbtTagEquipment);
-					
-					nbtTagListEquipment.appendTag(nbtTagEquipment);
+				if (itemStack != null && itemStack != ItemStack.EMPTY && itemStack.getItem() != Items.AIR) {
+					nbtTagListEquipment.appendTag(itemStack.writeToNBT(new NBTTagCompound()));
 				}
 			}
 			
 			nbtTag.setTag(NBTTAG_VILLAGE_ENTITYEQUIPMENT, nbtTagListEquipment);
 		}
+		
+		return nbtTag;
 	}
 	
 	public static void resetEntityList() {

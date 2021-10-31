@@ -23,32 +23,33 @@ import net.tangotek.tektopia.entities.EntityVillagerTek;
 
 public class ResidentsData {
 	
-	private static final String NBTTAG_VILLAGE_RESIDENTS = "villageresidents";
-	private static final String NBTTAG_VILLAGE_RESIDENTSLIST = "villageresidentslist";
-	private static final String NBTTAG_VILLAGE_RESIDENTSPROFESSIONCOUNTS = "villageresidentsprofessioncounts";
-	private static final String NBTTAG_VILLAGE_RESIDENTSPROFESSIONNAME = "villageresidentsprofessionname";
-	private static final String NBTTAG_VILLAGE_RESIDENTSPROFESSIONCOUNT = "villageresidentsprofessioncount";
-	private static final String NBTTAG_VILLAGE_RESIDENTADULTCOUNT = "villageresidentadultcount";
-	private static final String NBTTAG_VILLAGE_RESIDENTCHILDCOUNT = "villageresidentchildcount";
-	private static final String NBTTAG_VILLAGE_RESIDENTMALECOUNT = "villageresidentmalecount";
-	private static final String NBTTAG_VILLAGE_RESIDENTFEMALECOUNT = "villageresidentfemalecount";
+	protected static final String NBTTAG_VILLAGE_RESIDENTS = "villageresidents";
+	protected static final String NBTTAG_VILLAGE_RESIDENTSLIST = "villageresidentslist";
+	protected static final String NBTTAG_VILLAGE_RESIDENTSPROFESSIONCOUNTS = "villageresidentsprofessioncounts";
+	protected static final String NBTTAG_VILLAGE_RESIDENTSPROFESSIONNAME = "villageresidentsprofessionname";
+	protected static final String NBTTAG_VILLAGE_RESIDENTSPROFESSIONCOUNT = "villageresidentsprofessioncount";
+	protected static final String NBTTAG_VILLAGE_RESIDENTADULTCOUNT = "villageresidentadultcount";
+	protected static final String NBTTAG_VILLAGE_RESIDENTCHILDCOUNT = "villageresidentchildcount";
+	protected static final String NBTTAG_VILLAGE_RESIDENTMALECOUNT = "villageresidentmalecount";
+	protected static final String NBTTAG_VILLAGE_RESIDENTFEMALECOUNT = "villageresidentfemalecount";
 	
 	public static final int STATISTICS_RANGE = 20;
 
-	private List<ResidentData> residents;
-	private Map<String, Integer> professionTypeCounts;
+	protected VillageData villageData;
+	protected List<ResidentData> residents;
+	protected Map<String, Integer> professionTypeCounts;
 
-	private int adultCount = 0;
-	private int childCount = 0;
-	private int maleCount = 0;
-	private int femaleCount = 0;
+	protected int adultCount = 0;
+	protected int childCount = 0;
+	protected int maleCount = 0;
+	protected int femaleCount = 0;
 
 	public ResidentsData() {
-		populateData(null);
+		populateData(null, null);
 	}
 	
-	public ResidentsData(Village village) {
-		populateData(village);
+	protected VillageData getVillageData() {
+		return this.villageData;
 	}
 	
 	public int getResidentsCount() {
@@ -239,7 +240,7 @@ public class ResidentsData {
 						.findFirst().orElse(null);
 	}
 	
-	private void clearData() {
+	protected void clearData() {
 		this.residents = new ArrayList<ResidentData>();
 		this.professionTypeCounts = new HashMap<String, Integer>();
 
@@ -249,8 +250,10 @@ public class ResidentsData {
 		this.femaleCount = 0;
 	}
 	
-	public void populateData(Village village) {
+	public void populateData(VillageData villageData, Village village) {
 		clearData();
+		
+		this.villageData = villageData;
 		
 		if (village != null) {
 			
@@ -327,12 +330,14 @@ public class ResidentsData {
 		}
 	}
 	
-	public void readNBT(NBTTagCompound nbtTag) {
+	public void readNBT(VillageData villageData, NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
 		}
 		
 		clearData();
+		
+		this.villageData = villageData;
 		
 		if (nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTS)) {
 			NBTTagCompound nbtResidentsData = nbtTag.getCompoundTag(NBTTAG_VILLAGE_RESIDENTS);
@@ -341,9 +346,7 @@ public class ResidentsData {
 				NBTTagList nbtTagListResidents = nbtResidentsData.getTagList(NBTTAG_VILLAGE_RESIDENTSLIST, 10);
 				
 				for (int index = 0; index < nbtTagListResidents.tagCount(); index++) {
-					NBTTagCompound nbtTagResident = nbtTagListResidents.getCompoundTagAt(index);
-					
-					this.residents.add(new ResidentData(nbtTagResident));
+					this.residents.add(new ResidentData(nbtTagListResidents.getCompoundTagAt(index)));
 				}
 			}
 			
@@ -364,7 +367,7 @@ public class ResidentsData {
 		}
 	}
 	
-	public void writeNBT(NBTTagCompound nbtTag) {
+	public NBTTagCompound writeNBT(NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
 		}	
@@ -375,10 +378,7 @@ public class ResidentsData {
 			NBTTagList nbtTagListResidents = new NBTTagList();
 			
 			for (ResidentData resident : this.residents) {
-				NBTTagCompound nbtResident = new NBTTagCompound();
-				resident.writeNBT(nbtResident);
-				
-				nbtTagListResidents.appendTag(nbtResident);
+				nbtTagListResidents.appendTag(resident.writeNBT(new NBTTagCompound()));
 			}
 			
 			nbtResidentsData.setTag(NBTTAG_VILLAGE_RESIDENTSLIST, nbtTagListResidents);
@@ -404,6 +404,8 @@ public class ResidentsData {
 		nbtResidentsData.setInteger(NBTTAG_VILLAGE_RESIDENTFEMALECOUNT, this.femaleCount);
 
 		nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTS, nbtResidentsData);
+		
+		return nbtTag;
 	}
 	
 }

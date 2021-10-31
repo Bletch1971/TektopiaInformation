@@ -12,35 +12,35 @@ import net.tangotek.tektopia.entities.EntityVillageNavigator;
 public class VillageData {
 	public static final float MC_TICKS_PER_SECOND = 1000.0F / 60.0F / 60.0F;
 
-	private static final String NBTTAG_VILLAGE_NAME = "villagename";
-	private static final String NBTTAG_VILLAGE_ORIGIN = "villageorigin";
-	private static final String NBTTAG_VILLAGE_SIZE = "villagesize";
-	private static final String NBTTAG_VILLAGE_WORLDTIME = "villageworldtime";
+	protected static final String NBTTAG_VILLAGE_NAME = "villagename";
+	protected static final String NBTTAG_VILLAGE_ORIGIN = "villageorigin";
+	protected static final String NBTTAG_VILLAGE_SIZE = "villagesize";
+	protected static final String NBTTAG_VILLAGE_WORLDTIME = "villageworldtime";
 
-	private static final String NBTTAG_ENTITYID = "entityid";
-	private static final String NBTTAG_BEDPOSITION = "bedposition";
-	private static final String NBTTAG_FRAMEPOSITION = "frameposition";
+	protected static final String NBTTAG_ENTITYID = "entityid";
+	protected static final String NBTTAG_BEDPOSITION = "bedposition";
+	protected static final String NBTTAG_FRAMEPOSITION = "frameposition";
 	
-	private static final String NBTTAG_PLAYERPOSITION = "playerposition";
+	protected static final String NBTTAG_PLAYERPOSITION = "playerposition";
 	
-	private String villageName;
-	private BlockPos villageOrigin;
-	private int villageSize;
-	private long worldTime;
+	protected String villageName;
+	protected BlockPos villageOrigin;
+	protected int villageSize;
+	protected long worldTime;
 	
-	private StructuresData structuresData;
-	private HomesData homesData;
-	private ResidentsData residentsData;
-	private EconomyData economyData;
-	private VisitorsData visitorsData;
-	private EnemiesData enemiesData;
+	protected StructuresData structuresData;
+	protected HomesData homesData;
+	protected ResidentsData residentsData;
+	protected EconomyData economyData;
+	protected VisitorsData visitorsData;
+	protected EnemiesData enemiesData;
 	
-	private int entityId;
-	private int structureId;
-	private BlockPos bedPosition;
-	private BlockPos framePosition;
+	protected int entityId;
+	protected int structureId;
+	protected BlockPos bedPosition;
+	protected BlockPos framePosition;
 	
-	private BlockPos playerPosition;
+	protected BlockPos playerPosition;
 	
 	public VillageData() {
 		populateData(null);
@@ -205,7 +205,7 @@ public class VillageData {
 		this.framePosition = null;
 	}
 	
-	private void clearData() {
+	protected void clearData() {
 		this.villageName = "";
 		this.villageOrigin = null;
 		this.villageSize = 0;
@@ -215,15 +215,16 @@ public class VillageData {
 		
 		this.playerPosition = null;
 		
-		this.structuresData = new StructuresData();
-		this.homesData = new HomesData();
 		this.residentsData = new ResidentsData();
-		this.economyData = new EconomyData();
 		this.visitorsData = new VisitorsData();
 		this.enemiesData = new EnemiesData();
+		
+		this.structuresData = new StructuresData();
+		this.homesData = new HomesData();
+		this.economyData = new EconomyData();
 	}
 	
-	public void populateData(Village village) {
+	protected void populateData(Village village) {
 		clearData();
 		
 		if (village != null) {
@@ -234,14 +235,14 @@ public class VillageData {
 			this.worldTime = village.getWorld().getWorldTime();
 		}
 		
-		this.structuresData.populateData(village);
-		this.homesData.populateData(village);
-		this.residentsData.populateData(village);
-		this.economyData.populateData(village);
-		this.visitorsData.populateData(village);
+		this.structuresData.populateData(this, village);
+		this.homesData.populateData(this, village);
+		this.residentsData.populateData(this, village);
+		this.economyData.populateData(this, village);
+		this.visitorsData.populateData(this, village);
 		
 		if (ModConfig.gui.tektopiaInformationBook.showEnemies)
-			this.enemiesData.populateData(village);
+			this.enemiesData.populateData(this, village);
 	}
 	
 	public void readBuffer(PacketBuffer buffer) throws IOException {
@@ -249,8 +250,7 @@ public class VillageData {
 			return;
 		}
 		
-		NBTTagCompound nbtTag = buffer.readCompoundTag();
-		readNBT(nbtTag);
+		readNBT(buffer.readCompoundTag());
 	}
 	
 	public void readNBT(NBTTagCompound nbtTag) {
@@ -272,12 +272,12 @@ public class VillageData {
 		
 		this.playerPosition = nbtTag.hasKey(NBTTAG_PLAYERPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_PLAYERPOSITION)) : null;
 
-		this.structuresData.readNBT(nbtTag);
-		this.homesData.readNBT(nbtTag);
-		this.residentsData.readNBT(nbtTag);
-		this.economyData.readNBT(nbtTag);
-		this.visitorsData.readNBT(nbtTag);
-		this.enemiesData.readNBT(nbtTag);
+		this.residentsData.readNBT(this, nbtTag);
+		this.visitorsData.readNBT(this, nbtTag);
+		this.enemiesData.readNBT(this, nbtTag);
+		this.structuresData.readNBT(this, nbtTag);
+		this.homesData.readNBT(this, nbtTag);
+		this.economyData.readNBT(this, nbtTag);
 	}
 	
 	public void writeBuffer(PacketBuffer buffer) throws IOException {
@@ -285,12 +285,11 @@ public class VillageData {
 			return;
 		}
 		
-		NBTTagCompound nbtTag = new NBTTagCompound();
-		writeNBT(nbtTag);
+		NBTTagCompound nbtTag = writeNBT(new NBTTagCompound());
 		buffer.writeCompoundTag(nbtTag);
 	}
 	
-	public void writeNBT(NBTTagCompound nbtTag) {
+	public NBTTagCompound writeNBT(NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
 		}	
@@ -313,13 +312,15 @@ public class VillageData {
 		if (this.playerPosition != null) {
 			nbtTag.setLong(NBTTAG_PLAYERPOSITION, this.playerPosition.toLong());
 		}		
-		
-		this.structuresData.writeNBT(nbtTag);
-		this.homesData.writeNBT(nbtTag);
+
 		this.residentsData.writeNBT(nbtTag);
-		this.economyData.writeNBT(nbtTag);
 		this.visitorsData.writeNBT(nbtTag);
 		this.enemiesData.writeNBT(nbtTag);
+		this.structuresData.writeNBT(nbtTag);
+		this.homesData.writeNBT(nbtTag);
+		this.economyData.writeNBT(nbtTag);
+		
+		return nbtTag;
 	}
 	
 }

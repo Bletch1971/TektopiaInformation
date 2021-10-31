@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import bletch.tektopiainformation.utils.TektopiaUtils;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.tangotek.tektopia.entities.EntityVillagerTek;
@@ -19,40 +20,45 @@ import net.tangotek.tektopia.structures.VillageStructureType;
 
 public class HomeData {
 
-	private static final String NBTTAG_VILLAGE_HOMEID = "villagehomeid";
-	private static final String NBTTAG_VILLAGE_HOMETYPE = "villagehometype";
-	private static final String NBTTAG_VILLAGE_HOMEPOSITION = "villagehomeposition";
-	private static final String NBTTAG_VILLAGE_HOMEVALID = "villagehomevalid";
-	private static final String NBTTAG_VILLAGE_HOMEFLOORTILECOUNT = "villagehomefloortilecount";
-	private static final String NBTTAG_VILLAGE_HOMETILESPERVILLAGER = "villagehometilespervillager";
-	private static final String NBTTAG_VILLAGE_HOMEMAXBEDS = "villagehomemaxbeds";
-	private static final String NBTTAG_VILLAGE_HOMERESIDENTS = "villagehomeresidents";
-	private static final String NBTTAG_VILLAGE_HOMEBEDPOSITIONS = "villagehomebedpositions";
-	private static final String NBTTAG_VILLAGE_HOMEBEDPOSITION = "villagehomebedposition";
+	protected static final String NBTTAG_VILLAGE_HOMEID = "villagehomeid";
+	protected static final String NBTTAG_VILLAGE_HOMETYPE = "villagehometype";
+	protected static final String NBTTAG_VILLAGE_HOMEPOSITION = "villagehomeposition";
+	protected static final String NBTTAG_VILLAGE_HOMEVALID = "villagehomevalid";
+	protected static final String NBTTAG_VILLAGE_HOMEFLOORTILECOUNT = "villagehomefloortilecount";
+	protected static final String NBTTAG_VILLAGE_HOMETILESPERVILLAGER = "villagehometilespervillager";
+	protected static final String NBTTAG_VILLAGE_HOMEMAXBEDS = "villagehomemaxbeds";
+	protected static final String NBTTAG_VILLAGE_HOMERESIDENTS = "villagehomeresidents";
+	protected static final String NBTTAG_VILLAGE_HOMEBEDPOSITIONS = "villagehomebedpositions";
+	protected static final String NBTTAG_VILLAGE_HOMEBEDPOSITION = "villagehomebedposition";
 	
-	private static Random rand = new Random();
+	protected static final Random rand = new Random();
+	protected VillageData villageData;
 
-	private int homeId;
-	private VillageStructureType structureType;
-	private BlockPos framePosition;
-	private boolean isValid;
-	private int floorTileCount;
-	private int maxBeds;
-	private int tilesPerVillager;
+	protected int homeId;
+	protected VillageStructureType structureType;
+	protected BlockPos framePosition;
+	protected boolean isValid;
+	protected int floorTileCount;
+	protected int maxBeds;
+	protected int tilesPerVillager;
 
-	private List<ResidentData> residents;
-	private List<BlockPos> bedPositions;
+	protected List<ResidentData> residents;
+	protected List<BlockPos> bedPositions;
 	
-	public HomeData() {
-		populateData(null);
-	}
-	
-	public HomeData(VillageStructure structure) {
+	public HomeData(VillageData villageData, VillageStructure structure) {
+		this.villageData = villageData;
+		
 		populateData(structure);
 	}
 	
-	public HomeData(NBTTagCompound nbtTag) {
+	public HomeData(VillageData villageData, NBTTagCompound nbtTag) {
+		this.villageData = villageData;
+		
 		readNBT(nbtTag);
+	}
+	
+	protected VillageData getVillageData() {
+		return this.villageData;
 	}
 	
 	public int getHomeId() {
@@ -179,7 +185,7 @@ public class HomeData {
 		return (densityRatio < this.tilesPerVillager);
 	}
 	
-	private void clearData() {
+	protected void clearData() {
 		this.homeId = rand.nextInt();
 		this.structureType = null;
 		this.framePosition = null;
@@ -192,7 +198,7 @@ public class HomeData {
 		this.bedPositions = new ArrayList<BlockPos>();
 	}
 	
-	public void populateData(VillageStructure structure) {
+	protected void populateData(VillageStructure structure) {
 		clearData();
 		
 		List<VillageStructureType> homeTypes = TektopiaUtils.getVillageHomeTypes();
@@ -249,12 +255,21 @@ public class HomeData {
 		this.maxBeds = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEMAXBEDS) ? nbtTag.getInteger(NBTTAG_VILLAGE_HOMEMAXBEDS) : 0;
 
 		if (nbtTag.hasKey(NBTTAG_VILLAGE_HOMERESIDENTS)) {
-			NBTTagList nbtTagListResidents = nbtTag.getTagList(NBTTAG_VILLAGE_HOMERESIDENTS, 10);
+			NBTTagList nbtTagListResidents = nbtTag.getTagList(NBTTAG_VILLAGE_HOMERESIDENTS, 3);
 			
 			for (int index = 0; index < nbtTagListResidents.tagCount(); index++) {
-				NBTTagCompound nbtTagResident = nbtTagListResidents.getCompoundTagAt(index);
+				int nbtTagId = nbtTagListResidents.getIntAt(index);
 				
-				this.residents.add(new ResidentData(nbtTagResident));
+				if (this.villageData != null) {
+					ResidentData resident = this.villageData.getResidentsData().getResidentById(nbtTagId);
+					if (resident == null) {
+						resident = this.villageData.getVisitorsData().getVisitorById(nbtTagId);
+					}
+					
+					if (resident != null) {
+						this.residents.add(resident);
+					}
+				}
 			}
 		}
 		
@@ -269,7 +284,7 @@ public class HomeData {
 		}
 	}
 	
-	public void writeNBT(NBTTagCompound nbtTag) {
+	public NBTTagCompound writeNBT(NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
 		}
@@ -290,10 +305,7 @@ public class HomeData {
 			NBTTagList nbtTagListResidents = new NBTTagList();
 			
 			for (ResidentData resident : this.residents) {
-				NBTTagCompound nbtResidentData = new NBTTagCompound();
-				resident.writeNBT(nbtResidentData);
-				
-				nbtTagListResidents.appendTag(nbtResidentData);
+				nbtTagListResidents.appendTag(new NBTTagInt(resident.getId()));
 			}
 			
 			nbtTag.setTag(NBTTAG_VILLAGE_HOMERESIDENTS, nbtTagListResidents);
@@ -313,6 +325,8 @@ public class HomeData {
 			
 			nbtTag.setTag(NBTTAG_VILLAGE_HOMEBEDPOSITIONS, nbtTagListBedPositions);
 		}
+		
+		return nbtTag;
 	}
 	
 }

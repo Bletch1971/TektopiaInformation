@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import bletch.tektopiainformation.utils.TektopiaUtils;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -13,21 +14,22 @@ import net.tangotek.tektopia.caps.IVillageData;
 
 public class EconomyData {
 	
-	private static final String NBTTAG_VILLAGE_ECONOMY = "villageeconomy";
-	private static final String NBTTAG_VILLAGE_PROFESSIONSALES = "villageprofessionsales";
-	private static final String NBTTAG_VILLAGE_MERCHANTSALES = "villagemerchantsales";
-	private static final String NBTTAG_VILLAGE_SALESHISTORY = "villagesaleshistory";
-	
-	private int professionSales;
-	private int merchantSales;
-	private List<ItemStack> salesHistory;
+	protected static final String NBTTAG_VILLAGE_ECONOMY = "villageeconomy";
+	protected static final String NBTTAG_VILLAGE_PROFESSIONSALES = "villageprofessionsales";
+	protected static final String NBTTAG_VILLAGE_MERCHANTSALES = "villagemerchantsales";
+	protected static final String NBTTAG_VILLAGE_SALESHISTORY = "villagesaleshistory";
+
+	protected VillageData villageData;
+	protected int professionSales;
+	protected int merchantSales;
+	protected List<ItemStack> salesHistory;
 
 	public EconomyData() {
-		populateData(null);
+		populateData(null, null);
 	}
 	
-	public EconomyData(Village village) {
-		populateData(village);
+	protected VillageData getVillageData() {
+		return this.villageData;
 	}
 	
 	public int getProfessionSales() {
@@ -44,26 +46,28 @@ public class EconomyData {
 				: Collections.unmodifiableList(this.salesHistory);
 	}
 	
-	private void clearData() {
+	protected void clearData() {
 		this.professionSales = 0;
 		this.merchantSales = 0;
 		
 		this.salesHistory = new ArrayList<ItemStack>();
 	}
 	
-	public void populateData(Village village) {
+	public void populateData(VillageData villageData, Village village) {
 		clearData();
+		
+		this.villageData = villageData;
 		
 		if (village != null) {
 			
 			// get the village town data
-			IVillageData villageData = village.getTownData();
+			IVillageData townData = village.getTownData();
 		
-			this.professionSales = villageData != null ? villageData.getProfessionSales() : 0;
-			this.merchantSales = villageData != null && villageData.getEconomy() != null ? villageData.getEconomy().getSalesHistorySize() : 0;
+			this.professionSales = townData != null ? townData.getProfessionSales() : 0;
+			this.merchantSales = townData != null && townData.getEconomy() != null ? townData.getEconomy().getSalesHistorySize() : 0;
 			
-			if (villageData != null && villageData.getEconomy() != null) {
-				List<ItemStack> salesHistory = TektopiaUtils.getEconomySalesHistory(villageData.getEconomy());
+			if (townData != null && townData.getEconomy() != null) {
+				List<ItemStack> salesHistory = TektopiaUtils.getEconomySalesHistory(townData.getEconomy());
 				
 				for (ItemStack itemStack : salesHistory) {
 					if (itemStack != null) {
@@ -74,12 +78,14 @@ public class EconomyData {
 		}
 	}
 	
-	public void readNBT(NBTTagCompound nbtTag) {
+	public void readNBT(VillageData villageData, NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
 		}
 		
 		clearData();
+		
+		this.villageData = villageData;
 
 		if (nbtTag.hasKey(NBTTAG_VILLAGE_ECONOMY)) {
 			NBTTagCompound nbtEconomyData = nbtTag.getCompoundTag(NBTTAG_VILLAGE_ECONOMY);
@@ -91,15 +97,13 @@ public class EconomyData {
 				NBTTagList nbtTagListSalesHistory = nbtEconomyData.getTagList(NBTTAG_VILLAGE_SALESHISTORY, 10);
 				
 				for (int index = 0; index < nbtTagListSalesHistory.tagCount(); index++) {
-					NBTTagCompound nbtTagSalesHistory = nbtTagListSalesHistory.getCompoundTagAt(index);
-					
-					this.salesHistory.add(new ItemStack(nbtTagSalesHistory));
+					this.salesHistory.add(new ItemStack(nbtTagListSalesHistory.getCompoundTagAt(index)));
 				}
 			}
 		}
 	}
 	
-	public void writeNBT(NBTTagCompound nbtTag) {
+	public NBTTagCompound writeNBT(NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
 		}	
@@ -113,11 +117,8 @@ public class EconomyData {
 			NBTTagList nbtTagListSalesHistory = new NBTTagList();
 			
 			for (ItemStack itemStack : this.salesHistory) {
-				if (itemStack != null) {
-					NBTTagCompound nbtTagSalesHistory = new NBTTagCompound();
-					nbtTagSalesHistory = itemStack.writeToNBT(nbtTagSalesHistory);
-					
-					nbtTagListSalesHistory.appendTag(nbtTagSalesHistory);
+				if (itemStack != null && itemStack != ItemStack.EMPTY && itemStack.getItem() != Items.AIR) {
+					nbtTagListSalesHistory.appendTag(itemStack.writeToNBT(new NBTTagCompound()));
 				}
 			}
 			
@@ -125,6 +126,8 @@ public class EconomyData {
 		}
 
 		nbtTag.setTag(NBTTAG_VILLAGE_ECONOMY, nbtEconomyData);
+		
+		return nbtTag;
 	}
 	
 }

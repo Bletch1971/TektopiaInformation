@@ -17,21 +17,22 @@ import net.tangotek.tektopia.structures.VillageStructureType;
 
 public class HomesData {
 	
-	private static final String NBTTAG_VILLAGE_HOMES = "villagehomes";
-	private static final String NBTTAG_VILLAGE_HOMESLIST = "villagehomeslist";
-	private static final String NBTTAG_VILLAGE_HOMETYPECOUNTS = "villagehometypecounts";
-	private static final String NBTTAG_VILLAGE_HOMETYPENAME = "villagehometypename";
-	private static final String NBTTAG_VILLAGE_HOMETYPECOUNT = "villagehometypecount";
-	
-	private List<HomeData> homes;
-	private Map<VillageStructureType, Integer> homeTypeCounts;
+	protected static final String NBTTAG_VILLAGE_HOMES = "villagehomes";
+	protected static final String NBTTAG_VILLAGE_HOMESLIST = "villagehomeslist";
+	protected static final String NBTTAG_VILLAGE_HOMETYPECOUNTS = "villagehometypecounts";
+	protected static final String NBTTAG_VILLAGE_HOMETYPENAME = "villagehometypename";
+	protected static final String NBTTAG_VILLAGE_HOMETYPECOUNT = "villagehometypecount";
+
+	protected VillageData villageData;
+	protected List<HomeData> homes;
+	protected Map<VillageStructureType, Integer> homeTypeCounts;
 	
 	public HomesData() {
-		populateData(null);
+		populateData(null, null);
 	}
 	
-	public HomesData(Village village) {
-		populateData(village);
+	protected VillageData getVillageData() {
+		return this.villageData;
 	}
 	
 	public int getHomesCount() {
@@ -132,13 +133,15 @@ public class HomesData {
 		return total[0];
 	}
 	
-	private void clearData() {
+	protected void clearData() {
 		this.homes = new ArrayList<HomeData>();
 		this.homeTypeCounts = new LinkedHashMap<VillageStructureType, Integer>();
 	}
 	
-	public void populateData(Village village) {
+	public void populateData(VillageData villageData, Village village) {
 		clearData();
+		
+		this.villageData = villageData;
 		
 		if (village != null) {
 			
@@ -149,18 +152,20 @@ public class HomesData {
 				this.homeTypeCounts.put(entry.getKey(), structures.size());
 
 				for (VillageStructure structure : structures) {
-					this.homes.add(new HomeData(structure));
+					this.homes.add(new HomeData(villageData, structure));
 				}
 			}
 		}
 	}
 	
-	public void readNBT(NBTTagCompound nbtTag) {
+	public void readNBT(VillageData villageData, NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
 		}
 		
 		clearData();
+		
+		this.villageData = villageData;
 
 		if (nbtTag.hasKey(NBTTAG_VILLAGE_HOMES)) {
 			NBTTagCompound nbtHomesData = nbtTag.getCompoundTag(NBTTAG_VILLAGE_HOMES);
@@ -180,15 +185,13 @@ public class HomesData {
 				NBTTagList nbtTagListHomes = nbtHomesData.getTagList(NBTTAG_VILLAGE_HOMESLIST, 10);
 				
 				for (int index = 0; index < nbtTagListHomes.tagCount(); index++) {
-					NBTTagCompound nbtTagHome = nbtTagListHomes.getCompoundTagAt(index);
-					
-					this.homes.add(new HomeData(nbtTagHome));
+					this.homes.add(new HomeData(villageData, nbtTagListHomes.getCompoundTagAt(index)));
 				}
 			}
 		}
 	}
 	
-	public void writeNBT(NBTTagCompound nbtTag) {
+	public NBTTagCompound writeNBT(NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
 		}	
@@ -213,16 +216,15 @@ public class HomesData {
 			NBTTagList nbtTagListHomes = new NBTTagList();
 
 			for (HomeData structure : this.homes) {
-				NBTTagCompound nbtHome = new NBTTagCompound();
-				structure.writeNBT(nbtHome);
-				
-				nbtTagListHomes.appendTag(nbtHome);
+				nbtTagListHomes.appendTag(structure.writeNBT(new NBTTagCompound()));
 			}
 			
 			nbtHomesData.setTag(NBTTAG_VILLAGE_HOMESLIST, nbtTagListHomes);
 		}
 		
 		nbtTag.setTag(NBTTAG_VILLAGE_HOMES, nbtHomesData);
+		
+		return nbtTag;
 	}
 	
 }

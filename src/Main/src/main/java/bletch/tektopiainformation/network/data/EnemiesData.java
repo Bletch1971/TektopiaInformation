@@ -14,17 +14,18 @@ import net.tangotek.tektopia.entities.EntityVillageNavigator;
 
 public class EnemiesData {
 	
-	private static final String NBTTAG_VILLAGE_ENEMIES = "villageenemies";
-	private static final String NBTTAG_VILLAGE_ENEMIESLIST = "villageenemieslist";
+	protected static final String NBTTAG_VILLAGE_ENEMIES = "villageenemies";
+	protected static final String NBTTAG_VILLAGE_ENEMIESLIST = "villageenemieslist";
 	
-	private List<EnemyData> enemies;
+	protected VillageData villageData;
+	protected List<EnemyData> enemies;
 
 	public EnemiesData() {
-		populateData(null);
+		populateData(null, null);
 	}
 	
-	public EnemiesData(Village village) {
-		populateData(village);
+	protected VillageData getVillageData() {
+		return this.villageData;
 	}
 	
 	public int getEnemiesCount() {
@@ -51,12 +52,14 @@ public class EnemiesData {
 						.findFirst().orElse(null);
 	}
 	
-	private void clearData() {
+	protected void clearData() {
 		this.enemies = new ArrayList<EnemyData>();
 	}
 	
-	public void populateData(Village village) {
+	public void populateData(VillageData villageData, Village village) {
 		clearData();
+		
+		this.villageData = villageData;
 		
 		if (village != null) {
 			
@@ -74,12 +77,14 @@ public class EnemiesData {
 		}
 	}
 	
-	public void readNBT(NBTTagCompound nbtTag) {
+	public void readNBT(VillageData villageData, NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
 		}
 		
 		clearData();
+		
+		this.villageData = villageData;
 		
 		if (nbtTag.hasKey(NBTTAG_VILLAGE_ENEMIES)) {
 			NBTTagCompound nbtEnemiesData = nbtTag.getCompoundTag(NBTTAG_VILLAGE_ENEMIES);
@@ -88,15 +93,13 @@ public class EnemiesData {
 				NBTTagList nbtTagListEnemies = nbtEnemiesData.getTagList(NBTTAG_VILLAGE_ENEMIESLIST, 10);
 				
 				for (int index = 0; index < nbtTagListEnemies.tagCount(); index++) {
-					NBTTagCompound nbtTagEnemy = nbtTagListEnemies.getCompoundTagAt(index);
-					
-					this.enemies.add(new EnemyData(nbtTagEnemy));
+					this.enemies.add(new EnemyData(nbtTagListEnemies.getCompoundTagAt(index)));
 				}
 			}
 		}
 	}
 	
-	public void writeNBT(NBTTagCompound nbtTag) {
+	public NBTTagCompound writeNBT(NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
 		}	
@@ -107,16 +110,15 @@ public class EnemiesData {
 			NBTTagList nbtTagListEnemies = new NBTTagList();
 			
 			for (EnemyData enemy : this.enemies) {
-				NBTTagCompound nbtEnemy = new NBTTagCompound();
-				enemy.writeNBT(nbtEnemy);
-				
-				nbtTagListEnemies.appendTag(nbtEnemy);
+				nbtTagListEnemies.appendTag(enemy.writeNBT(new NBTTagCompound()));
 			}
 			
 			nbtEnemiesData.setTag(NBTTAG_VILLAGE_ENEMIESLIST, nbtTagListEnemies);
 		}
 
 		nbtTag.setTag(NBTTAG_VILLAGE_ENEMIES, nbtEnemiesData);
+		
+		return nbtTag;
 	}
 
 }
