@@ -297,6 +297,13 @@ public class ResidentsData {
 				
 				this.professionTypeCounts.put(TektopiaUtils.PROFESSIONTYPE_ARCHITECT, this.professionTypeCounts.get(TektopiaUtils.PROFESSIONTYPE_ARCHITECT) + 1);
 				this.residents.add(new ResidentData(entity));
+
+				this.adultCount++;
+				
+				if (entity.isMale())
+					this.maleCount++;
+				else
+					this.femaleCount++;
 			}
 			
 			// populate Tradesman
@@ -309,6 +316,13 @@ public class ResidentsData {
 				
 				this.professionTypeCounts.put(TektopiaUtils.PROFESSIONTYPE_TRADESMAN, this.professionTypeCounts.get(TektopiaUtils.PROFESSIONTYPE_TRADESMAN) + 1);
 				this.residents.add(new ResidentData(entity));
+
+				this.adultCount++;
+				
+				if (entity.isMale())
+					this.maleCount++;
+				else
+					this.femaleCount++;
 			}
 		}
 	}
