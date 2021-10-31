@@ -280,15 +280,21 @@ public class ResidentData extends EntityData {
 	}
 	
 	public MerchantRecipeList getRecipeList() {
-		return this.recipes;
+		return this.recipes == null
+				? new MerchantRecipeList()
+				: this.recipes;
 	}
 	
 	public List<ItemStack> getInventory() {
-		return this.inventory;
+		return this.inventory == null
+				? new ArrayList<ItemStack>()
+				: this.inventory;
 	}
 	
 	public int getInventoryCount() {
-		return this.inventory == null ? 0 : this.inventory.size();
+		return this.inventory == null 
+				? 0 
+				: this.inventory.size();
 	}
 	
 	public List<ItemStack> getRecentEats() {

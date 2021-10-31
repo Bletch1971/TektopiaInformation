@@ -71,13 +71,13 @@ public class ResidentsData {
 						.collect(Collectors.toList()));
 	}
 	
-	public List<ResidentData> getResidentsByType(String professionType) {
+	public List<ResidentData> getResidentsByType(String professionType, Boolean sortByLevel) {
 		return this.residents == null
 				? Collections.unmodifiableList(new ArrayList<ResidentData>())
 				: Collections.unmodifiableList(this.residents.stream()
 						.filter(r -> professionType != null && professionType.toUpperCase().equals(r.getProfessionType()))
 						.sorted((c1 , c2) -> { 
-							int compare = Integer.compare(c2.getBaseLevel(), c1.getBaseLevel());
+							int compare = sortByLevel ? Integer.compare(c2.getBaseLevel(), c1.getBaseLevel()) : 0;
 							return compare != 0 ? compare : c1.getName().compareTo(c2.getName());
 						})
 						.collect(Collectors.toList()));

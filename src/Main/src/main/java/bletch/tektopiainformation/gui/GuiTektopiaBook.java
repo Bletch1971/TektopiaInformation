@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -114,7 +115,7 @@ public class GuiTektopiaBook extends GuiScreen {
 	private static final int PROFESSION_HEIGHT = 90;
 
 	private static final int PAGE_HEADER_Y = 20;
-	private static final int PAGE_BODY_Y = 35;
+	private static final int PAGE_BODY_Y = 32;
 	private static final int PAGE_FOOTER_Y = 335;
 
 	private static final int PAGE_LEFTPAGE_LEFTMARGIN_X = 35;
@@ -174,7 +175,7 @@ public class GuiTektopiaBook extends GuiScreen {
 	private static final int LABEL_TRAILINGSPACE_X = 10;
 
 	private static final int LINE_SPACE_Y = 2;
-	private static final int LINE_SPACE_Y_HEADER = 4;
+	private static final int LINE_SPACE_Y_HEADER = 2;
 	private static final int LINE_SPACE_Y_IMAGE = 6;
 
 	private static final int STRUCTURETYPES_PER_PAGE = 24;
@@ -196,9 +197,10 @@ public class GuiTektopiaBook extends GuiScreen {
 	private static final int SALESHISTORY_PER_PAGE = 16;
 	private static final int RECENTEATS_PER_PAGE = 5;
 	private static final int ADDITIONALPROFESSIONS_PER_PAGE = 4;
-	private static final int AIFILTERLIST_PER_PAGE = 24;
+	private static final int AIFILTERLIST_PER_PAGE = 23;
 	private static final int INVENTORY_PER_LINE = 9;
 	private static final int INVENTORYLINES_PER_PAGE = 3;
+	private static final int AIFILTERRESIDENTS_PER_PAGE = 10;
 
 	private static final ResourceLocation book = new ResourceLocation(ModDetails.MOD_ID, "textures/gui/gui_book.png");
 	private static final ResourceLocation bookmarkLeft = new ResourceLocation(ModDetails.MOD_ID, "textures/gui/bookmark_left.png");
@@ -233,8 +235,8 @@ public class GuiTektopiaBook extends GuiScreen {
 	private static Boolean showMapPlayer = true;  
 	private static Boolean showMapVisitors = true;  
 	private static Boolean showMapEnemies = true;  
-	private Boolean showSelectedOnly = false; 
-	private Boolean showSelectedAlways = false; 
+	private static Boolean showSelectedAlways = false;
+	private Boolean showSelectedOnly = false;  
 
 	private VillageData villageData;
 	private HashMap<String, ResourceLocation> bookmarkResources;
@@ -734,44 +736,42 @@ public class GuiTektopiaBook extends GuiScreen {
 					}
 				}
 			}
+			
+			// structure type pages
+			for (VillageStructureType structureType : structureTypeCounts.keySet()) {
+				List<StructureData> structuresByType = structuresData.getStructuresByType(structureType);
 
-			if (structuresData.getStructures() != null) {
-				// structure type pages
-				for (VillageStructureType structureType : structureTypeCounts.keySet()) {
-					List<StructureData> structures = structuresData.getStructuresByType(structureType);
-
-					int count = structures == null || structures.size() == 0 ? 0 : structures.size();
-					if (count > 0) {
-						int pages = count / STRUCTURES_PER_PAGE;
-						if (count % STRUCTURES_PER_PAGE > 0) {
-							pages++;
-						}
-
-						for (int page = 0; page < pages; page++) {    	        			
-							addPage(new GuiPage(GuiPageType.STRUCTURETYPE, pageIndex++, getStructureTypePageKey(structureType, page)));
-						}
-					}
-				}
-
-				// structure pages
-				for (StructureData structure : structuresData.getStructures()) {
-					int count = structure.getOccupantCount();
-					int pages = count / STRUCTUREOCCUPANTS_PER_PAGE;
-					if (count % STRUCTUREOCCUPANTS_PER_PAGE > 0) {
+				int count = structuresByType.size();
+				if (count > 0) {
+					int pages = count / STRUCTURES_PER_PAGE;
+					if (count % STRUCTURES_PER_PAGE > 0) {
 						pages++;
 					}
-					pages = Math.max(1, pages);
 
-					for (int page = 0; page < pages; page++) {
-						// check if the structure owns the frame position
-						if (page == 0 && this.villageData.getStructureId() > 0 && this.villageData.getStructureId() == structure.getStructureId()) {
-							startPageIndex = pageIndex;
-						}
-						else if (page == 0 && this.villageData.getFramePosition() != null && structure.getFramePosition() != null && this.villageData.getFramePosition().equals(structure.getFramePosition())) {
-							startPageIndex = pageIndex;
-						} 
-						addPage(new GuiPage(GuiPageType.STRUCTURE, pageIndex++, getStructureDetailPageKey(structure.getStructureId(), page)));
+					for (int page = 0; page < pages; page++) {    	        			
+						addPage(new GuiPage(GuiPageType.STRUCTURETYPE, pageIndex++, getStructureTypePageKey(structureType, page)));
 					}
+				}
+			}
+			
+			// structure pages
+			for (StructureData structure : structuresData.getStructures()) {
+				int count = structure.getOccupantCount();
+				int pages = count / STRUCTUREOCCUPANTS_PER_PAGE;
+				if (count % STRUCTUREOCCUPANTS_PER_PAGE > 0) {
+					pages++;
+				}
+				pages = Math.max(1, pages);
+
+				for (int page = 0; page < pages; page++) {
+					// check if the structure owns the frame position
+					if (page == 0 && this.villageData.getStructureId() > 0 && this.villageData.getStructureId() == structure.getStructureId()) {
+						startPageIndex = pageIndex;
+					}
+					else if (page == 0 && this.villageData.getFramePosition() != null && structure.getFramePosition() != null && this.villageData.getFramePosition().equals(structure.getFramePosition())) {
+						startPageIndex = pageIndex;
+					} 
+					addPage(new GuiPage(GuiPageType.STRUCTURE, pageIndex++, getStructureDetailPageKey(structure.getStructureId(), page)));
 				}
 			}
 		}
@@ -804,9 +804,9 @@ public class GuiTektopiaBook extends GuiScreen {
 			if (homesData.getHomes() != null) {
 				// home type pages
 				for (VillageStructureType homeType : homeTypeCounts.keySet()) {
-					List<HomeData> homes = homesData.getHomesByType(homeType);
+					List<HomeData> homesByType = homesData.getHomesByType(homeType);
 
-					int count = homes == null || homes.size() == 0 ? 0 : homes.size();
+					int count = homesByType.size();
 					if (count > 0) {
 						int pages = count / HOMES_PER_PAGE;
 						if (count % HOMES_PER_PAGE > 0) {
@@ -852,10 +852,10 @@ public class GuiTektopiaBook extends GuiScreen {
 			// title page
 			addPage(new GuiPage(GuiPageType.SUMMARY, pageIndex++, getPageKey(BOOKMARK_KEY_PROFESSIONS, 0), BOOKMARK_KEY_PROFESSIONS));
 
-			Map<String, Integer> allProfessionTypeCounts = residentsData.getProfessionTypeCountsAll();
+			Map<String, Integer> professionTypeCounts = residentsData.getProfessionTypeCountsAll();
 			
 			// profession type list
-			int count = allProfessionTypeCounts.size();
+			int count = professionTypeCounts.size();
 			int pages = count / PROFESSIONTYPES_PER_PAGE;
 			if (count % PROFESSIONTYPES_PER_PAGE > 0) {
 				pages++;
@@ -867,7 +867,7 @@ public class GuiTektopiaBook extends GuiScreen {
 			}
 
 			// profession pages
-			for (Entry<String, Integer> entry : allProfessionTypeCounts.entrySet()) {
+			for (Entry<String, Integer> entry : professionTypeCounts.entrySet()) {
 				count = entry.getValue();
 				if (count > 0) {
 					pages = count / PROFESSIONS_PER_PAGE;
@@ -902,19 +902,17 @@ public class GuiTektopiaBook extends GuiScreen {
 			}
 
 			// resident pages
-			if (residentsData.getResidents() != null) {
-				for (ResidentData residentData : residentsData.getResidents()) {
-					// check for the resident
-					if (this.villageData.getEntityId() > 0 && this.villageData.getEntityId() == residentData.getId()) {
-						startPageIndex = pageIndex;
-					}
-					// check if the resident owns the bed position
-					if (this.villageData.getBedPosition() != null && residentData.getBedPosition() != null && this.villageData.getBedPosition().equals(residentData.getBedPosition())) {
-						startPageIndex = pageIndex;
-					}    	        	
-
-					addPage(new GuiPage(GuiPageType.RESIDENT, pageIndex++, getResidentDetailPageKey(residentData.getId())));
+			for (ResidentData residentData : residentsData.getResidents()) {
+				// check for the resident
+				if (this.villageData.getEntityId() > 0 && this.villageData.getEntityId() == residentData.getId()) {
+					startPageIndex = pageIndex;
 				}
+				// check if the resident owns the bed position
+				if (this.villageData.getBedPosition() != null && residentData.getBedPosition() != null && this.villageData.getBedPosition().equals(residentData.getBedPosition())) {
+					startPageIndex = pageIndex;
+				}    	        	
+
+				addPage(new GuiPage(GuiPageType.RESIDENT, pageIndex++, getResidentDetailPageKey(residentData.getId())));
 			}
 		}
 
@@ -938,30 +936,27 @@ public class GuiTektopiaBook extends GuiScreen {
 			}
 
 			// visitor pages
-			if (visitorsData.getVisitors() != null) {
-				for (VisitorData visitorData : visitorsData.getVisitors()) {
-					// check for the visitor
-					if (this.villageData.getEntityId() > 0 && this.villageData.getEntityId() == visitorData.getId()) {
-						startPageIndex = pageIndex;
-					}  	        	
+			for (VisitorData visitorData : visitorsData.getVisitors()) {
+				// check for the visitor
+				if (this.villageData.getEntityId() > 0 && this.villageData.getEntityId() == visitorData.getId()) {
+					startPageIndex = pageIndex;
+				}  	        	
 
-					addPage(new GuiPage(GuiPageType.VISITOR, pageIndex++, getPageKey("" + visitorData.getId(), 0)));
+				addPage(new GuiPage(GuiPageType.VISITOR, pageIndex++, getPageKey("" + visitorData.getId(), 0)));
 
-					// if visitor is a vendor, then make sure to add additional pages for items, if needed.
-					if (visitorData.isVendor()) {
-						MerchantRecipeList recipeList = visitorData.getRecipeList();
-						if (recipeList != null && !recipeList.isEmpty()) {
-							count = recipeList.size() - VISITORVENDORLIST0_PER_PAGE;
-							if (count > 0) {
-								pages = count / VISITORVENDORLIST_PER_PAGE;
-								if (count % VISITORVENDORLIST_PER_PAGE > 0) {
-									pages++;
-								}
+				// if visitor is a vendor, then make sure to add additional pages for items, if needed.
+				if (visitorData.isVendor()) {
+					MerchantRecipeList recipeList = visitorData.getRecipeList();
+					
+					count = recipeList.size() - VISITORVENDORLIST0_PER_PAGE;
+					if (count > 0) {
+						pages = count / VISITORVENDORLIST_PER_PAGE;
+						if (count % VISITORVENDORLIST_PER_PAGE > 0) {
+							pages++;
+						}
 
-								for (int page = 0; page < pages; page++) {
-									addPage(new GuiPage(GuiPageType.VISITOR, pageIndex++, getResidentDetailPageKey(visitorData.getId(), page + 1)));
-								}
-							}
+						for (int page = 0; page < pages; page++) {
+							addPage(new GuiPage(GuiPageType.VISITOR, pageIndex++, getResidentDetailPageKey(visitorData.getId(), page + 1)));
 						}
 					}
 				}
@@ -995,10 +990,10 @@ public class GuiTektopiaBook extends GuiScreen {
 			// title page
 			addPage(new GuiPage(GuiPageType.SUMMARY, pageIndex++, getPageKey(BOOKMARK_KEY_AIFILTER, 0), BOOKMARK_KEY_AIFILTER));
 			
-			Map<String, Integer> mainProfessionTypeCounts = residentsData.getProfessionTypeCounts();
+			Map<String, Integer> professionTypeCounts = residentsData.getProfessionTypeCounts();
 			
 			// profession type list
-			int count = (int)mainProfessionTypeCounts.size();
+			int count = (int)professionTypeCounts.size();
 			int pages = count / PROFESSIONTYPES_PER_PAGE;
 			if (count % PROFESSIONTYPES_PER_PAGE > 0) {
 				pages++;
@@ -1009,20 +1004,20 @@ public class GuiTektopiaBook extends GuiScreen {
 				addPage(new GuiPage(GuiPageType.AIFILTER, pageIndex++, getPageKey("", page)));
 			}
 			
-			// profession pages
-//			for (String professionType : mainProfessionTypeNames) {
-//				count = residentsData.getProfessionTypeCount(professionType);
-//				if (count > 0) {
-//					pages = count / PROFESSIONS_PER_PAGE;
-//					if (count % PROFESSIONS_PER_PAGE > 0) {
-//						pages++;
-//					}
-//
-//					for (int page = 0; page < pages; page++) {
-//						addPage(new GuiPage(GuiPageType.PROFESSIONTYPE, pageIndex++, getProfessionDetailPageKey(professionType, page)));
-//					}
-//				}
-//			}
+			// profession AI filter pages
+			for (Entry<String, Integer> entry : professionTypeCounts.entrySet()) {
+				count = entry.getValue();
+				if (count > 0) {
+					pages = count / AIFILTERRESIDENTS_PER_PAGE;
+					if (count % AIFILTERRESIDENTS_PER_PAGE > 0) {
+						pages++;
+					}
+
+					for (int page = 0; page < pages; page++) {
+						addPage(new GuiPage(GuiPageType.AIFILTER, pageIndex++, getAIFilterDetailPageKey(entry.getKey(), page)));
+					}
+				}
+			}
 		}
 		
 		if (residentsData != null || structuresData != null) {
@@ -1374,7 +1369,180 @@ public class GuiTektopiaBook extends GuiScreen {
 			}
 			
 		} else {
+
+			String professionType = dataKey[0];
+			List<ResidentData> residents = residentsData != null ? residentsData.getResidentsByType(professionType, false) : null;
+
+			String typeName = getTypeName(professionType);
+
+			if (!StringUtils.isNullOrWhitespace(typeName)) {
+				if (!dataKey[1].equals("0") && !StringUtils.isNullOrWhitespace(continued)) {
+					typeName += " " + continued;
+				}
+				typeName = TextFormatting.DARK_BLUE + typeName;
+
+				if (guiPage.isLeftPage()) {
+					Font.normal.printLeft(typeName, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X, y, this.zLevel); 
+				}
+
+				if (guiPage.isRightPage()) {
+					Font.normal.printLeft(typeName, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X, y, this.zLevel); 
+				}
+			} 
+
+			y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+
+			if (dataKey[1].equals("0")) {
+
+				String totalLabel = TextUtils.translate("tektopiaBook.professiontypes.total");
+				String totalText = "";
+
+				if (!StringUtils.isNullOrWhitespace(totalLabel)) {
+					if (residents != null) {
+						totalText += "" + residents.size();
+					}
+
+					if (guiPage.isLeftPage()) {
+						Font.small.printLeft(totalLabel, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y, this.zLevel);
+						Font.small.printRight(totalText, this.x + PAGE_LEFTPAGE_CENTER_X + indentX, y, this.zLevel); 
+					}
+
+					if (guiPage.isRightPage()) {
+						Font.small.printLeft(totalLabel, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y, this.zLevel);
+						Font.small.printRight(totalText, this.x + PAGE_RIGHTPAGE_CENTER_X + indentX, y, this.zLevel); 
+					}
+				}
+			} 
+
+			y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y + LINE_SPACE_Y_HEADER;
+
+			String header = TextUtils.translate("tektopiaBook.aifilters.header");
+
+			if (!StringUtils.isNullOrWhitespace(header)) {
+				header = TextFormatting.DARK_BLUE + header;
+
+				if (guiPage.isLeftPage()) {
+					Font.small.printLeft(header, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X, y, this.zLevel); 
+				}
+
+				if (guiPage.isRightPage()) {
+					Font.small.printLeft(header, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X, y, this.zLevel); 
+				}
+			} 
+
+			y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
 			
+			String nameHeader = TextUtils.translate("tektopiaBook.headers.name");
+
+			if (!StringUtils.isNullOrWhitespace(nameHeader)) {
+				nameHeader = TextFormatting.UNDERLINE + nameHeader;
+
+				if (guiPage.isLeftPage()) {
+					Font.small.printLeft(nameHeader, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y, this.zLevel); 
+				}
+
+				if (guiPage.isRightPage()) {
+					Font.small.printLeft(nameHeader, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y, this.zLevel); 
+				}
+			}
+
+			int page = 0;
+			try {
+				page = Integer.parseInt(dataKey[1]);
+			}
+			catch (NumberFormatException e) {
+				page = 0;
+			}
+			int startIndex = page * AIFILTERRESIDENTS_PER_PAGE;
+			int index = 0;
+			int xIndent = indentX;
+			int yStart = y;
+			
+			int valueWidth = Math.max(Font.small.getStringWidth(TextUtils.SYMBOL_GREENTICK), Font.small.getStringWidth(TextUtils.SYMBOL_REDCROSS));
+			
+			for (ResidentData resident : residents) {
+				if (index >= startIndex && index < startIndex + AIFILTERRESIDENTS_PER_PAGE) {
+
+					String residentHeader = TextFormatting.UNDERLINE + (resident.isMale() ? TextUtils.SYMBOL_MALE : TextUtils.SYMBOL_FEMALE);
+					String residentName = formatResidentName(resident.isMale(), resident.getName(), true);
+					
+					if (guiPage.isLeftPage()) {
+						Font.small.printCentered(residentHeader, this.x + PAGE_LEFTPAGE_CENTER_X + xIndent, y, this.zLevel);  
+						
+						x1 = this.x + PAGE_LEFTPAGE_CENTER_X + xIndent - (valueWidth / 2);
+						x2 = x1 + valueWidth;
+					}
+
+					if (guiPage.isRightPage()) {
+						Font.small.printCentered(residentHeader, this.x + PAGE_RIGHTPAGE_CENTER_X + xIndent, y, this.zLevel); 
+						
+						x1 = this.x + PAGE_RIGHTPAGE_CENTER_X + xIndent - (valueWidth / 2);
+						x2 = x1 + valueWidth;
+					}
+					
+					if (!this.isSubPageOpen()) {
+						button = new GuiHyperlink(BUTTON_KEY_AIFILTERLINK, getHyperlinkData(GuiPageType.RESIDENT, getResidentDetailPageKey(resident.getId())));
+						button.setIcon(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT);
+						this.buttons.add(button);
+						
+						List<String> tooltips = Arrays.asList(residentName
+								, formatResidentLevel(resident.getLevel(), resident.getBaseLevel(), true, true)
+								, TextUtils.translate("tektopiaBook.links.aifilterdetails"));
+						
+						toolTip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, tooltips);
+						this.tooltips.add(toolTip);
+					}
+					
+					y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+					
+					int aiFilterIndex = 0;
+					for (Entry<String, Boolean> aiFilter : resident.getAiFilters().entrySet()) {
+						if (aiFilterIndex++ >= AIFILTERLIST_PER_PAGE)
+							break;
+						
+						if (index == startIndex) {
+							String aiFilterName = getAiFilterName(aiFilter.getKey());
+							String aiFilterNameShort = Font.small.trimStringToWidth(aiFilterName, 100, true);
+
+							if (guiPage.isLeftPage()) {
+								Font.small.printLeft(aiFilterNameShort, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y, this.zLevel); 
+								
+								x1 = this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX;
+								x2 = x1 + Font.small.getStringWidth(aiFilterNameShort);
+							}
+
+							if (guiPage.isRightPage()) {
+								Font.small.printLeft(aiFilterNameShort, this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX, y, this.zLevel);
+								
+								x1 = this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX;
+								x2 = x1 + Font.small.getStringWidth(aiFilterNameShort); 
+							}
+							
+							if (!this.isSubPageOpen() && !aiFilterName.equals(aiFilterNameShort)) {
+								toolTip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, aiFilterName);
+								this.tooltips.add(toolTip);
+							}
+						}
+						
+						String aiFilterValue = aiFilter.getValue() ? TextUtils.SYMBOL_GREENTICK : TextUtils.SYMBOL_REDCROSS;
+
+						if (guiPage.isLeftPage()) {
+							Font.small.printCentered(aiFilterValue, this.x + PAGE_LEFTPAGE_CENTER_X + xIndent, y, this.zLevel); 
+						}
+
+						if (guiPage.isRightPage()) {
+							Font.small.printCentered(aiFilterValue, this.x + PAGE_RIGHTPAGE_CENTER_X + xIndent, y, this.zLevel); 
+						}
+
+						y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
+					}
+					
+					xIndent += valueWidth + 2;
+					y = yStart;
+				}
+				
+				index++;
+			}
 		}
 	}
 
@@ -2510,7 +2678,7 @@ public class GuiTektopiaBook extends GuiScreen {
 		List<GuiMapMarker> mapMarkers = new ArrayList<GuiMapMarker>();
 
 		// create all the map markers
-		if (showMapTownHall || this.showSelectedAlways) {
+		if (showMapTownHall || showSelectedAlways) {
 
 			BlockPos structurePoint = townHallStructure.getFramePosition();
 			BlockPos villageOffset = structurePoint.subtract(villageOrigin);
@@ -2518,9 +2686,7 @@ public class GuiTektopiaBook extends GuiScreen {
 			String name = TextFormatting.DARK_GREEN + getStructureTypeName(townHallStructure.getStructureType());
 			String position = TextUtils.translate("tektopiaBook.homes.frameposition") + " " + formatBlockPos(structurePoint);
 
-			List<String> tooltips = new ArrayList<String>();
-			tooltips.add(name);
-			tooltips.add(position);
+			List<String> tooltips = Arrays.asList(name, position);
 
 			int markerSize = MAP_MARKER_SIZE;
 			int markerOffset = 0;
@@ -2544,7 +2710,7 @@ public class GuiTektopiaBook extends GuiScreen {
 				priority = 2;
 			}
 
-			if (showMapTownHall && !showSelectedOnly || showSelectedOnly && priority > 1 || this.showSelectedAlways && priority > 1) {
+			if (showMapTownHall && !showSelectedOnly || showSelectedOnly && priority > 1 || showSelectedAlways && priority > 1) {
 				ResourceLocation texture = mapMarkerTownHall;
 
 				GuiTexture icon = new GuiTexture(texture, this.zLevel, 
@@ -2564,7 +2730,7 @@ public class GuiTektopiaBook extends GuiScreen {
 			}
 		}
 
-		if (showMapHomes || this.showSelectedAlways) {
+		if (showMapHomes || showSelectedAlways) {
 			HomesData homesData = this.villageData.getHomesData();
 
 			for (HomeData home : homesData.getHomes()) {
@@ -2575,9 +2741,7 @@ public class GuiTektopiaBook extends GuiScreen {
 				String name = TextFormatting.DARK_GREEN + getStructureTypeName(home.getStructureType());
 				String position = TextUtils.translate("tektopiaBook.homes.frameposition") + " " + formatBlockPos(structurePoint);
 
-				List<String> tooltips = new ArrayList<String>();
-				tooltips.add(name);
-				tooltips.add(position);
+				List<String> tooltips = Arrays.asList(name, position);
 
 				int markerSize = MAP_MARKER_SIZE;
 				int markerOffset = 0;
@@ -2601,7 +2765,7 @@ public class GuiTektopiaBook extends GuiScreen {
 					priority = 2;
 				}
 
-				if (showMapHomes && !showSelectedOnly || showSelectedOnly && priority > 1 || this.showSelectedAlways && priority > 1) {
+				if (showMapHomes && !showSelectedOnly || showSelectedOnly && priority > 1 || showSelectedAlways && priority > 1) {
 					ResourceLocation texture = mapMarkerHome;
 
 					GuiTexture icon = new GuiTexture(texture, this.zLevel, 
@@ -2622,7 +2786,7 @@ public class GuiTektopiaBook extends GuiScreen {
 			}
 		}
 
-		if (showMapStructures || this.showSelectedAlways) {
+		if (showMapStructures || showSelectedAlways) {
 			StructuresData structuresData = this.villageData.getStructuresData();
 			List<VillageStructureType> excludeTypes = TektopiaUtils.getVillageHomeTypes();
 			excludeTypes.add(VillageStructureType.TOWNHALL);
@@ -2637,9 +2801,7 @@ public class GuiTektopiaBook extends GuiScreen {
 				String name = TextFormatting.DARK_GREEN + getStructureTypeName(structure.getStructureType());
 				String position = TextUtils.translate("tektopiaBook.homes.frameposition") + " " + formatBlockPos(structurePoint);
 
-				List<String> tooltips = new ArrayList<String>();
-				tooltips.add(name);
-				tooltips.add(position);
+				List<String> tooltips = Arrays.asList(name, position);
 
 				int markerSize = MAP_MARKER_SIZE;
 				int markerOffset = 0;
@@ -2663,7 +2825,7 @@ public class GuiTektopiaBook extends GuiScreen {
 					priority = 2;
 				}
 
-				if (showMapStructures && !showSelectedOnly || showSelectedOnly && priority > 1 || this.showSelectedAlways && priority > 1) {
+				if (showMapStructures && !showSelectedOnly || showSelectedOnly && priority > 1 || showSelectedAlways && priority > 1) {
 					ResourceLocation texture = mapMarkerStructure;
 
 					GuiTexture icon = new GuiTexture(texture, this.zLevel, 
@@ -2684,7 +2846,7 @@ public class GuiTektopiaBook extends GuiScreen {
 			}
 		}
 
-		if (showMapResidents || this.showSelectedAlways) {
+		if (showMapResidents || showSelectedAlways) {
 			ResidentsData residentsData = this.villageData.getResidentsData();
 
 			for (ResidentData resident : residentsData.getResidents()) {
@@ -2709,12 +2871,7 @@ public class GuiTektopiaBook extends GuiScreen {
 					}
 				}
 
-				List<String> tooltips = new ArrayList<String>();
-				tooltips.add(name);
-				tooltips.add(profession);
-				tooltips.add(level);
-				tooltips.add(health);
-				tooltips.add(position);
+				List<String> tooltips = Arrays.asList(name, profession, level, health, position);
 
 				int markerSize = MAP_MARKER_SIZE;
 				int markerOffset = 0;
@@ -2731,7 +2888,7 @@ public class GuiTektopiaBook extends GuiScreen {
 					priority = 2;
 				}
 
-				if (showMapResidents && !showSelectedOnly || showSelectedOnly && priority > 1 || this.showSelectedAlways && priority > 1) {
+				if (showMapResidents && !showSelectedOnly || showSelectedOnly && priority > 1 || showSelectedAlways && priority > 1) {
 					ResourceLocation texture = resident.isMale() ? mapMarkerResidentMale : mapMarkerResidentFemale;
 
 					GuiTexture icon = new GuiTexture(texture, this.zLevel, 
@@ -2752,7 +2909,7 @@ public class GuiTektopiaBook extends GuiScreen {
 			}
 		}
 
-		if (showMapVisitors || this.showSelectedAlways) {
+		if (showMapVisitors || showSelectedAlways) {
 			VisitorsData visitorsData = this.villageData.getVisitorsData();
 
 			for (VisitorData visitor : visitorsData.getVisitors()) {
@@ -2798,7 +2955,7 @@ public class GuiTektopiaBook extends GuiScreen {
 					priority = 2;
 				}
 
-				if (showMapVisitors && !showSelectedOnly || showSelectedOnly && priority > 1 || this.showSelectedAlways && priority > 1) {
+				if (showMapVisitors && !showSelectedOnly || showSelectedOnly && priority > 1 || showSelectedAlways && priority > 1) {
 					ResourceLocation texture = mapMarkerVisitor;
 
 					GuiTexture icon = new GuiTexture(texture, this.zLevel, 
@@ -2819,7 +2976,7 @@ public class GuiTektopiaBook extends GuiScreen {
 			}
 		}
 
-		if (showMapEnemies || this.showSelectedAlways) {
+		if (showMapEnemies || showSelectedAlways) {
 			EnemiesData enemiesData = this.villageData.getEnemiesData();
 
 			for (EnemyData enemy : enemiesData.getEnemies()) {
@@ -2829,9 +2986,7 @@ public class GuiTektopiaBook extends GuiScreen {
 				String name = TextFormatting.AQUA + enemy.getName();
 				String position = TextUtils.translate("tektopiaBook.residents.position") + " " + formatBlockPos(enemy.getCurrentPosition());
 
-				List<String> tooltips = new ArrayList<String>();
-				tooltips.add(name);
-				tooltips.add(position);
+				List<String> tooltips = Arrays.asList(name, position);
 
 				int markerSize = MAP_MARKER_SIZE;
 				int markerOffset = 0;
@@ -2848,7 +3003,7 @@ public class GuiTektopiaBook extends GuiScreen {
 					priority = 2;
 				}
 
-				if (showMapEnemies && !showSelectedOnly || showSelectedOnly && priority > 1 || this.showSelectedAlways && priority > 1) {
+				if (showMapEnemies && !showSelectedOnly || showSelectedOnly && priority > 1 || showSelectedAlways && priority > 1) {
 					ResourceLocation texture = mapMarkerEnemy;
 
 					GuiTexture icon = new GuiTexture(texture, this.zLevel, 
@@ -2876,9 +3031,7 @@ public class GuiTektopiaBook extends GuiScreen {
 			String name = TextFormatting.AQUA + "Player";
 			String position = TextUtils.translate("tektopiaBook.residents.position") + " " + formatBlockPos(this.villageData.getPlayerPosition());
 
-			List<String> tooltips = new ArrayList<String>();
-			tooltips.add(name);
-			tooltips.add(position);
+			List<String> tooltips = Arrays.asList(name, position);
 
 			int markerSize = MAP_MARKER_SIZE;
 			int markerOffset = 0;
@@ -3128,19 +3281,19 @@ public class GuiTektopiaBook extends GuiScreen {
 
 		y -= LINE_SPACE_Y + LINE_SPACE_Y_HEADER;
 
-		filterText = TextFormatting.DARK_BLUE + TextUtils.translate("tektopiaBook.map.options.showselectedalways");
+		filterText = TextFormatting.DARK_BLUE + TextUtils.translate("tektopiaBook.map.options.showselectedonly");
 		if (!StringUtils.isNullOrWhitespace(filterText)) {
-			buttonIcon = new GuiTexture(this.showSelectedAlways ? mapCheckmarkTick : mapCheckmarkCross, this.zLevel, x, y, 10, 10, 0, 0, 10, 10);
-			button = new GuiButton(BUTTON_KEY_SHOWMAPSELECTEDALWAYS, buttonIcon);
+			buttonIcon = new GuiTexture(this.showSelectedOnly ? mapCheckmarkTick : mapCheckmarkCross, this.zLevel, x, y, 10, 10, 0, 0, 10, 10);
+			button = new GuiButton(BUTTON_KEY_SHOWMAPSELECTEDONLY, buttonIcon);
 			this.buttons.add(button);
 			Font.small.printLeft(filterText, x + indentX, y + 1, this.zLevel);
 			y -= Font.small.fontRenderer.FONT_HEIGHT;
 		}
 
-		filterText = TextFormatting.DARK_BLUE + TextUtils.translate("tektopiaBook.map.options.showselectedonly");
+		filterText = TextFormatting.DARK_BLUE + TextUtils.translate("tektopiaBook.map.options.showselectedalways");
 		if (!StringUtils.isNullOrWhitespace(filterText)) {
-			buttonIcon = new GuiTexture(this.showSelectedOnly ? mapCheckmarkTick : mapCheckmarkCross, this.zLevel, x, y, 10, 10, 0, 0, 10, 10);
-			button = new GuiButton(BUTTON_KEY_SHOWMAPSELECTEDONLY, buttonIcon);
+			buttonIcon = new GuiTexture(showSelectedAlways ? mapCheckmarkTick : mapCheckmarkCross, this.zLevel, x, y, 10, 10, 0, 0, 10, 10);
+			button = new GuiButton(BUTTON_KEY_SHOWMAPSELECTEDALWAYS, buttonIcon);
 			this.buttons.add(button);
 			Font.small.printLeft(filterText, x + indentX, y + 1, this.zLevel);
 			y -= Font.small.fontRenderer.FONT_HEIGHT;
@@ -3359,9 +3512,9 @@ public class GuiTektopiaBook extends GuiScreen {
 
 		y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
 
-		Map<String, Integer> allProfessionTypeCounts = residentsData != null ? residentsData.getProfessionTypeCountsAll() : null;
+		Map<String, Integer> professionTypeCounts = residentsData != null ? residentsData.getProfessionTypeCountsAll() : null;
 
-		if (allProfessionTypeCounts != null) {
+		if (professionTypeCounts != null) {
 			final int[] maxLength = { 0 };
 
 			int page = 0;
@@ -3391,7 +3544,7 @@ public class GuiTektopiaBook extends GuiScreen {
 
 			y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
 
-			for (Entry<String, Integer> entry : allProfessionTypeCounts.entrySet()) {
+			for (Entry<String, Integer> entry : professionTypeCounts.entrySet()) {
 				if (index >= startIndex && index < startIndex + PROFESSIONTYPES_PER_PAGE) {
 					String typeName = getTypeName(entry.getKey());
 					int typeCount = entry.getValue();
@@ -3444,8 +3597,8 @@ public class GuiTektopiaBook extends GuiScreen {
 		String professionType = dataKey[0];
 
 		ResidentsData residentsData = this.villageData.getResidentsData();
-		Map<String, Integer> allProfessionTypeCounts = residentsData != null ? residentsData.getProfessionTypeCountsAll() : null;
-		List<ResidentData> residents = residentsData != null ? residentsData.getResidentsByType(professionType) : null;
+		Map<String, Integer> professionTypeCounts = residentsData != null ? residentsData.getProfessionTypeCountsAll() : null;
+		List<ResidentData> residents = residentsData != null ? residentsData.getResidentsByType(professionType, true) : null;
 
 		String typeName = getTypeName(professionType);
 		String continued = TextUtils.translate("tektopiaBook.continued");
@@ -3475,8 +3628,8 @@ public class GuiTektopiaBook extends GuiScreen {
 			String totalText = "";
 
 			if (!StringUtils.isNullOrWhitespace(totalLabel)) {
-				if (allProfessionTypeCounts != null && allProfessionTypeCounts.containsKey(professionType)) {
-					totalText += "" + allProfessionTypeCounts.get(professionType);
+				if (professionTypeCounts != null && professionTypeCounts.containsKey(professionType)) {
+					totalText += "" + professionTypeCounts.get(professionType);
 				}
 
 				if (guiPage.isLeftPage()) {
@@ -3807,15 +3960,15 @@ public class GuiTektopiaBook extends GuiScreen {
 
 						if (isSubPageOpen()) {
 
-							RenderUtils.drawModalRectWithCustomSizedTextureWithZLevel(buttonAiFilter, this.zLevel, x1, y - 8, 0, 0, 24, 24, 24, 24);
+							RenderUtils.drawModalRectWithCustomSizedTextureWithZLevel(buttonAiFilter, this.zLevel, x1, y - 5, 0, 0, 24, 24, 24, 24);
 
 						} else {
 							GuiButton aiFilterButton = new GuiButton(BUTTON_KEY_AIFILTER);
-							aiFilterButton.setIcon(buttonAiFilter, this.zLevel, x1, y - 8, 24, 24, 0, 0, 24, 24);
+							aiFilterButton.setIcon(buttonAiFilter, this.zLevel, x1, y - 5, 24, 24, 0, 0, 24, 24);
 							aiFilterButton.setButtonData(getAiFilterSubPageKey(residentId));
 							this.buttons.add(aiFilterButton);
 
-							GuiTooltip aiFilterToolTip = new GuiTooltip(x1, y - 8, 24, 24, aiFilterText);
+							GuiTooltip aiFilterToolTip = new GuiTooltip(x1, y - 5, 24, 24, aiFilterText);
 							this.tooltips.add(aiFilterToolTip);
 						}
 					}
@@ -3834,15 +3987,15 @@ public class GuiTektopiaBook extends GuiScreen {
 
 						if (isSubPageOpen()) {
 
-							RenderUtils.drawModalRectWithCustomSizedTextureWithZLevel(buttonInventory, this.zLevel, x1, y - 8, 0, 0, 24, 24, 24, 24);
+							RenderUtils.drawModalRectWithCustomSizedTextureWithZLevel(buttonInventory, this.zLevel, x1, y - 5, 0, 0, 24, 24, 24, 24);
 
 						} else {
 							GuiButton inventoryButton = new GuiButton(BUTTON_KEY_INVENTORY);
-							inventoryButton.setIcon(buttonInventory, this.zLevel, x1, y - 8, 24, 24, 0, 0, 24, 24);
+							inventoryButton.setIcon(buttonInventory, this.zLevel, x1, y - 5, 24, 24, 0, 0, 24, 24);
 							inventoryButton.setButtonData(getInventorySubPageKey(residentId));
 							this.buttons.add(inventoryButton);
 
-							GuiTooltip inventoryToolTip = new GuiTooltip(x1, y - 8, 24, 24, inventoryText);
+							GuiTooltip inventoryToolTip = new GuiTooltip(x1, y - 5, 24, 24, inventoryText);
 							this.tooltips.add(inventoryToolTip);
 						}
 					}
@@ -3852,7 +4005,7 @@ public class GuiTektopiaBook extends GuiScreen {
 
 				int tXL = this.x + (PAGE_LEFTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
 				int tXR = this.x + (PAGE_RIGHTPAGE_RIGHTMARGIN_X - PROFESSION_WIDTH);
-				int tY = y;
+				int tY = y + LINE_SPACE_Y_IMAGE;
 
 				String gender = resident.isMale() ? "m" : "f";
 				ResourceLocation residentResource = new ResourceLocation(ModDetails.MOD_ID, "textures/professions/" + resident.getProfessionType() + "_" + gender + ".png");
@@ -5824,7 +5977,18 @@ public class GuiTektopiaBook extends GuiScreen {
 		case BOOKMARK_KEY_AIFILTER:
 			summaryName = TextUtils.translate("bookmark.aifilters.name");
 			summaryInformation = TextUtils.translate("bookmark.aifilters.information");
-			//dataName = TextUtils.translate("tektopiaBook.headers.summary");
+			dataName = TextUtils.translate("tektopiaBook.headers.summary");
+			
+			residentsData = this.villageData.getResidentsData();
+
+			if (residentsData != null) {
+				String homesTotalResidents = TextUtils.translate("tektopiaBook.homes.totalresidents");
+
+				if (!StringUtils.isNullOrWhitespace(homesTotalResidents)) {
+					dataInformation.add(homesTotalResidents 
+							+ "|" + residentsData.getResidentsCount());
+				}
+			}
 			break;
 		case BOOKMARK_KEY_ECONOMY:
 			summaryName = TextUtils.translate("bookmark.economy.name");
@@ -7401,21 +7565,19 @@ public class GuiTektopiaBook extends GuiScreen {
 
 		y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
 
-		if (resident.getAiFiltersCount() > 0) {
+		for (Entry<String, Boolean> aiFilter : resident.getAiFilters().entrySet()) {
 
-			for (Entry<String, Boolean> aiFilter : resident.getAiFilters().entrySet()) {
+			if (index >= startIndex && index < startIndex + AIFILTERLIST_PER_PAGE) {
+				String aiFilterName = getAiFilterName(aiFilter.getKey());
+				String aiFilterValue = aiFilter.getValue() ? TextUtils.SYMBOL_GREENTICK : TextUtils.SYMBOL_REDCROSS;
 
-				if (index >= startIndex && index < startIndex + AIFILTERLIST_PER_PAGE) {
-					String aiFilterName = getAiFilterName(aiFilter.getKey());
-					String aiFilterValue = aiFilter.getValue() ? TextUtils.SYMBOL_GREENTICK : TextUtils.SYMBOL_REDCROSS;
+				Font.small.printCentered(aiFilterValue, this.xPagePortrait + SUBPAGE_PORTRAIT_LEFT_X + (maxLength[0] / 2), y, this.zLevel);
+				Font.small.printLeft(aiFilterName, this.xPagePortrait + SUBPAGE_PORTRAIT_LEFT_X + indentX + maxLength[0], y, this.zLevel); 
 
-					Font.small.printCentered(aiFilterValue, this.xPagePortrait + SUBPAGE_PORTRAIT_LEFT_X + (maxLength[0] / 2), y, this.zLevel);
-					Font.small.printLeft(aiFilterName, this.xPagePortrait + SUBPAGE_PORTRAIT_LEFT_X + indentX + maxLength[0], y, this.zLevel); 
-
-					y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
-				}
-				index++;
+				y += Font.small.fontRenderer.FONT_HEIGHT + LINE_SPACE_Y;
 			}
+			
+			index++;
 		}
 	}
 
@@ -7606,11 +7768,11 @@ public class GuiTektopiaBook extends GuiScreen {
 		case BUTTON_KEY_SHOWMAPTOWNHALL:
 			showMapTownHall = !showMapTownHall;
 			return;
+		case BUTTON_KEY_SHOWMAPSELECTEDALWAYS:
+			showSelectedAlways = !showSelectedAlways;
+			return;
 		case BUTTON_KEY_SHOWMAPSELECTEDONLY:
 			this.showSelectedOnly = !this.showSelectedOnly;
-			return;
-		case BUTTON_KEY_SHOWMAPSELECTEDALWAYS:
-			this.showSelectedAlways = !this.showSelectedAlways;
 			return;
 
 		case BUTTON_KEY_CLEARSELECTION:
@@ -8050,7 +8212,7 @@ public class GuiTektopiaBook extends GuiScreen {
 	}
 
 	private static String getAIFilterDetailPageKey(String professionType, int page) {
-		return getPageKey(professionType.toUpperCase() + "_aifilters", page);
+		return getPageKey(professionType.toUpperCase(), page);
 	}
 
 	private static String getProfessionDetailPageKey(String professionType) {
