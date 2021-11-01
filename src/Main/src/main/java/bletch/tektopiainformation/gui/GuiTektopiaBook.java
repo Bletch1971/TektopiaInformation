@@ -7664,7 +7664,7 @@ public class GuiTektopiaBook extends GuiScreen {
 			int tY = y + 29;
 			
 			// set the z-level of the items one level higher.
-			float oldZLevel = this.setZLevel(this.zLevel + 1);
+			float oldZLevel = this.setZLevel(this.zLevel + 5);
 
 			for (ItemStack item : resident.getInventory()) {
 
