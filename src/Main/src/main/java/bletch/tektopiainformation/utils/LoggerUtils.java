@@ -1,4 +1,4 @@
-package bletch.common.utils;
+package bletch.tektopiainformation.utils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

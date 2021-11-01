@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import bletch.common.utils.LoggerUtils;
 import bletch.common.utils.TextUtils;
 import bletch.tektopiainformation.core.ModConfig;
 import bletch.tektopiainformation.core.ModDetails;
 import bletch.tektopiainformation.utils.DebugUtils;
+import bletch.tektopiainformation.utils.LoggerUtils;
 import bletch.tektopiainformation.utils.TektopiaUtils;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.IJeiHelpers;
