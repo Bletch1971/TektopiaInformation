@@ -7668,7 +7668,7 @@ public class GuiTektopiaBook extends GuiScreen {
 				if (index >= startIndex && index < startIndex + (INVENTORYLINES_PER_PAGE * INVENTORY_PER_LINE)) {
 
 					if (index > startIndex && index % INVENTORY_PER_LINE == 0) {
-						tX = this.xPagePortrait + SUBPAGE_PORTRAIT_LEFT_X + indentX;
+						tX = this.xPagePortrait + SUBPAGE_PORTRAIT_LEFT_X + ((SUBPAGE_PORTRAIT_WIDTH - (INVENTORY_PER_LINE * 18)) / 2) + 1;
 						tY += 18;
 					}
 
