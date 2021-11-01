@@ -7661,7 +7661,7 @@ public class GuiTektopiaBook extends GuiScreen {
 		if (resident.getInventoryCount() > 0) {
 
 			int tX = this.xPagePortrait + SUBPAGE_PORTRAIT_LEFT_X + ((SUBPAGE_PORTRAIT_WIDTH - (INVENTORY_PER_LINE * 18)) / 2) + 1;
-			int tY = y + 27;
+			int tY = y + 29;
 
 			for (ItemStack item : resident.getInventory()) {
 
