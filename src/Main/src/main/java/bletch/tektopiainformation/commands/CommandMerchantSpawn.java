@@ -57,7 +57,7 @@ public class CommandMerchantSpawn extends CommandMerchantBase {
 			return;
 		}
 
-		BlockPos spawnPosition = spawnNearMe ? entityPlayer.getPosition().north(2) : TektopiaUtils.getVillageSpawnPoint(world, village);
+		BlockPos spawnPosition = spawnNearMe ? entityPlayer.getPosition() : TektopiaUtils.getVillageSpawnPoint(world, village);
 		
 		if (spawnPosition == null) {
 			notifyCommandListener(sender, this, MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".noposition", new Object[0]);
