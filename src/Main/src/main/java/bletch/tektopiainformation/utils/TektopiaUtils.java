@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -14,9 +15,15 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import bletch.tektopiainformation.core.ModDetails;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.gen.ChunkProviderServer;
 import net.tangotek.tektopia.ProfessionType;
 import net.tangotek.tektopia.Village;
 import net.tangotek.tektopia.economy.ItemEconomy;
@@ -389,5 +396,50 @@ public class TektopiaUtils {
 			return timeOfDay >= startTime || timeOfDay <= endTime;
 		}
 	}
+    
+	public static String formatBlockPos(BlockPos blockPos) {
+    	if (blockPos == null) {
+    		return "";
+    	}
+    	
+    	return blockPos.getX() + ", " + blockPos.getY() + ", " + blockPos.getZ();
+    }
+
+	public static BlockPos getVillageSpawnPoint(World world, Village village) {
+		int retries = 3;
+		
+		while (retries-- > 0) {
+			BlockPos spawnPosition = village.getEdgeNode();
+
+			if (isChunkFullyLoaded(world, spawnPosition)) {
+				return spawnPosition;
+			}
+		}
+		
+		return null;
+	}
+
+	public static boolean isChunkFullyLoaded(World world, BlockPos pos) {
+		if (world == null || world.isRemote || pos == null) {
+			return true;
+		}
+
+		long i = ChunkPos.asLong(pos.getX() >> 4, pos.getZ() >> 4);
+		Chunk chunk = (Chunk)((ChunkProviderServer)world.getChunkProvider()).id2ChunkMap.get(i);
+		return chunk != null && !chunk.unloadQueued;
+	}
+
+	public static Boolean trySpawnEntity(World world, BlockPos spawnPosition, Function<World, ?> createFunc) {
+		if (world == null || spawnPosition == null || createFunc == null)
+			return false;
+		
+		EntityLiving entity = (EntityLiving)createFunc.apply(world);
+		if (entity == null)
+			return false;
+		
+		entity.setLocationAndAngles((double)spawnPosition.getX() + 0.5D, (double)spawnPosition.getY(), (double)spawnPosition.getZ() + 0.5D, 0.0F, 0.0F);
+		entity.onInitialSpawn(world.getDifficultyForLocation(spawnPosition), (IEntityLivingData)null);
+		return world.spawnEntity(entity);
+   }
 	
 }

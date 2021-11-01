@@ -68,6 +68,8 @@ config.debug.tooltip=Debug settings
 
 config.debug.enableDebug=Enable Debug
 config.debug.enableDebug.tooltip=If true, debug information will be output to the console.
+config.debug.enableDebugCommands=Enable Debug Commands
+config.debug.enableDebugCommands.tooltip=If true, will register new commands for debug use.
 config.debug.showTooltipTranslationKey=Show Item Translation Key - Tooltip
 config.debug.showTooltipTranslationKey.tooltip=If true, the item translation key will be show in the tooltip.
 config.debug.showJeiBlocksMissingInformation=Show Blocks Missing Information - JEI
@@ -164,6 +166,39 @@ config.gui.tektopiaInformationBook.doesGuiPauseGame=Does Opening Book Pause Game
 config.gui.tektopiaInformationBook.doesGuiPauseGame.tooltip=If true, opening the book will pause the game when in single-player.
 config.gui.tektopiaInformationBook.showEnemies=Enemy Details Visible
 config.gui.tektopiaInformationBook.showEnemies.tooltip=If true, enemies will be shown in the book; otherwise the enemies section will be blank.
+
+#============
+#= Commands =
+#============
+commands.merchant.usage=/merchant
+
+commands.merchant.kill.usage=/merchant kill
+commands.merchant.kill.noexists=§eMerchant kill failed...Merchant not located in the village
+commands.merchant.kill.novillage=§cMerchant kill failed...no village found
+commands.merchant.kill.success=§aMerchant [%s§a] has been killed
+
+commands.merchant.spawn.usage=/merchant spawn [me]
+commands.merchant.spawn.badconditions=§cMerchant spawn failed...spawn conditions not valid
+commands.merchant.spawn.exists=§eMerchant spawn failed...Merchant already located in the village
+commands.merchant.spawn.noposition=§cMerchant spawn failed...no spawn position found
+commands.merchant.spawn.novillage=§cMerchant spawn failed...no village found
+commands.merchant.spawn.failed=§cMerchant spawn failed
+commands.merchant.spawn.success=§aMerchant has appeared at %s
+
+commands.nomad.usage=/nomad
+
+commands.nomad.kill.usage=/nomad kill [0|1]
+commands.nomad.kill.noexists=§eNomad kill failed...Nomad not located in the village
+commands.nomad.kill.novillage=§cNomad kill failed...no village found
+commands.nomad.kill.success=§aNomad [%s§a] has been killed
+
+commands.nomad.spawn.usage=/nomad spawn [me]
+commands.nomad.spawn.badconditions=§cNomad spawn failed...spawn conditions not valid
+commands.nomad.spawn.exists=§eNomad spawn failed...Nomad limit (2) for the village has been reached
+commands.nomad.spawn.noposition=§cNomad spawn failed...no spawn position found
+commands.nomad.spawn.novillage=§cNomad spawn failed...no village found
+commands.nomad.spawn.failed=§cNomad spawn failed
+commands.nomad.spawn.success=§aNomad has appeared at %s
 
 #=================
 #= Tektopia Book =

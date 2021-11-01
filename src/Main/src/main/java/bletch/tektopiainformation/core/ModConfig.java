@@ -46,7 +46,12 @@ public class ModConfig {
 		
 		@Config.Comment("If true, debug information will be output to the console.")
 		@Config.LangKey("config.debug.enableDebug")
-		public boolean enableDebug = false;		
+		public boolean enableDebug = false;	
+		
+		@Config.Comment("If true, will register new commands for debug use.")
+		@Config.LangKey("config.debug.enableDebugCommands")
+		@Config.RequiresWorldRestart
+		public boolean enableDebugCommands = false;		
 	
 		@Config.Comment("If true, the item translation key will be show in the tooltip.")
 		@Config.LangKey("config.debug.showTooltipTranslationKey")
