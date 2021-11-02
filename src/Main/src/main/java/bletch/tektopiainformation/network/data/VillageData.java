@@ -3,6 +3,7 @@ package bletch.tektopiainformation.network.data;
 import java.io.IOException;
 
 import bletch.tektopiainformation.core.ModConfig;
+import bletch.tektopiainformation.utils.LoggerUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -250,6 +251,9 @@ public class VillageData {
 			return;
 		}
 		
+		String logMessage = "VillageData - readBuffer called; buffer capacity=" + buffer.capacity() + "; buffer max capacity=" + buffer.maxCapacity();
+		LoggerUtils.info(logMessage, true);
+		
 		readNBT(buffer.readCompoundTag());
 	}
 	
@@ -287,6 +291,9 @@ public class VillageData {
 		
 		NBTTagCompound nbtTag = writeNBT(new NBTTagCompound());
 		buffer.writeCompoundTag(nbtTag);
+		
+		String logMessage = "VillageData - writeBuffer called; buffer capacity=" + buffer.capacity() + "; buffer max capacity=" + buffer.maxCapacity();
+		LoggerUtils.info(logMessage, true);
 	}
 	
 	public NBTTagCompound writeNBT(NBTTagCompound nbtTag) {
