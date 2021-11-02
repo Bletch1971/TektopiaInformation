@@ -471,7 +471,7 @@ public class ResidentData extends EntityData {
 				});
 			
 			// remove any invalid items from the equipment list - DO NOT do this for the armor, we need
-			this.equipment.removeIf((p) -> p == null || p == ItemStack.EMPTY || p.getItem() == Items.AIR);
+			this.equipment.removeIf((i) -> i == null || i.isEmpty());
 			
 			int inventorySize = inventory.getSizeInventory();
 			if (inventorySize > 0) {
@@ -676,7 +676,7 @@ public class ResidentData extends EntityData {
 			NBTTagList nbtTagListInventory = new NBTTagList();
 			
 			for (ItemStack itemStack : this.inventory) {
-				if (itemStack != null && itemStack != ItemStack.EMPTY && itemStack.getItem() != Items.AIR) {					
+				if (itemStack != null && !itemStack.isEmpty()) {					
 					nbtTagListInventory.appendTag(itemStack.writeToNBT(new NBTTagCompound()));
 				}
 			}

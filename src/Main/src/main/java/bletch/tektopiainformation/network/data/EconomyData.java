@@ -115,9 +115,9 @@ public class EconomyData {
 		
 		if (this.salesHistory != null && this.salesHistory.size() > 0) {
 			NBTTagList nbtTagListSalesHistory = new NBTTagList();
-			
+
 			for (ItemStack itemStack : this.salesHistory) {
-				if (itemStack != null && itemStack != ItemStack.EMPTY && itemStack.getItem() != Items.AIR) {
+				if (itemStack != null && !itemStack.isEmpty()) {
 					nbtTagListSalesHistory.appendTag(itemStack.writeToNBT(new NBTTagCompound()));
 				}
 			}

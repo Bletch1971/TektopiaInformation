@@ -167,7 +167,7 @@ public class EntityData {
 			this.equipment.addAll((Collection<? extends ItemStack>) entity.getHeldEquipment());
 			
 			// remove any invalid items from the equipment list - DO NOT do this for the armor, we need
-			this.equipment.removeIf((p) -> p == null || p == ItemStack.EMPTY || p.getItem() == Items.AIR);
+			this.equipment.removeIf((i) -> i == null || i.isEmpty());
 		}
 	}
 	
@@ -248,7 +248,7 @@ public class EntityData {
 			NBTTagList nbtTagListEquipment = new NBTTagList();
 			
 			for (ItemStack itemStack : this.equipment) {
-				if (itemStack != null && itemStack != ItemStack.EMPTY && itemStack.getItem() != Items.AIR) {
+				if (itemStack != null && !itemStack.isEmpty()) {
 					nbtTagListEquipment.appendTag(itemStack.writeToNBT(new NBTTagCompound()));
 				}
 			}

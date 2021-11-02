@@ -42,7 +42,6 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -4023,26 +4022,29 @@ public class GuiTektopiaBook extends GuiScreen {
 				tXL -= 20;
 				tXR -= 20;
 				tY = y + 10;
+				
+				// set the z-level of the items one level higher.
+				float oldZLevel = this.addZLevel(5);
 
 				// draw armor slots
-				for (ItemStack piece : resident.getArmor()) {
-					if (piece != null && piece != ItemStack.EMPTY) {
-						List<String> tooltip = piece.getTooltip(null, TooltipFlags.NORMAL);
-						if (piece.isItemEnchanted() && tooltip != null && tooltip.size() > 0) {
+				for (ItemStack itemStack : resident.getArmor()) {
+					if (itemStack != null && !itemStack.isEmpty()) {
+						List<String> tooltip = itemStack.getTooltip(null, TooltipFlags.NORMAL);
+						if (itemStack.isItemEnchanted() && tooltip != null && tooltip.size() > 0) {
 							tooltip.set(0, TextFormatting.AQUA + tooltip.get(0));
 						}
 
 						if (guiPage.isLeftPage()) {
-							RenderUtils.renderItemAndEffectIntoGUI(super.itemRender, piece, tXL, tY, true);
-							RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, piece, tXL, tY, null);
+							RenderUtils.renderItemAndEffectIntoGUI(super.itemRender, itemStack, tXL, tY, true);
+							RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, itemStack, tXL, tY, null);
 							if (!isSubPageOpen() && tooltip != null && tooltip.size() > 0) {
 								this.tooltips.add(new GuiTooltip(tXL, tY, 16, 16, tooltip));
 							}
 						}
 
 						if (guiPage.isRightPage()) {
-							RenderUtils.renderItemAndEffectIntoGUI(super.itemRender, piece, tXR, tY, true);
-							RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, piece, tXR, tY, null);
+							RenderUtils.renderItemAndEffectIntoGUI(super.itemRender, itemStack, tXR, tY, true);
+							RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, itemStack, tXR, tY, null);
 							if (!isSubPageOpen() && tooltip != null && tooltip.size() > 0) {
 								this.tooltips.add(new GuiTooltip(tXR, tY, 16, 16, tooltip));
 							}
@@ -4056,24 +4058,24 @@ public class GuiTektopiaBook extends GuiScreen {
 				tY = y + 10; 
 
 				// draw equipment slots
-				for (ItemStack piece : resident.getEquipment()) {
-					if (piece != null && piece != ItemStack.EMPTY) {
-						List<String> tooltip = piece.getTooltip(null, TooltipFlags.NORMAL);
-						if (piece.isItemEnchanted() && tooltip != null && tooltip.size() > 0) {
+				for (ItemStack itemStack : resident.getEquipment()) {
+					if (itemStack != null && !itemStack.isEmpty()) {
+						List<String> tooltip = itemStack.getTooltip(null, TooltipFlags.NORMAL);
+						if (itemStack.isItemEnchanted() && tooltip != null && tooltip.size() > 0) {
 							tooltip.set(0, TextFormatting.AQUA + tooltip.get(0));
 						}
 
 						if (guiPage.isLeftPage()) {
-							RenderUtils.renderItemAndEffectIntoGUI(super.itemRender, piece, tXL, tY, true);
-							RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, piece, tXL, tY, null);
+							RenderUtils.renderItemAndEffectIntoGUI(super.itemRender, itemStack, tXL, tY, true);
+							RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, itemStack, tXL, tY, null);
 							if (!isSubPageOpen() && tooltip != null && tooltip.size() > 0) {
 								this.tooltips.add(new GuiTooltip(tXL, tY, 16, 16, tooltip));
 							}
 						}
 
 						if (guiPage.isRightPage()) {
-							RenderUtils.renderItemAndEffectIntoGUI(super.itemRender, piece, tXR, tY, true);
-							RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, piece, tXR, tY, null);
+							RenderUtils.renderItemAndEffectIntoGUI(super.itemRender, itemStack, tXR, tY, true);
+							RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, itemStack, tXR, tY, null);
 							if (!isSubPageOpen() && tooltip != null && tooltip.size() > 0) {
 								this.tooltips.add(new GuiTooltip(tXR, tY, 16, 16, tooltip));
 							}
@@ -4081,6 +4083,8 @@ public class GuiTektopiaBook extends GuiScreen {
 					}
 					tY += 20;
 				}            
+				
+				this.setZLevel(oldZLevel);
 
 				String professionLabel = TextUtils.translate("tektopiaBook.residents.profession");
 				String professionText = "";
@@ -4591,7 +4595,7 @@ public class GuiTektopiaBook extends GuiScreen {
 								break;
 							}
 
-							if (recentEat != null && recentEat != ItemStack.EMPTY) {
+							if (recentEat != null && !recentEat.isEmpty()) {
 								List<String> tooltip = recentEat.getTooltip(null, TooltipFlags.NORMAL);
 								if (recentEat.isItemEnchanted() && tooltip != null && tooltip.size() > 0) {
 									tooltip.set(0, TextFormatting.AQUA + tooltip.get(0));
@@ -7379,7 +7383,7 @@ public class GuiTektopiaBook extends GuiScreen {
 		if (!this.isSubPageOpen())
 			return;
 
-		float oldZLevel = this.setZLevel(10.0F);
+		float oldZLevel = this.setZLevel(20.0F);
 
 		String[] subKeyParts = getSubPageKeyParts(this.subPageKey);
 
@@ -7664,9 +7668,9 @@ public class GuiTektopiaBook extends GuiScreen {
 			int tY = y + 29;
 			
 			// set the z-level of the items one level higher.
-			float oldZLevel = this.setZLevel(this.zLevel + 5);
+			float oldZLevel = this.addZLevel(5);
 
-			for (ItemStack item : resident.getInventory()) {
+			for (ItemStack itemStack : resident.getInventory()) {
 
 				if (index >= startIndex && index < startIndex + (INVENTORYLINES_PER_PAGE * INVENTORY_PER_LINE)) {
 
@@ -7675,14 +7679,14 @@ public class GuiTektopiaBook extends GuiScreen {
 						tY += 18;
 					}
 
-					if (item != null && item != ItemStack.EMPTY && item.getItem() != Items.AIR) {
-						List<String> tooltip = item.getTooltip(null, TooltipFlags.NORMAL);
-						if (item.isItemEnchanted() && tooltip != null && tooltip.size() > 0) {
+					if (itemStack != null && !itemStack.isEmpty()) {
+						List<String> tooltip = itemStack.getTooltip(null, TooltipFlags.NORMAL);
+						if (itemStack.isItemEnchanted() && tooltip != null && tooltip.size() > 0) {
 							tooltip.set(0, TextFormatting.AQUA + tooltip.get(0));
 						}
 
-						RenderUtils.renderItemAndEffectIntoGUI(super.itemRender, item, tX, tY, true);
-						RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, item, tX, tY, null);
+						RenderUtils.renderItemAndEffectIntoGUI(super.itemRender, itemStack, tX, tY, true);
+						RenderUtils.renderItemOverlayIntoGUI(super.itemRender, Font.normal.fontRenderer, itemStack, tX, tY, null);
 						if (tooltip != null && tooltip.size() > 0) {
 							this.tooltips.add(new GuiTooltip(tX, tY, 16, 16, tooltip));
 						}
@@ -8336,6 +8340,13 @@ public class GuiTektopiaBook extends GuiScreen {
 
 		if (subPageIndex > this.subPageCount)
 			subPageIndex = this.subPageCount;
+	}
+
+	protected float addZLevel(float zAddition) {
+		float oldZLevel = super.zLevel;
+		super.zLevel += zAddition;
+		super.itemRender.zLevel += zAddition;
+		return oldZLevel;
 	}
 
 	protected float setZLevel(float zLevel) {
