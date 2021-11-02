@@ -10,7 +10,6 @@ import bletch.tektopiainformation.TektopiaInformation;
 import bletch.tektopiainformation.core.ModDetails;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

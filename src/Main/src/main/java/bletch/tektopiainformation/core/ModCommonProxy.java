@@ -7,7 +7,6 @@ import bletch.tektopiainformation.TektopiaInformation;
 import bletch.tektopiainformation.network.handlers.PlayerInteractHandler;
 import bletch.tektopiainformation.network.handlers.VillageMessageHandlerOnServer;
 import bletch.tektopiainformation.network.messages.VillageMessageToClient;
-import bletch.tektopiainformation.utils.DebugUtils;
 import bletch.tektopiainformation.utils.LoggerUtils;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -55,7 +54,7 @@ public class ModCommonProxy {
 	
 	public void resetDebug() {
 		if (ModConfig.debug.enableDebug) {
-			DebugUtils.resetDebug();
+			LoggerUtils.resetDebug();
 		}		
 	}
 	

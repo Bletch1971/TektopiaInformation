@@ -7,7 +7,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import bletch.common.utils.StringUtils;
 import bletch.common.utils.TextUtils;
 import bletch.tektopiainformation.core.ModConfig;
-import bletch.tektopiainformation.utils.DebugUtils;
+import bletch.tektopiainformation.utils.LoggerUtils;
 import bletch.tektopiainformation.utils.TektopiaUtils;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaEntityAccessor;
@@ -354,7 +354,7 @@ public class TektopiaEntityWaila implements IWailaEntityProvider {
 			registrar.registerBodyProvider(entityProvider, entity);
 			
 			if (ModConfig.debug.enableDebug && ModConfig.debug.showWailaEntitiesRegistered) {
-				DebugUtils.writeLine("Registered WAILA information for entity " + key, true);
+				LoggerUtils.writeLine("Registered WAILA information for entity " + key, true);
 			} 
 		}
 	}

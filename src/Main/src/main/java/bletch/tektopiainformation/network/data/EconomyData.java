@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import bletch.tektopiainformation.utils.TektopiaUtils;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

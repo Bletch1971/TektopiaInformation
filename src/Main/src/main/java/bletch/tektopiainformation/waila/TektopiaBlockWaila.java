@@ -7,7 +7,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import bletch.common.utils.TextUtils;
 import bletch.tektopiainformation.core.ModConfig;
-import bletch.tektopiainformation.utils.DebugUtils;
+import bletch.tektopiainformation.utils.LoggerUtils;
 import bletch.tektopiainformation.utils.TektopiaUtils;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
@@ -112,7 +112,7 @@ public class TektopiaBlockWaila implements IWailaDataProvider {
 			registrar.registerBodyProvider(dataProvider, tektopiaClass);
 			
 			if (ModConfig.debug.enableDebug && ModConfig.debug.showWailaBlocksRegistered) {
-				DebugUtils.writeLine("Registered WAILA information for block " + key, true);
+				LoggerUtils.writeLine("Registered WAILA information for block " + key, true);
 			} 
 		}	
 	}

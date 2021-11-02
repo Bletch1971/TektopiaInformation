@@ -7,7 +7,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import bletch.common.utils.TextUtils;
 import bletch.tektopiainformation.core.ModConfig;
 import bletch.tektopiainformation.core.ModDetails;
-import bletch.tektopiainformation.utils.DebugUtils;
 import bletch.tektopiainformation.utils.LoggerUtils;
 import bletch.tektopiainformation.utils.TektopiaUtils;
 import mezz.jei.api.IGuiHelper;
@@ -138,7 +137,7 @@ public class TektopiaJei implements IModPlugin {
 					}
 		    		catch (Exception e) {
 		    			if (ModConfig.debug.enableDebug) {
-		    				DebugUtils.writeLine("Error registering JEI information for " + itemStack.getDisplayName() + "; key: " + key, true);
+		    				LoggerUtils.writeLine("Error registering JEI information for " + itemStack.getDisplayName() + "; key: " + key, true);
 		    			}
 		    		}
 					
@@ -154,12 +153,12 @@ public class TektopiaJei implements IModPlugin {
     	
     	if (ModConfig.debug.enableDebug && registeredInformation != null && registeredInformation.size() > 0) {
     		registeredInformation.sort((i1, i2) -> i1.compareTo(i2));
-    		DebugUtils.writeLines(registeredInformation, true);
+    		LoggerUtils.writeLines(registeredInformation, true);
     	}
     	
     	if (ModConfig.debug.enableDebug && missingInformation != null && missingInformation.size() > 0) {
     		missingInformation.sort((i1, i2) -> i1.compareTo(i2));
-    		DebugUtils.writeLines(missingInformation, true);
+    		LoggerUtils.writeLines(missingInformation, true);
     	}
     	
     	LoggerUtils.info("Registered item/block information with JEI - count: " + count);

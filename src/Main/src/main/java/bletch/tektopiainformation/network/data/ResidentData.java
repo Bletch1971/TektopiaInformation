@@ -13,7 +13,6 @@ import bletch.tektopiainformation.utils.TektopiaUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemHoe;
