@@ -4662,7 +4662,7 @@ public class GuiTektopiaBook extends GuiScreen {
 					int endIndex = Math.min(additionalProfessions.size(), startIndex + ADDITIONALPROFESSIONS_PER_PAGE);
 
 					List<Entry<String, Integer>> subList = resident.getAdditionalProfessions().entrySet().stream()
-							.skip(residentId)
+							.skip(startIndex)
 							.limit(endIndex - startIndex)
 							.collect(Collectors.toList());
 							
