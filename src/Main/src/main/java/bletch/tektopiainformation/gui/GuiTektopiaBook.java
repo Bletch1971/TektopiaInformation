@@ -1463,6 +1463,7 @@ public class GuiTektopiaBook extends GuiScreen {
 			int yStart = y;
 			
 			int valueWidth = Math.max(Font.small.getStringWidth(TextUtils.SYMBOL_GREENTICK), Font.small.getStringWidth(TextUtils.SYMBOL_REDCROSS));
+			int aiFilterNameMaxLength = 100;
 			
 			List<ResidentData> subList = residents.subList(startIndex, endIndex);
 			
@@ -1507,7 +1508,7 @@ public class GuiTektopiaBook extends GuiScreen {
 					
 					if (subList.indexOf(resident) == 0) {
 						String aiFilterName = getAiFilterName(aiFilter.getKey());
-						String aiFilterNameShort = Font.small.trimStringToWidth(aiFilterName, 100, true);
+						String aiFilterNameShort = Font.small.trimStringToWidth(aiFilterName, aiFilterNameMaxLength, true);
 
 						if (guiPage.isLeftPage()) {
 							Font.small.printLeft(aiFilterNameShort, this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX, y, this.zLevel); 
