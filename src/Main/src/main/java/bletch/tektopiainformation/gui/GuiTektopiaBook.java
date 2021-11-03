@@ -7138,11 +7138,12 @@ public class GuiTektopiaBook extends GuiScreen {
 						}
 						int startIndex = 0;
 						int endIndex = Math.min(recipeList.size(), startIndex + VISITORVENDORLIST0_PER_PAGE);
-
+						
 						if (page > 0) {
 							startIndex = VISITORVENDORLIST0_PER_PAGE + ((page - 1) * VISITORVENDORLIST_PER_PAGE);
 							endIndex = Math.min(recipeList.size(), startIndex + VISITORVENDORLIST_PER_PAGE);
 						}
+						y += LINE_SPACE_Y;
 
 						List<MerchantRecipe> recipes = recipeList.subList(startIndex, endIndex);
 
