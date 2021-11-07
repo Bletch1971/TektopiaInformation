@@ -32,6 +32,7 @@ import net.tangotek.tektopia.entities.EntityVillagerTek;
 import net.tangotek.tektopia.structures.VillageStructure;
 import net.tangotek.tektopia.structures.VillageStructureBarracks;
 import net.tangotek.tektopia.structures.VillageStructureHome;
+import net.tangotek.tektopia.structures.VillageStructureRancherPen;
 import net.tangotek.tektopia.structures.VillageStructureType;
 
 @ParametersAreNonnullByDefault
@@ -285,6 +286,29 @@ public class TektopiaUtils {
 		}
 		
 		return new ArrayList<BlockPos>();
+	}
+	
+	public static int getStructureAnimalCount(VillageStructureRancherPen structure) {
+		if (structure == null) {
+			return 0;
+		}
+		
+		try {
+			Field field = VillageStructureRancherPen.class.getDeclaredField("animalCount");
+			if (field != null) {
+				field.setAccessible(true);
+				
+				Object fieldValue = field.get(structure);
+				if (fieldValue != null && fieldValue instanceof Integer) {
+					return (int)fieldValue;
+				}
+			}
+		}
+		catch (Exception ex) {
+			//do nothing if an error was encountered
+		}
+		
+		return 0;
 	}
 	
 	public static List<ItemStack> getEconomySalesHistory(ItemEconomy economy) {

@@ -12,6 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.tangotek.tektopia.VillagerRole;
 import net.tangotek.tektopia.entities.EntityVillagerTek;
 import net.tangotek.tektopia.structures.VillageStructure;
+import net.tangotek.tektopia.structures.VillageStructureRancherPen;
 import net.tangotek.tektopia.structures.VillageStructureType;
 
 public class StructureData {
@@ -21,8 +22,11 @@ public class StructureData {
 	protected static final String NBTTAG_VILLAGE_STRUCTUREPOSITION = "villagestructureposition";
 	protected static final String NBTTAG_VILLAGE_STRUCTUREVALID = "villagestructurevalid";
 	protected static final String NBTTAG_VILLAGE_STRUCTUREFLOORTILECOUNT = "villagestructurefloortilecount";
-	protected static final String NBTTAG_VILLAGE_STRUCTURETILESPERVILLAGER = "villagestructuretilespervillager";
+	protected static final String NBTTAG_VILLAGE_STRUCTURETILESPEROCCUPANT = "villagestructuretilesperoccupant";
 	protected static final String NBTTAG_VILLAGE_STRUCTUREOCCUPANTS = "villagestructureoccupants";
+	protected static final String NBTTAG_VILLAGE_STRUCTUREANIMALPEN = "villagestructureanimalpen";
+	protected static final String NBTTAG_VILLAGE_STRUCTUREANIMALCOUNT = "villagestructureanimalcount";
+	protected static final String NBTTAG_VILLAGE_STRUCTUREANIMALSIZE = "villagestructureanimalsize";
 	
 	protected static final Random rand = new Random();
 	protected VillageData villageData;
@@ -32,7 +36,11 @@ public class StructureData {
 	protected BlockPos framePosition;
 	protected boolean isValid;
 	protected int floorTileCount;
-	protected int tilesPerVillager;
+	protected int tilesPerOccupant;
+
+	protected boolean isAnimalPen;
+	protected int animalCount;
+	protected int animalSize;
 	
 	protected List<ResidentData> occupants;
 	
@@ -78,8 +86,20 @@ public class StructureData {
 		return this.floorTileCount;
 	}
 	
-	public int getTilesPerVillager() {
-		return this.tilesPerVillager;
+	public int getTilesPerOccupant() {
+		return this.tilesPerOccupant;
+	}
+	
+	public boolean isAnimalPen() {
+		return this.isAnimalPen;
+	}
+	
+	public int getAnimalCount() {
+		return this.animalCount;
+	}
+	
+	public int getAnimalSize() {
+		return this.animalSize;
 	}
 	
 	public int getOccupantCount() {
@@ -94,19 +114,28 @@ public class StructureData {
 				: Collections.unmodifiableList(this.occupants);
 	}
 	
-	public int getDensityRatio() {
-		if (this.tilesPerVillager == 0 || this.getOccupantCount() == 0)
+	public int getOccupantDensityRatio() {
+		if (this.tilesPerOccupant == 0 || this.getOccupantCount() == 0)
 			return 0;
 		
 		return this.floorTileCount / this.getOccupantCount();
 	}
 	
-	public Boolean isOvercrowdedCurrent() {
-		if (this.tilesPerVillager == 0 || this.getOccupantCount() == 0)
-			return false;
+	public Boolean isOvercrowded() {
+		int densityRatio = this.getOccupantDensityRatio();
+		return (densityRatio > 0 && densityRatio < this.tilesPerOccupant);
+	}
+	
+	public int getAnimalDensityRatio() {
+		if (this.animalSize == 0 || this.animalCount == 0)
+			return 0;
 		
-		int densityRatio = this.floorTileCount / this.getOccupantCount();
-		return (densityRatio < this.tilesPerVillager);
+		return this.floorTileCount / this.animalCount;
+	}
+	
+	public Boolean isPenFull() {
+		int densityRatio = this.getAnimalDensityRatio();
+		return (densityRatio < this.animalSize);
 	}
 	
 	protected void clearData() {
@@ -115,7 +144,11 @@ public class StructureData {
 		this.framePosition = null;
 		this.isValid = false;
 		this.floorTileCount = 0;
-		this.tilesPerVillager = 0;
+		this.tilesPerOccupant = 0;
+		
+		this.isAnimalPen = false;
+		this.animalCount = 0;
+		this.animalSize = 0;
 		
 		this.occupants = new ArrayList<ResidentData>();
 	}
@@ -132,7 +165,7 @@ public class StructureData {
 			List<BlockPos> floorTiles = TektopiaUtils.getStructureFloorTiles(structure);
 			this.floorTileCount = floorTiles == null ? 0 : floorTiles.size();
 
-			this.tilesPerVillager = structure.type.tilesPerVillager;
+			this.tilesPerOccupant = structure.type.tilesPerVillager;
 			
 			List<EntityVillagerTek> occupants = structure.getEntitiesInside(EntityVillagerTek.class);
 			
@@ -141,6 +174,14 @@ public class StructureData {
 					this.occupants.add(new VisitorData(occupant));
 				else
 					this.occupants.add(new ResidentData(occupant));
+			}
+			
+			if (structure instanceof VillageStructureRancherPen) {
+				VillageStructureRancherPen rancherPen = (VillageStructureRancherPen)structure;
+				
+				this.isAnimalPen = true;
+				this.animalCount = TektopiaUtils.getStructureAnimalCount(rancherPen);
+				this.animalSize = rancherPen.getAnimalSize();
 			}
 		}
 	}
@@ -157,7 +198,11 @@ public class StructureData {
 		this.framePosition = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTUREPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_STRUCTUREPOSITION)) : null;
 		this.isValid = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTUREVALID) ? nbtTag.getBoolean(NBTTAG_VILLAGE_STRUCTUREPOSITION) : false;
 		this.floorTileCount = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTUREFLOORTILECOUNT) ? nbtTag.getInteger(NBTTAG_VILLAGE_STRUCTUREFLOORTILECOUNT) : 0;
-		this.tilesPerVillager = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTURETILESPERVILLAGER) ? nbtTag.getInteger(NBTTAG_VILLAGE_STRUCTURETILESPERVILLAGER) : 0;
+		this.tilesPerOccupant = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTURETILESPEROCCUPANT) ? nbtTag.getInteger(NBTTAG_VILLAGE_STRUCTURETILESPEROCCUPANT) : 0;
+
+		this.isAnimalPen = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTUREANIMALPEN) ? nbtTag.getBoolean(NBTTAG_VILLAGE_STRUCTUREANIMALPEN) : false;
+		this.animalCount = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTUREANIMALCOUNT) ? nbtTag.getInteger(NBTTAG_VILLAGE_STRUCTUREANIMALCOUNT) : 0;
+		this.animalSize = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTUREANIMALSIZE) ? nbtTag.getInteger(NBTTAG_VILLAGE_STRUCTUREANIMALSIZE) : 0;
 
 		if (nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTUREOCCUPANTS)) {
 			NBTTagList nbtTagListOccupants = nbtTag.getTagList(NBTTAG_VILLAGE_STRUCTUREOCCUPANTS, 3);
@@ -193,7 +238,11 @@ public class StructureData {
 		}
 		nbtTag.setBoolean(NBTTAG_VILLAGE_STRUCTUREVALID, this.isValid);
 		nbtTag.setInteger(NBTTAG_VILLAGE_STRUCTUREFLOORTILECOUNT, this.floorTileCount);
-		nbtTag.setInteger(NBTTAG_VILLAGE_STRUCTURETILESPERVILLAGER, this.tilesPerVillager);
+		nbtTag.setInteger(NBTTAG_VILLAGE_STRUCTURETILESPEROCCUPANT, this.tilesPerOccupant);
+
+		nbtTag.setBoolean(NBTTAG_VILLAGE_STRUCTUREANIMALPEN, this.isAnimalPen);
+		nbtTag.setInteger(NBTTAG_VILLAGE_STRUCTUREANIMALCOUNT, this.animalCount);
+		nbtTag.setInteger(NBTTAG_VILLAGE_STRUCTUREANIMALSIZE, this.animalSize);
 		
 		if (this.occupants != null) {
 			NBTTagList nbtTagListOccupants = new NBTTagList();

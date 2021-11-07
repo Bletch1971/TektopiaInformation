@@ -373,10 +373,13 @@ tektopiaBook.structures.total=Total Structures:
 tektopiaBook.structures.structuretypes=Structure Types
 tektopiaBook.structures.frameposition=Token Position:
 tektopiaBook.structures.floortiles=Total Floor Tiles:
+tektopiaBook.structures.currentanimals=Current Animals:
 tektopiaBook.structures.currentoccupants=Current Occupants:
+tektopiaBook.structures.tilesperanimal=Tiles Per Animal
 tektopiaBook.structures.tilesperoccupant=Tiles Per Occupant
 tektopiaBook.structures.minimumtiles=Minimum:
 tektopiaBook.structures.currenttiles=Current:
+tektopiaBook.structures.penfull=Pen Full:
 tektopiaBook.structures.overcrowded=Overcrowded:
 tektopiaBook.structures.occupants=Occupants
 

@@ -66,7 +66,7 @@ public class StructuresData {
 		return this.structures == null
 				? Collections.unmodifiableList(new ArrayList<StructureData>())
 				: Collections.unmodifiableList(this.structures.stream()
-						.filter(s -> s.isOvercrowdedCurrent())
+						.filter(s -> s.isOvercrowded())
 						.sorted((c1 , c2) -> c1.getStructureTypeName().compareTo(c2.getStructureTypeName()))
 						.collect(Collectors.toList()));
 	}
