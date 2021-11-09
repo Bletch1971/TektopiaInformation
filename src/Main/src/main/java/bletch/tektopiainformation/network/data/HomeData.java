@@ -107,7 +107,7 @@ public class HomeData {
 	
 	public List<ResidentData> getResidents() {
 		return this.residents == null
-				? Collections.unmodifiableList(new ArrayList<ResidentData>())
+				? Collections.unmodifiableList(new ArrayList<>())
 				: Collections.unmodifiableList(this.residents);
 	}
 	
@@ -127,7 +127,7 @@ public class HomeData {
 	
 	public List<BlockPos> getBedPositions() {
 		return this.bedPositions == null 
-				? new ArrayList<BlockPos>() 
+				? new ArrayList<>()
 				: Collections.unmodifiableList(this.bedPositions.stream()
 						.sorted((c1 , c2) -> c1.compareTo(c2))
 						.collect(Collectors.toList()));
@@ -194,8 +194,8 @@ public class HomeData {
 		this.maxBeds = 0;
 		this.tilesPerVillager = 0;
 		
-		this.residents = new ArrayList<ResidentData>();
-		this.bedPositions = new ArrayList<BlockPos>();
+		this.residents = new ArrayList<>();
+		this.bedPositions = new ArrayList<>();
 	}
 	
 	protected void populateData(VillageStructure structure) {
@@ -223,7 +223,7 @@ public class HomeData {
 					this.residents.add(new ResidentData(resident));
 				}
 
-				this.bedPositions = new ArrayList<BlockPos>(barracks.getSpecialBlocks(Blocks.BED));
+				this.bedPositions = new ArrayList<>(barracks.getSpecialBlocks(Blocks.BED));
 			}
 			else if (structure instanceof VillageStructureHome) {
 				VillageStructureHome home = (VillageStructureHome)structure;
@@ -234,7 +234,7 @@ public class HomeData {
 					this.residents.add(new ResidentData(resident));
 				}
 				
-				this.bedPositions = new ArrayList<BlockPos>(home.getSpecialBlocks(Blocks.BED));
+				this.bedPositions = new ArrayList<>(home.getSpecialBlocks(Blocks.BED));
 			}
 		}
 	}
@@ -249,7 +249,7 @@ public class HomeData {
 		this.homeId = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEID) ? nbtTag.getInteger(NBTTAG_VILLAGE_HOMEID) : rand.nextInt();
 		this.structureType = nbtTag.hasKey(NBTTAG_VILLAGE_HOMETYPE) ? VillageStructureType.valueOf(nbtTag.getString(NBTTAG_VILLAGE_HOMETYPE)) : null;
 		this.framePosition = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_HOMEPOSITION)) : null;
-		this.isValid = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEVALID) ? nbtTag.getBoolean(NBTTAG_VILLAGE_HOMEVALID) : false;
+		this.isValid = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEVALID) && nbtTag.getBoolean(NBTTAG_VILLAGE_HOMEVALID);
 		this.floorTileCount = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEFLOORTILECOUNT) ? nbtTag.getInteger(NBTTAG_VILLAGE_HOMEFLOORTILECOUNT) : 0;
 		this.tilesPerVillager = nbtTag.hasKey(NBTTAG_VILLAGE_HOMETILESPERVILLAGER) ? nbtTag.getInteger(NBTTAG_VILLAGE_HOMETILESPERVILLAGER) : 0;
 		this.maxBeds = nbtTag.hasKey(NBTTAG_VILLAGE_HOMEMAXBEDS) ? nbtTag.getInteger(NBTTAG_VILLAGE_HOMEMAXBEDS) : 0;

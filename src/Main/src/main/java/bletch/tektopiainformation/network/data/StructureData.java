@@ -110,7 +110,7 @@ public class StructureData {
 	
 	public List<ResidentData> getOccupants() {
 		return this.occupants == null
-				? Collections.unmodifiableList(new ArrayList<ResidentData>())
+				? Collections.unmodifiableList(new ArrayList<>())
 				: Collections.unmodifiableList(this.occupants);
 	}
 	
@@ -150,7 +150,7 @@ public class StructureData {
 		this.animalCount = 0;
 		this.animalSize = 0;
 		
-		this.occupants = new ArrayList<ResidentData>();
+		this.occupants = new ArrayList<>();
 	}
 	
 	protected void populateData(VillageStructure structure) {
@@ -196,11 +196,11 @@ public class StructureData {
 		this.structureId = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTUREID) ? nbtTag.getInteger(NBTTAG_VILLAGE_STRUCTUREID) : rand.nextInt();
 		this.structureType = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTURETYPE) ? VillageStructureType.valueOf(nbtTag.getString(NBTTAG_VILLAGE_STRUCTURETYPE)) : null;
 		this.framePosition = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTUREPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_STRUCTUREPOSITION)) : null;
-		this.isValid = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTUREVALID) ? nbtTag.getBoolean(NBTTAG_VILLAGE_STRUCTUREPOSITION) : false;
+		this.isValid = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTUREVALID) && nbtTag.getBoolean(NBTTAG_VILLAGE_STRUCTUREPOSITION);
 		this.floorTileCount = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTUREFLOORTILECOUNT) ? nbtTag.getInteger(NBTTAG_VILLAGE_STRUCTUREFLOORTILECOUNT) : 0;
 		this.tilesPerOccupant = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTURETILESPEROCCUPANT) ? nbtTag.getInteger(NBTTAG_VILLAGE_STRUCTURETILESPEROCCUPANT) : 0;
 
-		this.isAnimalPen = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTUREANIMALPEN) ? nbtTag.getBoolean(NBTTAG_VILLAGE_STRUCTUREANIMALPEN) : false;
+		this.isAnimalPen = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTUREANIMALPEN) && nbtTag.getBoolean(NBTTAG_VILLAGE_STRUCTUREANIMALPEN);
 		this.animalCount = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTUREANIMALCOUNT) ? nbtTag.getInteger(NBTTAG_VILLAGE_STRUCTUREANIMALCOUNT) : 0;
 		this.animalSize = nbtTag.hasKey(NBTTAG_VILLAGE_STRUCTUREANIMALSIZE) ? nbtTag.getInteger(NBTTAG_VILLAGE_STRUCTUREANIMALSIZE) : 0;
 

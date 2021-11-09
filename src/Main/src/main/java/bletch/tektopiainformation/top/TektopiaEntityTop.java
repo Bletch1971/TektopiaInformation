@@ -72,8 +72,7 @@ public class TektopiaEntityTop {
 				else if (villager.getProfessionType() != null) {
 					String profession = "";
 					int professionSkillLevel = 0;
-					output = "";
-					
+
 					// Profession
 					ProfessionType professionType = villager.getProfessionType();
 					switch (professionType) {
@@ -167,7 +166,7 @@ public class TektopiaEntityTop {
 					}
 					
 					// Additional Professions
-					Boolean addProfessionCountShown = false;
+					boolean addProfessionCountShown = false;
 	    			
 					for (ProfessionType addProfessionType : TektopiaUtils.getProfessionTypes()) {
 						if (addProfessionType == villager.getProfessionType()) {

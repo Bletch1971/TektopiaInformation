@@ -4,10 +4,10 @@ import bletch.tektopiainformation.enums.GuiPageType;
 
 public class GuiPage {
 
-	private GuiPageType guiPageType;
-	private int pageIndex;
-	private String dataKey;
-	private String bookmarkKey;
+	private final GuiPageType guiPageType;
+	private final int pageIndex;
+	private final String dataKey;
+	private final String bookmarkKey;
 	
 	public GuiPage(GuiPageType guiPageType, int pageIndex) {
 		this.guiPageType = guiPageType;

@@ -17,10 +17,10 @@ public class StringUtils {
 	
 	public static List<String> split(String text, int displayWidth, FontRenderer fontRenderer) {
 		if (isNullOrWhitespace(text) || fontRenderer == null) {
-			return new ArrayList<String>();
+			return new ArrayList<>();
 		}
 		
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		
 		int outputWidth = fontRenderer.getStringWidth(text);
 		

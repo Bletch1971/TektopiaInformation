@@ -1,17 +1,16 @@
 package bletch.tektopiainformation.commands;
 
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.server.permission.PermissionAPI;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class CommandMerchantBase extends CommandBase {
 	
@@ -20,22 +19,28 @@ public abstract class CommandMerchantBase extends CommandBase {
     public CommandMerchantBase(String name) {
         this.name = name;
     }
-    
+
+    @Nonnull
     public String getName() {
         return this.name;
     }
-    
+
+    @Nonnull
     public List<String> getAliases() {
         return Collections.singletonList(this.name);
     }
-    
-    public String getUsage(ICommandSender sender) {
+
+    @Nonnull
+    public String getUsage(@Nullable ICommandSender sender) {
         return MerchantCommands.COMMAND_PREFIX + this.name + ".usage";
     }
     
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+    public boolean checkPermission(@Nullable MinecraftServer server, @Nullable ICommandSender sender) {
         try {
-            return PermissionAPI.hasPermission((EntityPlayer)getCommandSenderAsPlayer(sender), MerchantCommands.COMMAND_PREFIX_WITH_MODID + this.getName());
+            if (sender == null) {
+                return false;
+            }
+            return PermissionAPI.hasPermission(getCommandSenderAsPlayer(sender), MerchantCommands.COMMAND_PREFIX_WITH_MODID + this.getName());
         }
         catch (PlayerNotFoundException e) {
             e.printStackTrace();
@@ -46,8 +51,9 @@ public abstract class CommandMerchantBase extends CommandBase {
     public int getRequiredPermissionLevel() {
         return 4;
     }
-    
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
+
+    @Nonnull
+    public List<String> getTabCompletions(@Nullable MinecraftServer server, @Nullable ICommandSender sender, @Nullable String[] args, @Nullable BlockPos targetPos) {
         return Collections.emptyList();
     }
 

@@ -1,11 +1,6 @@
 package bletch.tektopiainformation.network.data;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -252,7 +247,7 @@ public class ResidentData extends EntityData {
 	
 	public Map<String, Integer> getAdditionalProfessions() {
 		return this.additionalProfessions == null 
-				? Collections.unmodifiableMap(new LinkedHashMap<String, Integer>())
+				? Collections.unmodifiableMap(new LinkedHashMap<>())
 				: Collections.unmodifiableMap(this.additionalProfessions.entrySet().stream()
 					.sorted((c1 , c2) -> Integer.compare(c2.getValue(), c1.getValue()))
 					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new)));
@@ -266,9 +261,9 @@ public class ResidentData extends EntityData {
 	
 	public Map<String, Boolean> getAiFilters() {
 		return this.aiFilters == null 
-				? Collections.unmodifiableMap(new LinkedHashMap<String, Boolean>())
+				? Collections.unmodifiableMap(new LinkedHashMap<>())
 				: Collections.unmodifiableMap(this.aiFilters.entrySet().stream()
-					.sorted((c1 , c2) -> c1.getKey().compareTo(c2.getKey()))
+					.sorted(Entry.comparingByKey())
 					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new)));
 	}
 	
@@ -286,7 +281,7 @@ public class ResidentData extends EntityData {
 	
 	public List<ItemStack> getInventory() {
 		return this.inventory == null
-				? new ArrayList<ItemStack>()
+				? new ArrayList<>()
 				: this.inventory;
 	}
 	
@@ -341,11 +336,11 @@ public class ResidentData extends EntityData {
 		this.currentStructure = null;
 		this.currentTask = null;
 		
-		this.additionalProfessions = new LinkedHashMap<String, Integer>();
-		this.aiFilters = new LinkedHashMap<String, Boolean>(); 
+		this.additionalProfessions = new LinkedHashMap<>();
+		this.aiFilters = new LinkedHashMap<>();
 		this.recipes = null;
 		this.inventory = null;
-		this.recentEats = new ArrayList<Integer>();
+		this.recentEats = new ArrayList<>();
 	}
 	
 	protected void populateData(EntityVillagerTek villager) {
@@ -403,7 +398,7 @@ public class ResidentData extends EntityData {
 			}
 			
 			for (String professionType : TektopiaUtils.getProfessionTypeNames(false)) {
-				if (professionType == this.professionType) {
+				if (Objects.equals(professionType, this.professionType)) {
 					// do not include the villagers main profession
 					continue;
 				}
@@ -457,12 +452,9 @@ public class ResidentData extends EntityData {
 			
 			// check if the villager has a tool in their inventory, add to the equipment list
 			VillagerInventory inventory = villager.getInventory();
-			toolItemClasses.stream()
-				.forEach(c -> {
+			toolItemClasses.forEach(c -> {
 					List<ItemStack> tools = inventory.getItems(
-							(Function<ItemStack, Integer>) (s -> {
-								return (s.getItem().getClass() == c ? s.getItemDamage() : -1);
-							}), 1);
+							(Function<ItemStack, Integer>) (s -> (s.getItem().getClass() == c ? s.getItemDamage() : -1)), 1);
 			        
 					if (!tools.isEmpty()) {
 						this.equipment.addAll(tools);
@@ -474,7 +466,7 @@ public class ResidentData extends EntityData {
 			
 			int inventorySize = inventory.getSizeInventory();
 			if (inventorySize > 0) {
-				this.inventory = new ArrayList<ItemStack>(inventorySize);
+				this.inventory = new ArrayList<>(inventorySize);
 				
 				for (int slot = 0; slot < inventorySize; slot++) {
 					this.inventory.add(inventory.getStackInSlot(slot).copy());
@@ -494,12 +486,12 @@ public class ResidentData extends EntityData {
 		super.readNBT(nbtTag);
 
 		this.professionType = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTPROFESSIONTYPE) ? nbtTag.getString(NBTTAG_VILLAGE_RESIDENTPROFESSIONTYPE) : null;
-		this.isMale = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTMALE) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTMALE) : true;
-		this.isChild = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCHILD) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCHILD) : false;
-		this.isCaptain = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCAPTAIN) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCAPTAIN) : false;
-		this.isVendor = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTVENDOR) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTVENDOR) : false;
-		this.isVisitor = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTVISITOR) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTVISITOR) : false;
-		this.isSleeping = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTSLEEPING) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTSLEEPING) : false;
+		this.isMale = !nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTMALE) || nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTMALE);
+		this.isChild = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCHILD) && nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCHILD);
+		this.isCaptain = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCAPTAIN) && nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCAPTAIN);
+		this.isVendor = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTVENDOR) && nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTVENDOR);
+		this.isVisitor = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTVISITOR) && nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTVISITOR);
+		this.isSleeping = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTSLEEPING) && nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTSLEEPING);
 		this.baseLevel = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTBASELEVEL) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTBASELEVEL) : 0;
 		this.blessedLevel = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL) : 0;
 		this.daysAlive = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTDAYSALIVE) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTDAYSALIVE) : 0;
@@ -514,13 +506,13 @@ public class ResidentData extends EntityData {
 		this.sleepStartTime = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTSLEEPSTART) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTSLEEPSTART) : 0;
 		this.sleepFinishTime = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTSLEEPFINISH) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTSLEEPFINISH) : 0;
 		
-		this.canHaveBed = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCANHAVEBED) ? nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCANHAVEBED) : true;
+		this.canHaveBed = !nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCANHAVEBED) || nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCANHAVEBED);
 		this.bedPosition = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTBEDPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_RESIDENTBEDPOSITION)) : null;
 		this.currentStructure = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE)) : null;
 		this.currentTask = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCURRENTTASK) ? nbtTag.getString(NBTTAG_VILLAGE_RESIDENTCURRENTTASK) : null;
 		
 		ProfessionType originalProfessionType = null;
-		if (this.professionType != null && this.professionType.trim() != "") {
+		if (this.professionType != null && !this.professionType.trim().equals("")) {
 			originalProfessionType = TektopiaUtils.getProfessionType(this.professionType);
 		}
 		
@@ -559,7 +551,7 @@ public class ResidentData extends EntityData {
 		
 		if (nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTINVENTORY)) {
 			NBTTagList nbtTagListInventory = nbtTag.getTagList(NBTTAG_VILLAGE_RESIDENTINVENTORY, 10);		
-			this.inventory = new ArrayList<ItemStack>(nbtTagListInventory.tagCount());
+			this.inventory = new ArrayList<>(nbtTagListInventory.tagCount());
 			
 			for (int index = 0; index < nbtTagListInventory.tagCount(); index++) {
 				this.inventory.add(new ItemStack(nbtTagListInventory.getCompoundTagAt(index)));
@@ -601,7 +593,7 @@ public class ResidentData extends EntityData {
 		
 		nbtTag = super.writeNBT(nbtTag);
 		
-		if (this.professionType != null && this.professionType.trim() != "") {
+		if (this.professionType != null && !this.professionType.trim().equals("")) {
 			nbtTag.setString(NBTTAG_VILLAGE_RESIDENTPROFESSIONTYPE, this.professionType);
 		}
 		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTMALE, this.isMale);

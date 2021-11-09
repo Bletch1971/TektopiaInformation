@@ -18,7 +18,7 @@ public class MerchantCommands extends CommandTreeBase {
 	}
 
 	public void registerNodes() {
-		this.getSubCommands().stream().forEach((c) -> {
+		this.getSubCommands().forEach((c) -> {
 			PermissionAPI.registerNode(COMMAND_PREFIX_WITH_MODID + c.getName(), DefaultPermissionLevel.OP, c.getName());
 		});
 	}

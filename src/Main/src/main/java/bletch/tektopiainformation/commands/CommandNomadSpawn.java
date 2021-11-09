@@ -27,13 +27,13 @@ public class CommandNomadSpawn extends CommandMerchantBase {
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		if (args.length > 1) {
-			throw new WrongUsageException(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".usage", new Object[0]);
+			throw new WrongUsageException(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".usage");
 		} 
 		
-		Boolean spawnNearMe = false;
+		boolean spawnNearMe = false;
 		if (args.length > 0) {
 			if (!args[0].equalsIgnoreCase("me")) {
-				throw new WrongUsageException(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".usage", new Object[0]);
+				throw new WrongUsageException(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".usage");
 			}
 			
 			spawnNearMe = true;
@@ -43,8 +43,8 @@ public class CommandNomadSpawn extends CommandMerchantBase {
 		World world = entityPlayer != null ? entityPlayer.getEntityWorld() : null;
 		
 		if (world == null || world.isRaining() || Village.isNightTime(world)) {
-			notifyCommandListener(sender, this, NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".badconditions", new Object[0]);
-			LoggerUtils.info(TextUtils.translate(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".badconditions", new Object[0]), true);
+			notifyCommandListener(sender, this, NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".badconditions");
+			LoggerUtils.info(TextUtils.translate(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".badconditions"), true);
 			return;
 		}
 		
@@ -52,36 +52,36 @@ public class CommandNomadSpawn extends CommandMerchantBase {
 		Village village = villageManager != null && entityPlayer != null ? villageManager.getVillageAt(entityPlayer.getPosition()) : null;
 		
 		if (village == null) {
-			notifyCommandListener(sender, this, NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".novillage", new Object[0]);
-			LoggerUtils.info(TextUtils.translate(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".novillage", new Object[0]), true);
+			notifyCommandListener(sender, this, NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".novillage");
+			LoggerUtils.info(TextUtils.translate(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".novillage"), true);
 			return;
 		}
 
 		BlockPos spawnPosition = spawnNearMe ? entityPlayer.getPosition() : TektopiaUtils.getVillageSpawnPoint(world, village);
 		
 		if (spawnPosition == null) {
-			notifyCommandListener(sender, this, NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".noposition", new Object[0]);
-			LoggerUtils.info(TextUtils.translate(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".noposition", new Object[0]), true);
+			notifyCommandListener(sender, this, NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".noposition");
+			LoggerUtils.info(TextUtils.translate(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".noposition"), true);
 			return;
 		}
 
         List<EntityNomad> entityList = world.getEntitiesWithinAABB(EntityNomad.class, village.getAABB().grow(Village.VILLAGE_SIZE));
         
         if (entityList.size() > 1) {
-			notifyCommandListener(sender, this, NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".exists", new Object[0]);
-			LoggerUtils.info(TextUtils.translate(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".exists", new Object[0]), true);
+			notifyCommandListener(sender, this, NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".exists");
+			LoggerUtils.info(TextUtils.translate(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".exists"), true);
 			return;
         }
         
 		// attempt to spawn the nomad
 		if (!TektopiaUtils.trySpawnEntity(world, spawnPosition, (World w) -> new EntityNomad(w))) {
-			notifyCommandListener(sender, this, NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".failed", new Object[0]);
-			LoggerUtils.info(TextUtils.translate(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".failed", new Object[0]), true);
+			notifyCommandListener(sender, this, NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".failed");
+			LoggerUtils.info(TextUtils.translate(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".failed"), true);
 			return;
 		}
 		
-		notifyCommandListener(sender, this, NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".success", new Object[] { TektopiaUtils.formatBlockPos(spawnPosition) });
-		LoggerUtils.info(TextUtils.translate(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".success", new Object[] { TektopiaUtils.formatBlockPos(spawnPosition) }), true);
+		notifyCommandListener(sender, this, NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".success", TektopiaUtils.formatBlockPos(spawnPosition));
+		LoggerUtils.info(TextUtils.translate(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".success", TektopiaUtils.formatBlockPos(spawnPosition)), true);
 	}
 	
 }

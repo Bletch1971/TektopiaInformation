@@ -35,8 +35,8 @@ public class RenderUtils {
 		GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
 		RenderHelper.enableStandardItemLighting();
 
-		ent.rotationYaw = (float) Math.atan((double) (mouseX / 40.0F)) * 40.0F;
-		ent.rotationPitch = -((float) Math.atan((double) (mouseY / 40.0F))) * 20.0F;
+		ent.rotationYaw = (float) Math.atan(mouseX / 40.0F) * 40.0F;
+		ent.rotationPitch = -((float) Math.atan(mouseY / 40.0F)) * 20.0F;
 		ent.rotationYawHead = ent.rotationYaw;
 		ent.prevRotationYawHead = ent.rotationYaw;
 
@@ -145,8 +145,8 @@ public class RenderUtils {
 	public static void drawModalRectWithCustomSizedTextureWithZLevel(TextureManager textureManager, ResourceLocation resource, float zLevel, int x, int y, float u, float v, int width, int height, float textureWidth, float textureHeight) {
 		GlStateManager.pushMatrix();
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		
-		Minecraft.getMinecraft().getTextureManager().bindTexture(resource);
+
+		textureManager.bindTexture(resource);
 		
         float f = 1.0F / textureWidth;
         float f1 = 1.0F / textureHeight;

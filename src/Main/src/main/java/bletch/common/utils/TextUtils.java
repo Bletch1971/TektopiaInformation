@@ -40,9 +40,7 @@ public class TextUtils {
 		}
 		
 		String translate = translate(translateKey);
-		return StringUtils.isNullOrWhitespace(translate) || translate.equalsIgnoreCase(translateKey)
-				? false
-				: true;
+		return !StringUtils.isNullOrWhitespace(translate) && !translate.equalsIgnoreCase(translateKey);
 	}
 	
 	public static String translate(String translateKey, Object... translationArgs) {

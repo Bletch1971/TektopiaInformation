@@ -79,18 +79,16 @@ public class TektopiaBlockWaila implements IWailaDataProvider {
 
 	@Override
 	public NBTTagCompound getNBTData(EntityPlayerMP player, TileEntity tileEntity, NBTTagCompound tag, World world, BlockPos position) {
-		if (tileEntity != null) {
-			tileEntity.writeToNBT(tag);
-		}
+		tileEntity.writeToNBT(tag);
 
 		return tag;
 	}
 
 	public static void callbackRegister(IWailaRegistrar registrar) {
 		TektopiaBlockWaila dataProvider = new TektopiaBlockWaila();
-		ArrayList<String> processed = new ArrayList<String>();
+		ArrayList<String> processed = new ArrayList<>();
 		
-		ArrayList<Class<?>> tektopiaClasses = new ArrayList<Class<?>>();
+		ArrayList<Class<?>> tektopiaClasses = new ArrayList<>();
 		tektopiaClasses.addAll(TektopiaUtils.getTektopiaBlockClasses());
 		
 		// remove any blocks that are inherited from other tektopia mod blocks

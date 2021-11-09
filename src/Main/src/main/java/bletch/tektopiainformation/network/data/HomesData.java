@@ -1,10 +1,6 @@
 package bletch.tektopiainformation.network.data;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import bletch.tektopiainformation.utils.TektopiaUtils;
@@ -43,21 +39,18 @@ public class HomesData {
 	
 	public List<HomeData> getHomes() {
 		return this.homes == null
-				? Collections.unmodifiableList(new ArrayList<HomeData>())
+				? Collections.unmodifiableList(new ArrayList<>())
 				: Collections.unmodifiableList(this.homes.stream()
-						.sorted((c1 , c2) -> {
-							int compare = c1.getStructureType().name().compareTo(c2.getStructureType().name());
-							return compare != 0 ? compare : c1.getFramePosition().compareTo(c2.getFramePosition());
-						})
+						.sorted(Comparator.comparing((HomeData c) -> c.getStructureType().name()).thenComparing(HomeData::getFramePosition))
 						.collect(Collectors.toList()));
 	}
 	
 	public List<HomeData> getHomesByType(VillageStructureType structureType) {
 		return this.homes == null 
-				? Collections.unmodifiableList(new ArrayList<HomeData>())
+				? Collections.unmodifiableList(new ArrayList<>())
 				: Collections.unmodifiableList(this.homes.stream()
-						.filter(h -> structureType != null && h.getStructureType().equals(structureType))
-						.sorted((c1 , c2) -> c1.getFramePosition().compareTo(c2.getFramePosition()))
+						.filter(h -> h.getStructureType().equals(structureType))
+						.sorted(Comparator.comparing(HomeData::getFramePosition))
 						.collect(Collectors.toList()));
 	}
 	
@@ -93,9 +86,9 @@ public class HomesData {
 	
 	public Map<VillageStructureType, Integer> getHomeTypeCounts() {
 		return this.homeTypeCounts == null 
-				? Collections.unmodifiableMap(new LinkedHashMap<VillageStructureType, Integer>())
+				? Collections.unmodifiableMap(new LinkedHashMap<>())
 				: Collections.unmodifiableMap(this.homeTypeCounts.entrySet().stream()
-						.sorted((c1 , c2) -> c1.getKey().name().compareTo(c2.getKey().name()))
+						.sorted(Comparator.comparing(c -> c.getKey().name()))
 						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new)));
 	}	
 	
@@ -118,8 +111,7 @@ public class HomesData {
 	public int getMaxBeds() {
 		final int[] total = { 0 };
 		if (this.homes != null) {
-			this.homes.stream()
-					.forEach(h -> total[0] += h.getMaxBeds());
+			this.homes.forEach(h -> total[0] += h.getMaxBeds());
 		}
 		return total[0];
 	}
@@ -127,15 +119,14 @@ public class HomesData {
 	public int getTotalBeds() {
 		final int[] total = { 0 };
 		if (this.homes != null) {
-			this.homes.stream()
-					.forEach(h -> total[0] += h.getBedCount());
+			this.homes.forEach(h -> total[0] += h.getBedCount());
 		}
 		return total[0];
 	}
 	
 	protected void clearData() {
-		this.homes = new ArrayList<HomeData>();
-		this.homeTypeCounts = new LinkedHashMap<VillageStructureType, Integer>();
+		this.homes = new ArrayList<>();
+		this.homeTypeCounts = new LinkedHashMap<>();
 	}
 	
 	public void populateData(VillageData villageData, Village village) {

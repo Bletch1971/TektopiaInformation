@@ -30,12 +30,7 @@ public class VillageMessageHandlerOnClient implements IMessageHandler<VillageMes
 		// This code creates a new task which will be executed by the client during the next tick
 		// In this case, the task is to call messageHandlerOnClient.processMessage(minecraft, message)
 	    Minecraft minecraft = Minecraft.getMinecraft();
-	    minecraft.addScheduledTask(new Runnable()
-	    {
-	    	public void run() {
-	    		processMessage(minecraft, message);
-	    	}
-	    });
+	    minecraft.addScheduledTask(() -> processMessage(minecraft, message));
 	    
 		return null;
 	}
@@ -48,7 +43,7 @@ public class VillageMessageHandlerOnClient implements IMessageHandler<VillageMes
 			return;
 		}
 		if (!message.isMessageValid()) {
-			System.err.println("VillageMessageToClient was invalid - " + message.toString());
+			System.err.println("VillageMessageToClient was invalid - " + message);
 			return;
 		}
 		

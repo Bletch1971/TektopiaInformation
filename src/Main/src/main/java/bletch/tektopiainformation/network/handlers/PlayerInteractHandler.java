@@ -46,7 +46,7 @@ public class PlayerInteractHandler {
 					
 					// check if the player is holding a minecraft book
 					ItemStack itemInHand = event.getEntityPlayer().getHeldItem(event.getHand());
-					if (itemInHand != null && !itemInHand.isEmpty() && itemInHand.getItem() == Item.getByNameOrId("minecraft:book")) {
+					if (!itemInHand.isEmpty() && itemInHand.getItem() == Item.getByNameOrId("minecraft:book")) {
 						
 						EntityVillageNavigator villageEntity = (EntityVillageNavigator)event.getTarget();				
 						Village village = villageEntity.getVillage();
@@ -78,7 +78,7 @@ public class PlayerInteractHandler {
 					
 					// check if the player is holding a minecraft book
 					ItemStack itemInHand = event.getEntityPlayer().getHeldItem(event.getHand());
-					if (itemInHand != null && !itemInHand.isEmpty() && itemInHand.getItem() == Item.getByNameOrId("minecraft:book")) {
+					if (!itemInHand.isEmpty() && itemInHand.getItem() == Item.getByNameOrId("minecraft:book")) {
 						
 						Village village = null;
 						
@@ -146,11 +146,11 @@ public class PlayerInteractHandler {
 				
 				// check if the block is valid
 				Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
-				if (block != null && block instanceof BlockBed) {
+				if (block instanceof BlockBed) {
 					
 					// check if the player is holding a minecraft book
 					ItemStack itemInHand = event.getEntityPlayer().getHeldItem(event.getHand());
-					if (itemInHand != null && !itemInHand.isEmpty() && itemInHand.getItem() == Item.getByNameOrId("minecraft:book")) {
+					if (!itemInHand.isEmpty() && itemInHand.getItem() == Item.getByNameOrId("minecraft:book")) {
 						
 						Village village = null;
 						

@@ -1,17 +1,16 @@
 package bletch.tektopiainformation.utils;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-
+import bletch.tektopiainformation.TektopiaInformation;
+import bletch.tektopiainformation.core.ModConfig;
+import bletch.tektopiainformation.core.ModDetails;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import bletch.tektopiainformation.TektopiaInformation;
-import bletch.tektopiainformation.core.ModConfig;
-import bletch.tektopiainformation.core.ModDetails;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 
 public class LoggerUtils {
 
@@ -89,11 +88,11 @@ public class LoggerUtils {
 	}
 	
 	public static void resetDebug() {
-		writeLines(Arrays.asList("Debug Log:"), false);
+		writeLines(Collections.singletonList("Debug Log:"), false);
 	}
 	
 	public static void writeLine(String line, Boolean append) {
-		writeLines(Arrays.asList(line), append);
+		writeLines(Collections.singletonList(line), append);
 	}	
 	
 	public static void writeLines(Collection<String> lines, Boolean append) {

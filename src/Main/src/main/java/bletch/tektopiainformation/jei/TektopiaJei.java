@@ -30,7 +30,7 @@ public class TektopiaJei implements IModPlugin {
     private static IJeiHelpers jeiHelpers;
     private static IJeiRuntime jeiRuntime;
 
-    private static List<BlankRecipeCategory<?>> categories = new ArrayList<BlankRecipeCategory<?>>();
+    private static final List<BlankRecipeCategory<?>> categories = new ArrayList<>();
     
     @Override
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
@@ -89,16 +89,16 @@ public class TektopiaJei implements IModPlugin {
 	}
 	
 	private static void registerTektopiaIngredientInfo(IModRegistry registry) {
-		ArrayList<String> processed = new ArrayList<String>();
+		ArrayList<String> processed = new ArrayList<>();
 		
 		LoggerUtils.info("Registering item/block information with JEI");
 		
-		ArrayList<ItemStack> tektopiaItemStacks = new ArrayList<ItemStack>();
+		ArrayList<ItemStack> tektopiaItemStacks = new ArrayList<>();
 		tektopiaItemStacks.addAll(TektopiaUtils.getTektopiaBlockStacks());
 		tektopiaItemStacks.addAll(TektopiaUtils.getTektopiaItemStacks());
 		
-		ArrayList<String> missingInformation = new ArrayList<String>();
-		ArrayList<String> registeredInformation = new ArrayList<String>();		
+		ArrayList<String> missingInformation = new ArrayList<>();
+		ArrayList<String> registeredInformation = new ArrayList<>();
 		int count = 0;
 		
     	for (ItemStack tektopiaItemStack : tektopiaItemStacks) {
@@ -151,12 +151,12 @@ public class TektopiaJei implements IModPlugin {
 			}
 		}
     	
-    	if (ModConfig.debug.enableDebug && registeredInformation != null && registeredInformation.size() > 0) {
+    	if (ModConfig.debug.enableDebug && registeredInformation.size() > 0) {
     		registeredInformation.sort((i1, i2) -> i1.compareTo(i2));
     		LoggerUtils.writeLines(registeredInformation, true);
     	}
     	
-    	if (ModConfig.debug.enableDebug && missingInformation != null && missingInformation.size() > 0) {
+    	if (ModConfig.debug.enableDebug && missingInformation.size() > 0) {
     		missingInformation.sort((i1, i2) -> i1.compareTo(i2));
     		LoggerUtils.writeLines(missingInformation, true);
     	}

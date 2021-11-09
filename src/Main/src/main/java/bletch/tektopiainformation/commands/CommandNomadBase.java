@@ -35,7 +35,7 @@ public abstract class CommandNomadBase extends CommandBase {
     
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
         try {
-            return PermissionAPI.hasPermission((EntityPlayer)getCommandSenderAsPlayer(sender), NomadCommands.COMMAND_PREFIX_WITH_MODID + this.getName());
+            return PermissionAPI.hasPermission(getCommandSenderAsPlayer(sender), NomadCommands.COMMAND_PREFIX_WITH_MODID + this.getName());
         }
         catch (PlayerNotFoundException e) {
             e.printStackTrace();

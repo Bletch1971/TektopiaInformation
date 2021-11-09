@@ -80,7 +80,7 @@ public class EnemyData extends EntityData {
 		
 		nbtTag = super.writeNBT(nbtTag);
 		
-		if (this.enemyType != null && this.enemyType.trim() != "") {
+		if (this.enemyType != null && !this.enemyType.trim().equals("")) {
 			nbtTag.setString(NBTTAG_VILLAGE_ENEMYTYPE, this.enemyType);
 		}
 		if (this.currentTask != null) {

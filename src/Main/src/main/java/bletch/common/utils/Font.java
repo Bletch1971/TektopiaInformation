@@ -90,9 +90,9 @@ public class Font {
     }
     
     public List<String> splitStringToWidth(String text, int width) {
-    	List<String> lines = new ArrayList<String>();
+    	List<String> lines = new ArrayList<>();
     	
-    	if (text != null && text.trim() != "") {
+    	if (!StringUtils.isNullOrWhitespace(text)) {
         	int textWidth = fontRenderer.getStringWidth(text);
         	
         	while (textWidth > width) {
@@ -108,7 +108,7 @@ public class Font {
         		textWidth = fontRenderer.getStringWidth(text);
         	}
         	
-        	if (text != null && text.trim() != "") {
+        	if (!StringUtils.isNullOrWhitespace(text)) {
         		lines.add(text.trim());
         	}
     	}

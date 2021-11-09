@@ -284,7 +284,7 @@ public class VillageData {
 		this.economyData.readNBT(this, nbtTag);
 	}
 	
-	public void writeBuffer(PacketBuffer buffer) throws IOException {
+	public void writeBuffer(PacketBuffer buffer) {
 		if (buffer == null) {
 			return;
 		}

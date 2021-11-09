@@ -25,7 +25,7 @@ public class CommandMerchantKill extends CommandMerchantBase {
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		if (args.length > 0) {
-			throw new WrongUsageException(MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".usage", new Object[0]);
+			throw new WrongUsageException(MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".usage");
 		} 
 		
 		EntityPlayer entityPlayer = super.getCommandSenderAsPlayer(sender);
@@ -34,15 +34,15 @@ public class CommandMerchantKill extends CommandMerchantBase {
 		VillageManager villageManager = world != null ? VillageManager.get(world) : null;
 		Village village = villageManager != null && entityPlayer != null ? villageManager.getVillageAt(entityPlayer.getPosition()) : null;
 		if (village == null) {
-			notifyCommandListener(sender, this, MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".novillage", new Object[0]);
-			LoggerUtils.info(TextUtils.translate(MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".novillage", new Object[0]), true);
+			notifyCommandListener(sender, this, MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".novillage");
+			LoggerUtils.info(TextUtils.translate(MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".novillage"), true);
 			return;
 		}
 
         List<EntityMerchant> entityList = world.getEntitiesWithinAABB(EntityMerchant.class, village.getAABB().grow(Village.VILLAGE_SIZE));
         if (entityList.size() == 0) {
-			notifyCommandListener(sender, this, MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".noexists", new Object[0]);
-			LoggerUtils.info(TextUtils.translate(MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".noexists", new Object[0]), true);
+			notifyCommandListener(sender, this, MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".noexists");
+			LoggerUtils.info(TextUtils.translate(MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".noexists"), true);
 			return;
         }
         
@@ -54,8 +54,8 @@ public class CommandMerchantKill extends CommandMerchantBase {
         	
         	String name = (entity.isMale() ? TextFormatting.BLUE : TextFormatting.LIGHT_PURPLE) + entity.getName();
     		
-    		notifyCommandListener(sender, this, MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".success", new Object[] { name });
-    		LoggerUtils.info(TextUtils.translate(MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".success", new Object[] { name }), true);
+    		notifyCommandListener(sender, this, MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".success", name);
+    		LoggerUtils.info(TextUtils.translate(MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".success", name), true);
         }
 	}
 

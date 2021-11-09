@@ -5,18 +5,18 @@ import net.minecraft.util.math.BlockPos;
 
 public class GuiTexture {
 	
-	private ResourceLocation texture;
-	private float zLevel = 0;
+	private final ResourceLocation texture;
+	private float zLevel;
 	
-	private int left = 0;
-	private int top = 0;
-	private int width = 0;
-	private int height = 0;
+	private int left;
+	private int top;
+	private int width;
+	private int height;
 	
-	private int textureLeft = 0;
-	private int textureTop = 0;
-	private int textureWidth = 0;
-	private int textureHeight = 0;
+	private int textureLeft;
+	private int textureTop;
+	private int textureWidth;
+	private int textureHeight;
 	
 	public GuiTexture(ResourceLocation texture, float zLevel, int left, int top, int width, int height, int textureLeft, int textureTop, int textureWidth, int textureHeight) {
 		this.texture = texture;
@@ -129,12 +129,8 @@ public class GuiTexture {
 	public boolean withinBounds(int x, int y, float scale) {
 		int scaledX = (int) (x / scale);
 		int scaledY = (int) (y / scale);
-		
-		if (getLeft() <= scaledX && getTop() <= scaledY && getRight() >= scaledX && getBottom() >= scaledY) {
-			return true;
-		}
-		
-		return false;
+
+		return getLeft() <= scaledX && getTop() <= scaledY && getRight() >= scaledX && getBottom() >= scaledY;
 	}
 	
 }

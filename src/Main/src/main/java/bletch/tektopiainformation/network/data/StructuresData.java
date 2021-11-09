@@ -1,10 +1,6 @@
 package bletch.tektopiainformation.network.data;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
@@ -44,30 +40,27 @@ public class StructuresData {
 	
 	public List<StructureData> getStructures() {
 		return this.structures == null
-				? Collections.unmodifiableList(new ArrayList<StructureData>())
+				? Collections.unmodifiableList(new ArrayList<>())
 				: Collections.unmodifiableList(this.structures.stream()
-						.sorted((c1 , c2) -> {
-							int compare = c1.getStructureType().name().compareTo(c2.getStructureType().name());
-							return compare != 0 ? compare : c1.getFramePosition().compareTo(c2.getFramePosition());
-						})
+						.sorted(Comparator.comparing((StructureData c) -> c.getStructureType().name()).thenComparing(StructureData::getFramePosition))
 						.collect(Collectors.toList()));
 	}	
 	
 	public List<StructureData> getStructuresByType(VillageStructureType structureType) {
 		return this.structures == null
-				? Collections.unmodifiableList(new ArrayList<StructureData>())
+				? Collections.unmodifiableList(new ArrayList<>())
 				: Collections.unmodifiableList(this.structures.stream()
 						.filter(s -> structureType != null && structureType.equals(s.getStructureType()))
-						.sorted((c1 , c2) -> c1.getFramePosition().compareTo(c2.getFramePosition()))
+						.sorted(Comparator.comparing(StructureData::getFramePosition))
 						.collect(Collectors.toList()));
 	}
 	
 	public List<StructureData> getStructuresOvercrowded() {
 		return this.structures == null
-				? Collections.unmodifiableList(new ArrayList<StructureData>())
+				? Collections.unmodifiableList(new ArrayList<>())
 				: Collections.unmodifiableList(this.structures.stream()
 						.filter(s -> s.isOvercrowded())
-						.sorted((c1 , c2) -> c1.getStructureTypeName().compareTo(c2.getStructureTypeName()))
+						.sorted(Comparator.comparing(StructureData::getStructureTypeName))
 						.collect(Collectors.toList()));
 	}
 	
@@ -95,9 +88,9 @@ public class StructuresData {
 	
 	public Map<VillageStructureType, Integer> getStructureTypeCounts() {
 		return this.structureTypeCounts == null
-				? Collections.unmodifiableMap(new LinkedHashMap<VillageStructureType, Integer>())
+				? Collections.unmodifiableMap(new LinkedHashMap<>())
 				: Collections.unmodifiableMap(this.structureTypeCounts.entrySet().stream()
-						.sorted((c1 , c2) -> c1.getKey().name().compareTo(c2.getKey().name()))
+						.sorted(Comparator.comparing(c -> c.getKey().name()))
 						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new)));
 	}	
 	
@@ -116,8 +109,8 @@ public class StructuresData {
 	}
 	
 	protected void clearData() {		
-		this.structures = new ArrayList<StructureData>();
-		this.structureTypeCounts = new LinkedHashMap<VillageStructureType, Integer>();
+		this.structures = new ArrayList<>();
+		this.structureTypeCounts = new LinkedHashMap<>();
 	}
 	
 	public void populateData(VillageData villageData, Village village) {
