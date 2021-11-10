@@ -53,7 +53,17 @@ dependencies {
     deobfCompile "mcp.mobius.waila:Hwyla:${project.hwyla_version}"
     deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:${project.top_version}"
 	deobfCompile "com.leviathanstudio:CraftStudioAPI:${project.craftstudio_version}-mc1.12-alpha:dev"
+	
+	compile files('../../../../JavaWorkspaces/tektopia/Tektopia-1.12.2-1.1.0-deobf.jar')
 }
+
+//Creates a compiled de-obfuscated jar
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'deobf'
+}
+
+tasks.build.dependsOn('deobfJar')
 
 processResources {
     // replace stuff in mcmod.info, nothing else
