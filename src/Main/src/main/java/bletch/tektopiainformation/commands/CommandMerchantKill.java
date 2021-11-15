@@ -1,7 +1,10 @@
 package bletch.tektopiainformation.commands;
 
 import java.util.List;
+
+import bletch.common.commands.CommonCommandBase;
 import bletch.common.utils.TextUtils;
+import bletch.tektopiainformation.core.ModDetails;
 import bletch.tektopiainformation.utils.LoggerUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -14,18 +17,18 @@ import net.tangotek.tektopia.Village;
 import net.tangotek.tektopia.VillageManager;
 import net.tangotek.tektopia.entities.EntityMerchant;
 
-public class CommandMerchantKill extends CommandMerchantBase {
+public class CommandMerchantKill extends CommonCommandBase {
 
 	private static final String COMMAND_NAME = "kill";
 	
 	public CommandMerchantKill() {
-		super(COMMAND_NAME);
+		super(ModDetails.MOD_ID, MerchantCommands.COMMAND_PREFIX, COMMAND_NAME);
 	}
 
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		if (args.length > 0) {
-			throw new WrongUsageException(MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".usage");
+			throw new WrongUsageException(this.prefix + COMMAND_NAME + ".usage");
 		} 
 		
 		EntityPlayer entityPlayer = super.getCommandSenderAsPlayer(sender);
@@ -34,15 +37,15 @@ public class CommandMerchantKill extends CommandMerchantBase {
 		VillageManager villageManager = world != null ? VillageManager.get(world) : null;
 		Village village = villageManager != null && entityPlayer != null ? villageManager.getVillageAt(entityPlayer.getPosition()) : null;
 		if (village == null) {
-			notifyCommandListener(sender, this, MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".novillage");
-			LoggerUtils.info(TextUtils.translate(MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".novillage"), true);
+			notifyCommandListener(sender, this, this.prefix + COMMAND_NAME + ".novillage");
+			LoggerUtils.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".novillage"), true);
 			return;
 		}
 
         List<EntityMerchant> entityList = world.getEntitiesWithinAABB(EntityMerchant.class, village.getAABB().grow(Village.VILLAGE_SIZE));
         if (entityList.size() == 0) {
-			notifyCommandListener(sender, this, MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".noexists");
-			LoggerUtils.info(TextUtils.translate(MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".noexists"), true);
+			notifyCommandListener(sender, this, this.prefix + COMMAND_NAME + ".noexists");
+			LoggerUtils.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".noexists"), true);
 			return;
         }
         
@@ -54,8 +57,8 @@ public class CommandMerchantKill extends CommandMerchantBase {
         	
         	String name = (entity.isMale() ? TextFormatting.BLUE : TextFormatting.LIGHT_PURPLE) + entity.getName();
     		
-    		notifyCommandListener(sender, this, MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".success", name);
-    		LoggerUtils.info(TextUtils.translate(MerchantCommands.COMMAND_PREFIX + COMMAND_NAME + ".success", name), true);
+    		notifyCommandListener(sender, this, this.prefix + COMMAND_NAME + ".success", name);
+    		LoggerUtils.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".success", name), true);
         }
 	}
 

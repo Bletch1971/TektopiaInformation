@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import bletch.tektopiainformation.utils.TektopiaUtils;
+import bletch.common.utils.TektopiaUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.AxisAlignedBB;

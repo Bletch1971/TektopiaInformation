@@ -3,7 +3,9 @@ package bletch.tektopiainformation.commands;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import bletch.common.commands.CommonCommandBase;
 import bletch.common.utils.TextUtils;
+import bletch.tektopiainformation.core.ModDetails;
 import bletch.tektopiainformation.utils.LoggerUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -16,18 +18,18 @@ import net.tangotek.tektopia.Village;
 import net.tangotek.tektopia.VillageManager;
 import net.tangotek.tektopia.entities.EntityNomad;
 
-public class CommandNomadKill extends CommandNomadBase {
+public class CommandNomadKill extends CommonCommandBase {
 
 	private static final String COMMAND_NAME = "kill";
 	
 	public CommandNomadKill() {
-		super(COMMAND_NAME);
+		super(ModDetails.MOD_ID, NomadCommands.COMMAND_PREFIX, COMMAND_NAME);
 	}
 
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		if (args.length > 1) {
-			throw new WrongUsageException(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".usage");
+			throw new WrongUsageException(this.prefix + COMMAND_NAME + ".usage");
 		} 
 		
 		int argValue = -1;
@@ -36,11 +38,11 @@ public class CommandNomadKill extends CommandNomadBase {
 				argValue = Integer.parseInt(args[0]);
 				
 				if (argValue != 0 && argValue != 1) {
-					throw new WrongUsageException(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".usage");
+					throw new WrongUsageException(this.prefix + COMMAND_NAME + ".usage");
 				}
 			}
 			catch (Exception ex) {
-				throw new WrongUsageException(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".usage");
+				throw new WrongUsageException(this.prefix + COMMAND_NAME + ".usage");
 			}
 		}
         final int nomadGender = argValue;
@@ -51,8 +53,8 @@ public class CommandNomadKill extends CommandNomadBase {
 		VillageManager villageManager = world != null ? VillageManager.get(world) : null;
 		Village village = villageManager != null && entityPlayer != null ? villageManager.getVillageAt(entityPlayer.getPosition()) : null;
 		if (village == null) {
-			notifyCommandListener(sender, this, NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".novillage");
-			LoggerUtils.info(TextUtils.translate(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".novillage"), true);
+			notifyCommandListener(sender, this, this.prefix + COMMAND_NAME + ".novillage");
+			LoggerUtils.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".novillage"), true);
 			return;
 		}
 
@@ -61,8 +63,8 @@ public class CommandNomadKill extends CommandNomadBase {
 				.filter((e) -> nomadGender == -1 || nomadGender == 0 && e.isMale() || nomadGender == 1 && !e.isMale())
 				.collect(Collectors.toList());
         if (entityList.size() == 0) {
-			notifyCommandListener(sender, this, NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".noexists");
-			LoggerUtils.info(TextUtils.translate(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".noexists"), true);
+			notifyCommandListener(sender, this, this.prefix + COMMAND_NAME + ".noexists");
+			LoggerUtils.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".noexists"), true);
 			return;
         }
         
@@ -74,8 +76,8 @@ public class CommandNomadKill extends CommandNomadBase {
         	
         	String name = (entity.isMale() ? TextFormatting.BLUE : TextFormatting.LIGHT_PURPLE) + entity.getName();
     		
-    		notifyCommandListener(sender, this, NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".success", name);
-    		LoggerUtils.info(TextUtils.translate(NomadCommands.COMMAND_PREFIX + COMMAND_NAME + ".success", name), true);
+    		notifyCommandListener(sender, this, this.prefix + COMMAND_NAME + ".success", name);
+    		LoggerUtils.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".success", name), true);
         }
 	}
 

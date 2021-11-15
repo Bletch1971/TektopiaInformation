@@ -1,9 +1,9 @@
 package bletch.tektopiainformation.top;
 
+import bletch.common.utils.TektopiaUtils;
 import bletch.common.utils.TextUtils;
 import bletch.tektopiainformation.core.ModConfig;
 import bletch.tektopiainformation.core.ModDetails;
-import bletch.tektopiainformation.utils.TektopiaUtils;
 import mcjty.theoneprobe.api.IProbeHitEntityData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.IProbeInfoEntityProvider;

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import bletch.tektopiainformation.utils.TektopiaUtils;
+import bletch.common.utils.TektopiaUtils;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;

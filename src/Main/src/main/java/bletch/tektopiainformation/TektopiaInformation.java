@@ -33,9 +33,9 @@ public class TektopiaInformation {
 	@Mod.EventHandler
 	public void preInitialize(FMLPreInitializationEvent event) {
 		instance = this;
-		
-		proxy.preInitialize(event);
+
 		proxy.resetDebug();
+		proxy.preInitialize(event);
 	}
 	  
 	@Mod.EventHandler

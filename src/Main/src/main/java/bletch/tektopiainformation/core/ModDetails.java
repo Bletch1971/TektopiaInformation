@@ -2,8 +2,10 @@ package bletch.tektopiainformation.core;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import bletch.common.core.CommonDetails;
+
 @ParametersAreNonnullByDefault
-public class ModDetails {
+public class ModDetails extends CommonDetails {
 	private static final int VersionMajor = 1;
 	private static final int VersionMinor = 10;
 	private static final int VersionRevision = 0;
@@ -18,13 +20,6 @@ public class ModDetails {
 			
 	public static final String MOD_SERVER_PROXY_CLASS = "bletch." + MOD_ID + ".core.ModCommonProxy";
 	public static final String MOD_CLIENT_PROXY_CLASS = "bletch." + MOD_ID + ".core.ModClientProxy";
-
-	public static final String MOD_ID_MINECRAFT = "minecraft";
-	public static final String MOD_ID_FORGE = "forge";
-	public static final String MOD_ID_TEKTOPIA = "tektopia";
-	public static final String MOD_ID_JEI = "jei";
-	public static final String MOD_ID_WAILA = "waila";
-	public static final String MOD_ID_TOP = "theoneprobe";
 	
 	public static final String PATH_DEBUG = "/debug";
 	public static final String FILE_DEBUGLOG = PATH_DEBUG + "/" + MOD_ID + ".txt"; 
