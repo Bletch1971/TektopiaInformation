@@ -38,14 +38,14 @@ public class CommandMerchantKill extends CommonCommandBase {
 		Village village = villageManager != null && entityPlayer != null ? villageManager.getVillageAt(entityPlayer.getPosition()) : null;
 		if (village == null) {
 			notifyCommandListener(sender, this, this.prefix + COMMAND_NAME + ".novillage");
-			LoggerUtils.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".novillage"), true);
+			LoggerUtils.instance.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".novillage"), true);
 			return;
 		}
 
         List<EntityMerchant> entityList = world.getEntitiesWithinAABB(EntityMerchant.class, village.getAABB().grow(Village.VILLAGE_SIZE));
         if (entityList.size() == 0) {
 			notifyCommandListener(sender, this, this.prefix + COMMAND_NAME + ".noexists");
-			LoggerUtils.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".noexists"), true);
+			LoggerUtils.instance.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".noexists"), true);
 			return;
         }
         
@@ -58,7 +58,7 @@ public class CommandMerchantKill extends CommonCommandBase {
         	String name = (entity.isMale() ? TextFormatting.BLUE : TextFormatting.LIGHT_PURPLE) + entity.getName();
     		
     		notifyCommandListener(sender, this, this.prefix + COMMAND_NAME + ".success", name);
-    		LoggerUtils.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".success", name), true);
+    		LoggerUtils.instance.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".success", name), true);
         }
 	}
 

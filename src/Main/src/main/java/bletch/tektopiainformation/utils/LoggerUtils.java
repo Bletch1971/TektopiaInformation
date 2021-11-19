@@ -5,14 +5,18 @@ import bletch.tektopiainformation.core.ModConfig;
 
 public class LoggerUtils extends LoggerBase {
 
-	public static void debug(String message, Boolean checkConfig) {
+	public static LoggerUtils instance = new LoggerUtils();
+	
+	@Override
+	public void debug(String message, Boolean checkConfig) {
 		if (checkConfig && !ModConfig.debug.enableDebug)
 			return;
 		
 		debug(message);
 	}
 	
-	public static void info(String message, Boolean checkConfig) {
+	@Override
+	public void info(String message, Boolean checkConfig) {
 		if (checkConfig && !ModConfig.debug.enableDebug)
 			return;
 		

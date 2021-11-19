@@ -344,7 +344,7 @@ public class TektopiaEntityWaila implements IWailaEntityProvider {
 			registrar.registerBodyProvider(entityProvider, entity);
 			
 			if (ModConfig.debug.enableDebug && ModConfig.debug.showWailaEntitiesRegistered) {
-				LoggerUtils.writeLine("Registered WAILA information for entity " + key, true);
+				LoggerUtils.instance.writeLine("Registered WAILA information for entity " + key, true);
 			} 
 		}
 	}

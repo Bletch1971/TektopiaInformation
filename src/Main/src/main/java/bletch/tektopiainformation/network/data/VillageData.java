@@ -252,7 +252,7 @@ public class VillageData {
 		}
 		
 		String logMessage = "VillageData - readBuffer called; buffer capacity=" + buffer.capacity() + "; buffer max capacity=" + buffer.maxCapacity();
-		LoggerUtils.info(logMessage, true);
+		LoggerUtils.instance.info(logMessage, true);
 		
 		readNBT(buffer.readCompoundTag());
 	}
@@ -293,7 +293,7 @@ public class VillageData {
 		buffer.writeCompoundTag(nbtTag);
 		
 		String logMessage = "VillageData - writeBuffer called; buffer capacity=" + buffer.capacity() + "; buffer max capacity=" + buffer.maxCapacity();
-		LoggerUtils.info(logMessage, true);
+		LoggerUtils.instance.info(logMessage, true);
 	}
 	
 	public NBTTagCompound writeNBT(NBTTagCompound nbtTag) {

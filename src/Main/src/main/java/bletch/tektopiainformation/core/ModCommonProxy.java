@@ -33,9 +33,9 @@ public class ModCommonProxy {
 	
 	public void registerGui() {
     	if (ModConfig.gui.enableGuiIntegration) {
-    		LoggerUtils.info("Registering Gui");
+    		LoggerUtils.instance.info("Registering Gui");
 			MinecraftForge.EVENT_BUS.register(new PlayerInteractHandler());
-			LoggerUtils.info("Registered Gui");
+			LoggerUtils.instance.info("Registered Gui");
 		}
 	}
 	
@@ -53,11 +53,8 @@ public class ModCommonProxy {
 	}
 	
 	public void resetDebug() {
-		LoggerUtils.Initialise(ModDetails.MOD_NAME, getMinecraftDirectory() + ModDetails.FILE_DEBUGLOG);
-		
-		if (ModConfig.debug.enableDebug) {
-			LoggerUtils.resetDebug();
-		}		
+		LoggerUtils.instance.Initialise(ModDetails.MOD_NAME, getMinecraftDirectory() + ModDetails.FILE_DEBUGLOG);
+		LoggerUtils.instance.resetDebug();
 	}
 	
 }

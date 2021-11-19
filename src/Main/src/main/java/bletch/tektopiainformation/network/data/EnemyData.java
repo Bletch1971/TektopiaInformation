@@ -1,5 +1,6 @@
 package bletch.tektopiainformation.network.data;
 
+import bletch.common.Interfaces.IVillageEnemy;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.nbt.NBTTagCompound;
 import net.tangotek.tektopia.entities.EntityNecromancer;
@@ -51,6 +52,10 @@ public class EnemyData extends EntityData {
 			
 			if (entity instanceof EntityNecromancer) {
 				this.level = ((EntityNecromancer)entity).getLevel();
+			}
+			
+			if (entity instanceof IVillageEnemy) {
+				this.level = ((IVillageEnemy)entity).getLevel();
 			}
 			
 			for (EntityAITaskEntry task : entity.tasks.taskEntries) {

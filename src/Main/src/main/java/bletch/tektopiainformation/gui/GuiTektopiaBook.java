@@ -543,7 +543,7 @@ public class GuiTektopiaBook extends GuiScreen {
 
 		this.pages.add(page);
 
-		LoggerUtils.info("Adding page " + page.getBookmarkKey() + "::" + page.getGuiPageType() + "::" + page.getDataKey(), true);
+		LoggerUtils.instance.info("Adding page " + page.getBookmarkKey() + "::" + page.getGuiPageType() + "::" + page.getDataKey(), true);
 	}
 
 	protected void createBookmarkResources() {
@@ -1801,6 +1801,8 @@ public class GuiTektopiaBook extends GuiScreen {
 		int x2 = 0;
 		int x3 = 0;
 		int x4 = 0;
+		int x5 = 0;
+		int x6 = 0;
 
 		String[] dataKey = getPageKeyParts(guiPage.getDataKey());
 		EnemiesData enemiesData = this.villageData.getEnemiesData();
@@ -1862,6 +1864,9 @@ public class GuiTektopiaBook extends GuiScreen {
 				for (EnemyData enemy : subList) {
 					
 					String enemyName = enemy.getName();
+					String enemyLevel = "";
+					if (enemy.getLevel() > 0)
+						enemyLevel = TextUtils.translate("tektopiaBook.enemies.level") + " " + enemy.getLevel();
 					String enemyTask = getAiTaskName(enemy.getCurrentTask());
 					String enemyTaskShort = Font.small.trimStringToWidth(enemyTask, maxTaskLength, true);
 					String enemyPosition = formatBlockPos(enemy.getCurrentPosition());
@@ -1871,10 +1876,12 @@ public class GuiTektopiaBook extends GuiScreen {
 						Font.small.printLeft(enemyTaskShort, this.x + PAGE_LEFTPAGE_LEFTCENTER_X + indentX + indentX, y, this.zLevel);
 						Font.small.printRight(enemyPosition, this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X, y, this.zLevel);
 
-						x1 = this.x + PAGE_LEFTPAGE_LEFTCENTER_X + indentX + indentX;
-						x2 = x1 + Font.small.getStringWidth(enemyTaskShort);
-						x4 = this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X;
-						x3 = x4 - Font.small.getStringWidth(enemyPosition);
+						x1 = this.x + PAGE_LEFTPAGE_LEFTMARGIN_X + indentX;
+						x2 = x1 + Font.small.getStringWidth(enemyName);
+						x3 = this.x + PAGE_LEFTPAGE_LEFTCENTER_X + indentX + indentX;
+						x4 = x3 + Font.small.getStringWidth(enemyTaskShort);
+						x6 = this.x + PAGE_LEFTPAGE_RIGHTMARGIN_X;
+						x5 = x6 - Font.small.getStringWidth(enemyPosition);
 					}
 
 					if (guiPage.isRightPage()) {
@@ -1882,21 +1889,28 @@ public class GuiTektopiaBook extends GuiScreen {
 						Font.small.printLeft(enemyTaskShort, this.x + PAGE_RIGHTPAGE_LEFTCENTER_X + indentX + indentX, y, this.zLevel);
 						Font.small.printRight(enemyPosition, this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X, y, this.zLevel);
 
-						x1 = this.x + PAGE_RIGHTPAGE_LEFTCENTER_X + indentX + indentX;
-						x2 = x1 + Font.small.getStringWidth(enemyTaskShort);
-						x4 = this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X;
-						x3 = x4 - Font.small.getStringWidth(enemyPosition);
+						x1 = this.x + PAGE_RIGHTPAGE_LEFTMARGIN_X + indentX;
+						x2 = x1 + Font.small.getStringWidth(enemyName);
+						x3 = this.x + PAGE_RIGHTPAGE_LEFTCENTER_X + indentX + indentX;
+						x4 = x3 + Font.small.getStringWidth(enemyTaskShort);
+						x6 = this.x + PAGE_RIGHTPAGE_RIGHTMARGIN_X;
+						x5 = x6 - Font.small.getStringWidth(enemyPosition);
 					}
 
 					if (!this.isSubPageOpen()) {
-						toolTip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, enemyTask);
+						if (!StringUtils.isNullOrWhitespace(enemyLevel)) {
+							toolTip = new GuiTooltip(x1, y, x2 - x1, Font.small.fontRenderer.FONT_HEIGHT, enemyLevel);
+							this.tooltips.add(toolTip);
+						}
+						
+						toolTip = new GuiTooltip(x3, y, x4 - x3, Font.small.fontRenderer.FONT_HEIGHT, enemyTask);
 						this.tooltips.add(toolTip);
 
 						button = new GuiHyperlink(BUTTON_KEY_MAPLINK, getHyperlinkData(GuiPageType.ENEMY, getResidentDetailPageKey(enemy.getId())));
-						button.setIcon(x3, y, x4 - x3, Font.small.fontRenderer.FONT_HEIGHT);
+						button.setIcon(x5, y, x6 - x5, Font.small.fontRenderer.FONT_HEIGHT);
 						this.buttons.add(button);
 
-						toolTip = new GuiTooltip(x3, y, x4 - x3, Font.small.fontRenderer.FONT_HEIGHT, TextUtils.translate("tektopiaBook.links.mapdetails"));
+						toolTip = new GuiTooltip(x5, y, x6 - x5, Font.small.fontRenderer.FONT_HEIGHT, TextUtils.translate("tektopiaBook.links.mapdetails"));
 						this.tooltips.add(toolTip);
 					}
 
@@ -2974,9 +2988,12 @@ public class GuiTektopiaBook extends GuiScreen {
 				BlockPos villageOffset = enemyPoint.subtract(villageOrigin);
 
 				String name = TextFormatting.AQUA + enemy.getName();
+				String level = "";
+				if (enemy.getLevel() > 0)
+					level = TextUtils.translate("tektopiaBook.enemies.level") + " " + enemy.getLevel();
 				String position = TextUtils.translate("tektopiaBook.residents.position") + " " + formatBlockPos(enemy.getCurrentPosition());
 
-				List<String> tooltips = Arrays.asList(name, position);
+				List<String> tooltips = Arrays.asList(name, level, position);
 
 				int markerSize = MAP_MARKER_SIZE;
 				int markerOffset = 0;

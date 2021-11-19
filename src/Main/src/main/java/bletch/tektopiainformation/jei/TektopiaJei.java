@@ -49,7 +49,7 @@ public class TektopiaJei implements IModPlugin {
     			registerTektopiaIngredientInfo(registry);
     		}
     		catch (Exception ex) {
-    			LoggerUtils.error(ex.getMessage());
+    			LoggerUtils.instance.error(ex.getMessage());
     		}    		
     	}
     	
@@ -91,7 +91,7 @@ public class TektopiaJei implements IModPlugin {
 	private static void registerTektopiaIngredientInfo(IModRegistry registry) {
 		ArrayList<String> processed = new ArrayList<>();
 		
-		LoggerUtils.info("Registering item/block information with JEI");
+		LoggerUtils.instance.info("Registering item/block information with JEI");
 		
 		ArrayList<ItemStack> tektopiaItemStacks = new ArrayList<>();
 		tektopiaItemStacks.addAll(TektopiaUtils.getTektopiaBlockStacks());
@@ -137,7 +137,7 @@ public class TektopiaJei implements IModPlugin {
 					}
 		    		catch (Exception e) {
 		    			if (ModConfig.debug.enableDebug) {
-		    				LoggerUtils.writeLine("Error registering JEI information for " + itemStack.getDisplayName() + "; key: " + key, true);
+		    				LoggerUtils.instance.writeLine("Error registering JEI information for " + itemStack.getDisplayName() + "; key: " + key, true);
 		    			}
 		    		}
 					
@@ -153,15 +153,15 @@ public class TektopiaJei implements IModPlugin {
     	
     	if (ModConfig.debug.enableDebug && registeredInformation.size() > 0) {
     		registeredInformation.sort((i1, i2) -> i1.compareTo(i2));
-    		LoggerUtils.writeLines(registeredInformation, true);
+    		LoggerUtils.instance.writeLines(registeredInformation, true);
     	}
     	
     	if (ModConfig.debug.enableDebug && missingInformation.size() > 0) {
     		missingInformation.sort((i1, i2) -> i1.compareTo(i2));
-    		LoggerUtils.writeLines(missingInformation, true);
+    		LoggerUtils.instance.writeLines(missingInformation, true);
     	}
     	
-    	LoggerUtils.info("Registered item/block information with JEI - count: " + count);
+    	LoggerUtils.instance.info("Registered item/block information with JEI - count: " + count);
 	}
 
 }

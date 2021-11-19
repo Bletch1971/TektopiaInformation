@@ -46,7 +46,7 @@ public class CommandNomadSpawn extends CommonCommandBase {
 		
 		if (world == null || world.isRaining() || Village.isNightTime(world)) {
 			notifyCommandListener(sender, this, this.prefix + COMMAND_NAME + ".badconditions");
-			LoggerUtils.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".badconditions"), true);
+			LoggerUtils.instance.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".badconditions"), true);
 			return;
 		}
 		
@@ -55,7 +55,7 @@ public class CommandNomadSpawn extends CommonCommandBase {
 		
 		if (village == null) {
 			notifyCommandListener(sender, this, this.prefix + COMMAND_NAME + ".novillage");
-			LoggerUtils.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".novillage"), true);
+			LoggerUtils.instance.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".novillage"), true);
 			return;
 		}
 
@@ -63,7 +63,7 @@ public class CommandNomadSpawn extends CommonCommandBase {
 		
 		if (spawnPosition == null) {
 			notifyCommandListener(sender, this, this.prefix + COMMAND_NAME + ".noposition");
-			LoggerUtils.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".noposition"), true);
+			LoggerUtils.instance.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".noposition"), true);
 			return;
 		}
 
@@ -71,19 +71,19 @@ public class CommandNomadSpawn extends CommonCommandBase {
         
         if (entityList.size() > 1) {
 			notifyCommandListener(sender, this, this.prefix + COMMAND_NAME + ".exists");
-			LoggerUtils.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".exists"), true);
+			LoggerUtils.instance.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".exists"), true);
 			return;
         }
         
 		// attempt to spawn the nomad
 		if (!TektopiaUtils.trySpawnEntity(world, spawnPosition, (World w) -> new EntityNomad(w))) {
 			notifyCommandListener(sender, this, this.prefix + COMMAND_NAME + ".failed");
-			LoggerUtils.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".failed"), true);
+			LoggerUtils.instance.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".failed"), true);
 			return;
 		}
 		
 		notifyCommandListener(sender, this, this.prefix + COMMAND_NAME + ".success", TektopiaUtils.formatBlockPos(spawnPosition));
-		LoggerUtils.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".success", TektopiaUtils.formatBlockPos(spawnPosition)), true);
+		LoggerUtils.instance.info(TextUtils.translate(this.prefix + COMMAND_NAME + ".success", TektopiaUtils.formatBlockPos(spawnPosition)), true);
 	}
 	
 }

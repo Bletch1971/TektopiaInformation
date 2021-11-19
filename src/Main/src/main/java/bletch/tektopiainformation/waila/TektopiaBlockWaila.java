@@ -110,7 +110,7 @@ public class TektopiaBlockWaila implements IWailaDataProvider {
 			registrar.registerBodyProvider(dataProvider, tektopiaClass);
 			
 			if (ModConfig.debug.enableDebug && ModConfig.debug.showWailaBlocksRegistered) {
-				LoggerUtils.writeLine("Registered WAILA information for block " + key, true);
+				LoggerUtils.instance.writeLine("Registered WAILA information for block " + key, true);
 			} 
 		}	
 	}

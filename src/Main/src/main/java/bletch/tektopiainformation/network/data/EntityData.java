@@ -134,7 +134,7 @@ public class EntityData {
 		this.modId = ModDetails.MOD_ID;
 		this.modName = "";
 		this.name = "";
-		this.level = 1;
+		this.level = 0;
 		this.health = 0;
 		this.maxHealth = 20;
 		this.homePosition = null;
