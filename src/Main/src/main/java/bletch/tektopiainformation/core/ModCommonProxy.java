@@ -53,7 +53,7 @@ public class ModCommonProxy {
 	}
 	
 	public void resetDebug() {
-		LoggerUtils.Initialise(getMinecraftDirectory() + ModDetails.FILE_DEBUGLOG);
+		LoggerUtils.instance.Initialise(getMinecraftDirectory() + ModDetails.FILE_DEBUGLOG);
 		LoggerUtils.instance.resetDebug();
 	}
 	

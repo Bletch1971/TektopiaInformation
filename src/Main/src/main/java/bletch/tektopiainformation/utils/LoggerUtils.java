@@ -6,8 +6,10 @@ import bletch.tektopiainformation.core.ModDetails;
 
 public class LoggerUtils extends LoggerBase {
 	
-	public static void Initialise(String debugLogFile) {
-		LoggerBase.Initialise(new LoggerUtils(), ModDetails.MOD_NAME, debugLogFile);
+	public static LoggerUtils instance = new LoggerUtils();
+	
+	public void Initialise(String debugLogFile) {
+		Initialise(ModDetails.MOD_NAME, debugLogFile);
 	}
 	
 	@Override
