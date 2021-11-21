@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import bletch.common.utils.TektopiaUtils;
 import bletch.common.utils.TextUtils;
 import bletch.tektopiainformation.core.ModConfig;
 import bletch.tektopiainformation.core.ModDetails;
 import bletch.tektopiainformation.utils.LoggerUtils;
-import bletch.tektopiainformation.utils.TektopiaUtils;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.IJeiRuntime;
@@ -30,7 +30,7 @@ public class TektopiaJei implements IModPlugin {
     private static IJeiHelpers jeiHelpers;
     private static IJeiRuntime jeiRuntime;
 
-    private static List<BlankRecipeCategory<?>> categories = new ArrayList<BlankRecipeCategory<?>>();
+    private static final List<BlankRecipeCategory<?>> categories = new ArrayList<>();
     
     @Override
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
@@ -49,7 +49,7 @@ public class TektopiaJei implements IModPlugin {
     			registerTektopiaIngredientInfo(registry);
     		}
     		catch (Exception ex) {
-    			LoggerUtils.error(ex.getMessage());
+    			LoggerUtils.instance.error(ex.getMessage());
     		}    		
     	}
     	
@@ -89,16 +89,16 @@ public class TektopiaJei implements IModPlugin {
 	}
 	
 	private static void registerTektopiaIngredientInfo(IModRegistry registry) {
-		ArrayList<String> processed = new ArrayList<String>();
+		ArrayList<String> processed = new ArrayList<>();
 		
-		LoggerUtils.info("Registering item/block information with JEI");
+		LoggerUtils.instance.info("Registering item/block information with JEI");
 		
-		ArrayList<ItemStack> tektopiaItemStacks = new ArrayList<ItemStack>();
+		ArrayList<ItemStack> tektopiaItemStacks = new ArrayList<>();
 		tektopiaItemStacks.addAll(TektopiaUtils.getTektopiaBlockStacks());
 		tektopiaItemStacks.addAll(TektopiaUtils.getTektopiaItemStacks());
 		
-		ArrayList<String> missingInformation = new ArrayList<String>();
-		ArrayList<String> registeredInformation = new ArrayList<String>();		
+		ArrayList<String> missingInformation = new ArrayList<>();
+		ArrayList<String> registeredInformation = new ArrayList<>();
 		int count = 0;
 		
     	for (ItemStack tektopiaItemStack : tektopiaItemStacks) {
@@ -137,7 +137,7 @@ public class TektopiaJei implements IModPlugin {
 					}
 		    		catch (Exception e) {
 		    			if (ModConfig.debug.enableDebug) {
-		    				LoggerUtils.writeLine("Error registering JEI information for " + itemStack.getDisplayName() + "; key: " + key, true);
+		    				LoggerUtils.instance.writeLine("Error registering JEI information for " + itemStack.getDisplayName() + "; key: " + key, true);
 		    			}
 		    		}
 					
@@ -151,17 +151,17 @@ public class TektopiaJei implements IModPlugin {
 			}
 		}
     	
-    	if (ModConfig.debug.enableDebug && registeredInformation != null && registeredInformation.size() > 0) {
+    	if (ModConfig.debug.enableDebug && registeredInformation.size() > 0) {
     		registeredInformation.sort((i1, i2) -> i1.compareTo(i2));
-    		LoggerUtils.writeLines(registeredInformation, true);
+    		LoggerUtils.instance.writeLines(registeredInformation, true);
     	}
     	
-    	if (ModConfig.debug.enableDebug && missingInformation != null && missingInformation.size() > 0) {
+    	if (ModConfig.debug.enableDebug && missingInformation.size() > 0) {
     		missingInformation.sort((i1, i2) -> i1.compareTo(i2));
-    		LoggerUtils.writeLines(missingInformation, true);
+    		LoggerUtils.instance.writeLines(missingInformation, true);
     	}
     	
-    	LoggerUtils.info("Registered item/block information with JEI - count: " + count);
+    	LoggerUtils.instance.info("Registered item/block information with JEI - count: " + count);
 	}
 
 }

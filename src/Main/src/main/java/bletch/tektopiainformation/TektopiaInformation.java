@@ -33,9 +33,9 @@ public class TektopiaInformation {
 	@Mod.EventHandler
 	public void preInitialize(FMLPreInitializationEvent event) {
 		instance = this;
-		
-		proxy.preInitialize(event);
+
 		proxy.resetDebug();
+		proxy.preInitialize(event);
 	}
 	  
 	@Mod.EventHandler
@@ -55,19 +55,19 @@ public class TektopiaInformation {
 	@Mod.EventHandler
 	public void onServerStarting(final FMLServerStartingEvent e) {
 		if (ModConfig.debug.enableDebugCommands) {
-			LoggerUtils.info("Starting debug command registrations...");
+			LoggerUtils.instance.info("Starting debug command registrations...");
 			
-			LoggerUtils.info("Registering merchant commands");
+			LoggerUtils.instance.info("Registering merchant commands");
 			MerchantCommands merchantCommands = new MerchantCommands();
 			e.registerServerCommand(merchantCommands);
 			merchantCommands.registerNodes();
 			
-			LoggerUtils.info("Registering nomad commands");
+			LoggerUtils.instance.info("Registering nomad commands");
 			NomadCommands nomadCommands = new NomadCommands();
 			e.registerServerCommand(nomadCommands);
 			nomadCommands.registerNodes();
 			
-			LoggerUtils.info("Finished debug command registrations");
+			LoggerUtils.instance.info("Finished debug command registrations");
 		}
 	}
 	

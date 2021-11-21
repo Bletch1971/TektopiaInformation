@@ -5,10 +5,10 @@ import java.util.List;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import bletch.common.utils.TektopiaUtils;
 import bletch.common.utils.TextUtils;
 import bletch.tektopiainformation.core.ModConfig;
 import bletch.tektopiainformation.utils.LoggerUtils;
-import bletch.tektopiainformation.utils.TektopiaUtils;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaDataProvider;
@@ -79,18 +79,16 @@ public class TektopiaBlockWaila implements IWailaDataProvider {
 
 	@Override
 	public NBTTagCompound getNBTData(EntityPlayerMP player, TileEntity tileEntity, NBTTagCompound tag, World world, BlockPos position) {
-		if (tileEntity != null) {
-			tileEntity.writeToNBT(tag);
-		}
+		tileEntity.writeToNBT(tag);
 
 		return tag;
 	}
 
 	public static void callbackRegister(IWailaRegistrar registrar) {
 		TektopiaBlockWaila dataProvider = new TektopiaBlockWaila();
-		ArrayList<String> processed = new ArrayList<String>();
+		ArrayList<String> processed = new ArrayList<>();
 		
-		ArrayList<Class<?>> tektopiaClasses = new ArrayList<Class<?>>();
+		ArrayList<Class<?>> tektopiaClasses = new ArrayList<>();
 		tektopiaClasses.addAll(TektopiaUtils.getTektopiaBlockClasses());
 		
 		// remove any blocks that are inherited from other tektopia mod blocks
@@ -112,7 +110,7 @@ public class TektopiaBlockWaila implements IWailaDataProvider {
 			registrar.registerBodyProvider(dataProvider, tektopiaClass);
 			
 			if (ModConfig.debug.enableDebug && ModConfig.debug.showWailaBlocksRegistered) {
-				LoggerUtils.writeLine("Registered WAILA information for block " + key, true);
+				LoggerUtils.instance.writeLine("Registered WAILA information for block " + key, true);
 			} 
 		}	
 	}

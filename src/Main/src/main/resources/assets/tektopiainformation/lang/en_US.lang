@@ -279,6 +279,7 @@ tektopiaBook.economy.tradesmanitems=Tradesman Items
 
 tektopiaBook.enemies.total=Total Enemies:
 tektopiaBook.enemies.enemies=Enemies
+tektopiaBook.enemies.level=Level:
 
 tektopiaBook.homes.frameposition=Token Position:
 tektopiaBook.homes.totalhomes=Total Homes:

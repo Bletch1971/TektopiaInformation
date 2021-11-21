@@ -56,13 +56,13 @@ public class ModClientProxy extends ModCommonProxy {
 		super.registerTheOneProbe();
 		
 		if (Loader.isModLoaded(ModDetails.MOD_ID_TOP) && ModConfig.top.enableTopIntegration) {
-			LoggerUtils.info("Registering blocks with The One Probe");
+			LoggerUtils.instance.info("Registering blocks with The One Probe");
 			FMLInterModComms.sendFunctionMessage(ModDetails.MOD_ID_TOP, "getTheOneProbe", TektopiaBlockTop.class.getTypeName() + "$getTheOneProbe");
-			LoggerUtils.info("Registered blocks with The One Probe");
+			LoggerUtils.instance.info("Registered blocks with The One Probe");
 			
-			LoggerUtils.info("Registering entities with The One Probe");
+			LoggerUtils.instance.info("Registering entities with The One Probe");
 			FMLInterModComms.sendFunctionMessage(ModDetails.MOD_ID_TOP, "getTheOneProbe", TektopiaEntityTop.class.getTypeName() + "$getTheOneProbe");
-			LoggerUtils.info("Registered entities with The One Probe");
+			LoggerUtils.instance.info("Registered entities with The One Probe");
 		}
 	}
 	
@@ -71,9 +71,9 @@ public class ModClientProxy extends ModCommonProxy {
 		super.registerTooltips();
 		
     	if (ModConfig.tooltips.enableTooltipIntegration) {
-    		LoggerUtils.info("Registering Item Tooltip");
+    		LoggerUtils.instance.info("Registering Item Tooltip");
 			MinecraftForge.EVENT_BUS.register(new TektopiaItemTooltip());
-			LoggerUtils.info("Registered Item Tooltip");
+			LoggerUtils.instance.info("Registered Item Tooltip");
     	}
 	}
 	
@@ -81,13 +81,13 @@ public class ModClientProxy extends ModCommonProxy {
 		super.registerWaila();
 		
 		if (Loader.isModLoaded(ModDetails.MOD_ID_WAILA) && ModConfig.waila.enableWailaIntegration) {
-			LoggerUtils.info("Registering blocks with Waila");
+			LoggerUtils.instance.info("Registering blocks with Waila");
 			FMLInterModComms.sendMessage(ModDetails.MOD_ID_WAILA, "register", TektopiaBlockWaila.class.getTypeName() + ".callbackRegister");
-			LoggerUtils.info("Registered blocks with Waila");
+			LoggerUtils.instance.info("Registered blocks with Waila");
 			
-			LoggerUtils.info("Registering entities with Waila");
+			LoggerUtils.instance.info("Registering entities with Waila");
 			FMLInterModComms.sendMessage(ModDetails.MOD_ID_WAILA, "register", TektopiaEntityWaila.class.getTypeName() + ".callbackRegister");
-			LoggerUtils.info("Registered entities with Waila");
+			LoggerUtils.instance.info("Registered entities with Waila");
 		}
 	}
 	

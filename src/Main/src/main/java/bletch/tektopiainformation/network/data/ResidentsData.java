@@ -1,15 +1,10 @@
 package bletch.tektopiainformation.network.data;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import bletch.tektopiainformation.utils.TektopiaUtils;
+import bletch.common.utils.TektopiaUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -66,15 +61,15 @@ public class ResidentsData {
 	
 	public List<ResidentData> getResidents() {
 		return this.residents == null
-				? Collections.unmodifiableList(new ArrayList<ResidentData>())
+				? Collections.unmodifiableList(new ArrayList<>())
 				: Collections.unmodifiableList(this.residents.stream()
-						.sorted((c1 , c2) -> c1.getName().compareTo(c2.getName()))
+						.sorted(Comparator.comparing(EntityData::getName))
 						.collect(Collectors.toList()));
 	}
 	
 	public List<ResidentData> getResidentsByType(String professionType, Boolean sortByLevel) {
 		return this.residents == null
-				? Collections.unmodifiableList(new ArrayList<ResidentData>())
+				? Collections.unmodifiableList(new ArrayList<>())
 				: Collections.unmodifiableList(this.residents.stream()
 						.filter(r -> professionType != null && professionType.toUpperCase().equals(r.getProfessionType()))
 						.sorted((c1 , c2) -> { 
@@ -108,18 +103,18 @@ public class ResidentsData {
 	
 	public Map<String, Integer> getProfessionTypeCounts() {
 		return this.professionTypeCounts == null 
-				? Collections.unmodifiableMap(new LinkedHashMap<String, Integer>())
+				? Collections.unmodifiableMap(new LinkedHashMap<>())
 				: Collections.unmodifiableMap(this.professionTypeCounts.entrySet().stream()
 						.filter(e -> e.getValue() > 0 && !e.getKey().equals(TektopiaUtils.PROFESSIONTYPE_ARCHITECT) && !e.getKey().equals(TektopiaUtils.PROFESSIONTYPE_TRADESMAN))
-						.sorted((c1 , c2) -> c1.getKey().compareTo(c2.getKey()))
+						.sorted(Entry.comparingByKey())
 						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new)));
 	}
 	
 	public Map<String, Integer> getProfessionTypeCountsAll() {
 		return this.professionTypeCounts == null 
-				? Collections.unmodifiableMap(new LinkedHashMap<String, Integer>())
+				? Collections.unmodifiableMap(new LinkedHashMap<>())
 				: Collections.unmodifiableMap(this.professionTypeCounts.entrySet().stream()
-						.sorted((c1 , c2) -> c1.getKey().compareTo(c2.getKey()))
+						.sorted(Entry.comparingByKey())
 						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new)));
 	}	
 	
@@ -148,8 +143,7 @@ public class ResidentsData {
 	public int getNoBedCount() {
 		final int[] total = { 0 };
 		if (this.residents != null) {
-			this.residents.stream()
-					.forEach(h -> total[0] += (!h.getCanHaveBed() || h.hasBed() ? 0 : 1));
+			this.residents.forEach(h -> total[0] += (!h.getCanHaveBed() || h.hasBed() ? 0 : 1));
 		}
 		return total[0];
 	}
@@ -157,17 +151,16 @@ public class ResidentsData {
 	public Map<Integer, List<ResidentData>> getResidentHappinessStatistics() {
 		int rangeIndex = 0;
 
-		Map<Integer, List<ResidentData>> result = new LinkedHashMap<Integer, List<ResidentData>>();
-		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<ResidentData>());
-		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<ResidentData>());
-		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<ResidentData>());
-		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<ResidentData>());
-		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<ResidentData>());
-		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<ResidentData>());
+		Map<Integer, List<ResidentData>> result = new LinkedHashMap<>();
+		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<>());
+		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<>());
+		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<>());
+		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<>());
+		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<>());
+		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<>());
 		
 		if (this.residents != null) {
-			this.residents.stream()
-					.forEach(r -> {
+			this.residents.forEach(r -> {
 						int key = result.keySet().stream()
 							.filter(k -> r.getHappy() <= k)
 							.findFirst().orElse(-1);
@@ -179,10 +172,7 @@ public class ResidentsData {
 		
 		for (Entry<Integer, List<ResidentData>> entry : result.entrySet()) {
 			if (entry != null) {
-				entry.getValue().sort((c1, c2) -> {
-					int compare = Integer.compare(c1.getHappy(), c2.getHappy());
-					return compare != 0 ? compare : c1.getName().compareTo(c2.getName());
-				});
+				entry.getValue().sort(Comparator.comparingInt(ResidentData::getHappy).thenComparing(EntityData::getName));
 			}
 		}
 		
@@ -192,17 +182,16 @@ public class ResidentsData {
 	public Map<Integer, List<ResidentData>> getResidentHungerStatistics() {
 		int rangeIndex = 0;
 
-		Map<Integer, List<ResidentData>> result = new LinkedHashMap<Integer, List<ResidentData>>();
-		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<ResidentData>());
-		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<ResidentData>());
-		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<ResidentData>());
-		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<ResidentData>());
-		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<ResidentData>());
-		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<ResidentData>());
+		Map<Integer, List<ResidentData>> result = new LinkedHashMap<>();
+		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<>());
+		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<>());
+		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<>());
+		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<>());
+		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<>());
+		result.put(STATISTICS_RANGE * rangeIndex++, new ArrayList<>());
 		
 		if (this.residents != null) {
-			this.residents.stream()
-					.forEach(r -> {
+			this.residents.forEach(r -> {
 						int key = result.keySet().stream()
 							.filter(k -> r.getHunger() <= k)
 							.findFirst().orElse(-1);
@@ -214,10 +203,7 @@ public class ResidentsData {
 		
 		for (Entry<Integer, List<ResidentData>> entry : result.entrySet()) {
 			if (entry != null) {
-				entry.getValue().sort((c1, c2) -> {
-					int compare = Integer.compare(c1.getHunger(), c2.getHunger());
-					return compare != 0 ? compare : c1.getName().compareTo(c2.getName());
-				});
+				entry.getValue().sort(Comparator.comparingInt(ResidentData::getHunger).thenComparing(EntityData::getName));
 			}
 		}
 		
@@ -241,8 +227,8 @@ public class ResidentsData {
 	}
 	
 	protected void clearData() {
-		this.residents = new ArrayList<ResidentData>();
-		this.professionTypeCounts = new HashMap<String, Integer>();
+		this.residents = new ArrayList<>();
+		this.professionTypeCounts = new HashMap<>();
 
 		this.adultCount = 0;
 		this.childCount = 0;

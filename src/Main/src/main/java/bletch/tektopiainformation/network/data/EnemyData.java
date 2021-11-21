@@ -1,5 +1,6 @@
 package bletch.tektopiainformation.network.data;
 
+import bletch.common.Interfaces.IVillageEnemy;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.nbt.NBTTagCompound;
 import net.tangotek.tektopia.entities.EntityNecromancer;
@@ -53,6 +54,10 @@ public class EnemyData extends EntityData {
 				this.level = ((EntityNecromancer)entity).getLevel();
 			}
 			
+			if (entity instanceof IVillageEnemy) {
+				this.level = ((IVillageEnemy)entity).getLevel();
+			}
+			
 			for (EntityAITaskEntry task : entity.tasks.taskEntries) {
 				if (task != null && task.action != null && task.using) {
 					this.currentTask = task.action.getClass().getSimpleName();
@@ -80,7 +85,7 @@ public class EnemyData extends EntityData {
 		
 		nbtTag = super.writeNBT(nbtTag);
 		
-		if (this.enemyType != null && this.enemyType.trim() != "") {
+		if (this.enemyType != null && !this.enemyType.trim().equals("")) {
 			nbtTag.setString(NBTTAG_VILLAGE_ENEMYTYPE, this.enemyType);
 		}
 		if (this.currentTask != null) {

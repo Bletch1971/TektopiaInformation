@@ -7,7 +7,7 @@ public class GuiHyperlink extends GuiButton {
 	
 	public static final ResourceLocation BUTTON_INVISIBLE = new ResourceLocation(ModDetails.MOD_ID, "textures/gui/button_blank.png");
 
-	private String linkData;
+	private final String linkData;
 	
 	public GuiHyperlink(String key, String linkData) {
 		super(key);

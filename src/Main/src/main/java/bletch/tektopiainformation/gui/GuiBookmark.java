@@ -4,7 +4,7 @@ import net.minecraft.util.ResourceLocation;
 
 public class GuiBookmark extends GuiButton {
 	
-	private int pageIndex;
+	private final int pageIndex;
 	protected GuiTexture background;
 	
 	public GuiBookmark(String key, int pageIndex) {

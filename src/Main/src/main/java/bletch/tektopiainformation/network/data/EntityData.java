@@ -110,11 +110,11 @@ public class EntityData {
 	}
 	
 	public List<ItemStack> getArmor() {
-		return Collections.unmodifiableList(this.armor == null ? new ArrayList<ItemStack>() : this.armor);
+		return Collections.unmodifiableList(this.armor == null ? new ArrayList<>() : this.armor);
 	}
 	
 	public List<ItemStack> getEquipment() {
-		return Collections.unmodifiableList(this.equipment == null ? new ArrayList<ItemStack>() : this.equipment);
+		return Collections.unmodifiableList(this.equipment == null ? new ArrayList<>() : this.equipment);
 	}
 	
 	public EntityVillageNavigator getVillagerEntity() {
@@ -134,15 +134,15 @@ public class EntityData {
 		this.modId = ModDetails.MOD_ID;
 		this.modName = "";
 		this.name = "";
-		this.level = 1;
+		this.level = 0;
 		this.health = 0;
 		this.maxHealth = 20;
 		this.homePosition = null;
 		this.currentPosition = null;
 		this.totalArmorValue = 0;
 		
-		this.armor = new ArrayList<ItemStack>();
-		this.equipment = new ArrayList<ItemStack>();
+		this.armor = new ArrayList<>();
+		this.equipment = new ArrayList<>();
 	}
 	
 	protected void populateData(EntityVillageNavigator entity) {
@@ -191,7 +191,7 @@ public class EntityData {
 		
 		if (nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYARMOR)) {
 			NBTTagList nbtTagListArmor = nbtTag.getTagList(NBTTAG_VILLAGE_ENTITYARMOR, 10);
-			this.armor = new ArrayList<ItemStack>(nbtTagListArmor.tagCount());
+			this.armor = new ArrayList<>(nbtTagListArmor.tagCount());
 			
 			for (int index = 0; index < nbtTagListArmor.tagCount(); index++) {
 				this.armor.add(new ItemStack(nbtTagListArmor.getCompoundTagAt(index)));
@@ -202,7 +202,7 @@ public class EntityData {
 		
 		if (nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYEQUIPMENT)) {
 			NBTTagList nbtTagListEquipment = nbtTag.getTagList(NBTTAG_VILLAGE_ENTITYEQUIPMENT, 10);
-			this.equipment = new ArrayList<ItemStack>(nbtTagListEquipment.tagCount());
+			this.equipment = new ArrayList<>(nbtTagListEquipment.tagCount());
 			
 			for (int index = 0; index < nbtTagListEquipment.tagCount(); index++) {
 				this.equipment.add(new ItemStack(nbtTagListEquipment.getCompoundTagAt(index)));

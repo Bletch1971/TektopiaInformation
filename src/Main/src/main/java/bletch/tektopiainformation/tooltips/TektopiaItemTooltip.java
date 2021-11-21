@@ -35,22 +35,15 @@ public class TektopiaItemTooltip {
     	}
     	
     	ItemStack itemStack = event.getItemStack();
-    	if (itemStack == null) {
-    		return;
-    	}
+		Item item = itemStack.getItem();
 
-    	Item item = itemStack.getItem();
-    	if (item == null) {
-    		return;
-    	}
-    	
-    	ResourceLocation registryName = item.getRegistryName();
+		ResourceLocation registryName = item.getRegistryName();
     	if (registryName == null) {
     		return;
     	}
     	
     	String resourceDomain = registryName.getResourceDomain();
-    	if (resourceDomain == null || !(ModDetails.MOD_ID_TEKTOPIA.equalsIgnoreCase(resourceDomain))) {
+    	if (!(ModDetails.MOD_ID_TEKTOPIA.equalsIgnoreCase(resourceDomain))) {
     		return;
     	}
     	

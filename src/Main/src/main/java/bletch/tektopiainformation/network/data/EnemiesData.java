@@ -2,6 +2,7 @@ package bletch.tektopiainformation.network.data;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,9 +35,9 @@ public class EnemiesData {
 	
 	public List<EnemyData> getEnemies() {
 		return this.enemies == null
-				? Collections.unmodifiableList(new ArrayList<EnemyData>())
+				? Collections.unmodifiableList(new ArrayList<>())
 				: Collections.unmodifiableList(this.enemies.stream()
-						.sorted((c1 , c2) -> c1.getName().compareTo(c2.getName()))
+						.sorted(Comparator.comparing(EntityData::getName))
 						.collect(Collectors.toList()));
 	}
 	
@@ -53,7 +54,7 @@ public class EnemiesData {
 	}
 	
 	protected void clearData() {
-		this.enemies = new ArrayList<EnemyData>();
+		this.enemies = new ArrayList<>();
 	}
 	
 	public void populateData(VillageData villageData, Village village) {

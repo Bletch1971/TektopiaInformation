@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import bletch.tektopiainformation.utils.TektopiaUtils;
+import bletch.common.utils.TektopiaUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -41,7 +41,7 @@ public class EconomyData {
 	
 	public List<ItemStack> getSalesHistory() {
 		return this.salesHistory == null
-				? Collections.unmodifiableList(new ArrayList<ItemStack>())
+				? Collections.unmodifiableList(new ArrayList<>())
 				: Collections.unmodifiableList(this.salesHistory);
 	}
 	
@@ -49,7 +49,7 @@ public class EconomyData {
 		this.professionSales = 0;
 		this.merchantSales = 0;
 		
-		this.salesHistory = new ArrayList<ItemStack>();
+		this.salesHistory = new ArrayList<>();
 	}
 	
 	public void populateData(VillageData villageData, Village village) {
@@ -67,10 +67,12 @@ public class EconomyData {
 			
 			if (townData != null && townData.getEconomy() != null) {
 				List<ItemStack> salesHistory = TektopiaUtils.getEconomySalesHistory(townData.getEconomy());
-				
-				for (ItemStack itemStack : salesHistory) {
-					if (itemStack != null) {
-						this.salesHistory.add(itemStack);
+
+				if (salesHistory != null) {
+					for (ItemStack itemStack : salesHistory) {
+						if (itemStack != null) {
+							this.salesHistory.add(itemStack);
+						}
 					}
 				}
 			}

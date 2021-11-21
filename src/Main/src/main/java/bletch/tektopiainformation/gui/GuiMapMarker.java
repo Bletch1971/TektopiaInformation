@@ -9,9 +9,9 @@ import net.minecraft.util.math.BlockPos;
 
 public class GuiMapMarker extends GuiButton implements Comparable<GuiMapMarker> {
 
-	private GuiMapMarkerType markerType;
+	private final GuiMapMarkerType markerType;
 	private BlockPos position;
-	private GuiTooltip tooltip;
+	private final GuiTooltip tooltip;
 	private List<GuiMapQuadrant> quadrants;
 	private int priority;
 	
@@ -80,7 +80,7 @@ public class GuiMapMarker extends GuiButton implements Comparable<GuiMapMarker> 
 	}
 
 	private void setQuadrants() {
-		this.quadrants = new ArrayList<GuiMapQuadrant>();
+		this.quadrants = new ArrayList<>();
 		
 		if (this.position == null)
 			return;

@@ -2,7 +2,9 @@ package bletch.tektopiainformation.network.data;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,12 +38,9 @@ public class VisitorsData {
 	
 	public List<VisitorData> getVisitors() {
 		return this.visitors == null
-				? Collections.unmodifiableList(new ArrayList<VisitorData>())
+				? Collections.unmodifiableList(new ArrayList<>())
 				: Collections.unmodifiableList(this.visitors.stream()
-						.sorted((c1 , c2) -> {
-							int compare = c1.getProfessionType().compareTo(c2.getProfessionType());
-							return compare != 0 ? compare : c1.getName().compareTo(c2.getName());
-						})
+						.sorted(Comparator.comparing((Function<VisitorData, String>) ResidentData::getProfessionType).thenComparing(EntityData::getName))
 						.collect(Collectors.toList()));
 	}
 	
@@ -60,7 +59,7 @@ public class VisitorsData {
 	}
 	
 	protected void clearData() {
-		this.visitors = new ArrayList<VisitorData>();
+		this.visitors = new ArrayList<>();
 	}
 	
 	public void populateData(VillageData villageData, Village village) {
