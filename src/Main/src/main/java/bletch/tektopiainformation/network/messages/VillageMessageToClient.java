@@ -2,13 +2,18 @@ package bletch.tektopiainformation.network.messages;
 
 import java.io.IOException;
 
+import bletch.tektopiainformation.core.ModConfig;
 import bletch.tektopiainformation.network.data.VillageData;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTSizeTracker;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class VillageMessageToClient implements IMessage {
-
+	
 	private boolean messageIsValid;
 	private VillageData villageData;
 	
@@ -60,18 +65,41 @@ public class VillageMessageToClient implements IMessage {
 	}
 	
 	private void readBuffer(PacketBuffer buffer) throws IOException {
+		if (buffer == null) {
+			return;
+		}
+		
+		NBTTagCompound nbtTag = null;
+		
+		try {			
+			nbtTag = CompressedStreamTools.read(new ByteBufInputStream(buffer), new NBTSizeTracker(ModConfig.gui.maxNBTReadSize));
+		} 
+		catch (IOException e) {
+			nbtTag = null;
+		}
+		
+		if (nbtTag == null) {
+			return;
+		}
+		
 		this.villageData = new VillageData();
-		this.villageData.readBuffer(buffer);
+		this.villageData.readNBT(nbtTag);
 
 		this.messageIsValid = true;
 	}
 	
 	private void writeBuffer(PacketBuffer buffer) throws IOException {
-		if (!this.messageIsValid) return;
-		
-		if (this.villageData != null) {
-			this.villageData.writeBuffer(buffer);
+		if (!this.messageIsValid || this.villageData == null) {
+			return;
 		}
+		
+		NBTTagCompound nbtTag = this.villageData.writeNBT(new NBTTagCompound());
+		
+		if (nbtTag == null || nbtTag.hasNoTags()) {
+			return;
+		}
+
+		buffer.writeCompoundTag(nbtTag);
 	}
 	
 }

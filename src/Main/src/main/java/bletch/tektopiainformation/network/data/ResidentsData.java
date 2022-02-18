@@ -18,15 +18,15 @@ import net.tangotek.tektopia.entities.EntityVillagerTek;
 
 public class ResidentsData {
 	
-	protected static final String NBTTAG_VILLAGE_RESIDENTS = "villageresidents";
-	protected static final String NBTTAG_VILLAGE_RESIDENTSLIST = "villageresidentslist";
-	protected static final String NBTTAG_VILLAGE_RESIDENTSPROFESSIONCOUNTS = "villageresidentsprofessioncounts";
-	protected static final String NBTTAG_VILLAGE_RESIDENTSPROFESSIONNAME = "villageresidentsprofessionname";
-	protected static final String NBTTAG_VILLAGE_RESIDENTSPROFESSIONCOUNT = "villageresidentsprofessioncount";
-	protected static final String NBTTAG_VILLAGE_RESIDENTADULTCOUNT = "villageresidentadultcount";
-	protected static final String NBTTAG_VILLAGE_RESIDENTCHILDCOUNT = "villageresidentchildcount";
-	protected static final String NBTTAG_VILLAGE_RESIDENTMALECOUNT = "villageresidentmalecount";
-	protected static final String NBTTAG_VILLAGE_RESIDENTFEMALECOUNT = "villageresidentfemalecount";
+	protected static final String NBTTAG_VILLAGE_RESIDENTS = "residents";
+	protected static final String NBTTAG_VILLAGE_RESIDENTSLIST = "list";
+	protected static final String NBTTAG_VILLAGE_RESIDENTSPROFESSIONCOUNTS = "profs";
+	protected static final String NBTTAG_VILLAGE_RESIDENTSPROFESSIONNAME = "name";
+	protected static final String NBTTAG_VILLAGE_RESIDENTSPROFESSIONCOUNT = "count";
+	protected static final String NBTTAG_VILLAGE_RESIDENTADULTCOUNT = "adults";
+	protected static final String NBTTAG_VILLAGE_RESIDENTCHILDCOUNT = "childs";
+	protected static final String NBTTAG_VILLAGE_RESIDENTMALECOUNT = "males";
+	protected static final String NBTTAG_VILLAGE_RESIDENTFEMALECOUNT = "females";
 	
 	public static final int STATISTICS_RANGE = 20;
 
@@ -359,18 +359,8 @@ public class ResidentsData {
 		}	
 		
 		NBTTagCompound nbtResidentsData = new NBTTagCompound();
-		
-		if (this.residents != null) {
-			NBTTagList nbtTagListResidents = new NBTTagList();
-			
-			for (ResidentData resident : this.residents) {
-				nbtTagListResidents.appendTag(resident.writeNBT(new NBTTagCompound()));
-			}
-			
-			nbtResidentsData.setTag(NBTTAG_VILLAGE_RESIDENTSLIST, nbtTagListResidents);
-		}
 
-		if (this.professionTypeCounts != null) {
+		if (this.professionTypeCounts != null && this.professionTypeCounts.size() > 0) {
 			NBTTagList nbtTagListProfessionCounts = new NBTTagList();
 			
 			for (Entry<String, Integer> professionType : this.professionTypeCounts.entrySet()) {
@@ -381,15 +371,42 @@ public class ResidentsData {
 				nbtTagListProfessionCounts.appendTag(nbtTagProfessionCount);
 			}
 			
-			nbtResidentsData.setTag(NBTTAG_VILLAGE_RESIDENTSPROFESSIONCOUNTS, nbtTagListProfessionCounts);
+			if (!nbtTagListProfessionCounts.hasNoTags()) {
+				nbtResidentsData.setTag(NBTTAG_VILLAGE_RESIDENTSPROFESSIONCOUNTS, nbtTagListProfessionCounts);
+			}
 		}
 		
-		nbtResidentsData.setInteger(NBTTAG_VILLAGE_RESIDENTADULTCOUNT, this.adultCount);
-		nbtResidentsData.setInteger(NBTTAG_VILLAGE_RESIDENTCHILDCOUNT, this.childCount);
-		nbtResidentsData.setInteger(NBTTAG_VILLAGE_RESIDENTMALECOUNT, this.maleCount);
-		nbtResidentsData.setInteger(NBTTAG_VILLAGE_RESIDENTFEMALECOUNT, this.femaleCount);
+		if (this.residents != null && this.residents.size() > 0) {
+			NBTTagList nbtTagListResidents = new NBTTagList();
+			
+			for (ResidentData resident : this.residents) {
+				NBTTagCompound nbtTagResident = resident.writeNBT(new NBTTagCompound());
+				if (!nbtTagResident.hasNoTags()) {
+					nbtTagListResidents.appendTag(nbtTagResident);
+				}
+			}
+			
+			if (!nbtTagListResidents.hasNoTags()) {
+				nbtResidentsData.setTag(NBTTAG_VILLAGE_RESIDENTSLIST, nbtTagListResidents);
+			}
+		}
+		
+		if (this.adultCount > 0) {
+			nbtResidentsData.setInteger(NBTTAG_VILLAGE_RESIDENTADULTCOUNT, this.adultCount);
+		}
+		if (this.childCount > 0) {
+			nbtResidentsData.setInteger(NBTTAG_VILLAGE_RESIDENTCHILDCOUNT, this.childCount);
+		}
+		if (this.maleCount > 0) {
+			nbtResidentsData.setInteger(NBTTAG_VILLAGE_RESIDENTMALECOUNT, this.maleCount);
+		}
+		if (this.femaleCount > 0) {
+			nbtResidentsData.setInteger(NBTTAG_VILLAGE_RESIDENTFEMALECOUNT, this.femaleCount);
+		}
 
-		nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTS, nbtResidentsData);
+		if (!nbtResidentsData.hasNoTags()) {
+			nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTS, nbtResidentsData);
+		}
 		
 		return nbtTag;
 	}

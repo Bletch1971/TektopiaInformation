@@ -20,16 +20,16 @@ import net.tangotek.tektopia.structures.VillageStructureType;
 
 public class HomeData {
 
-	protected static final String NBTTAG_VILLAGE_HOMEID = "villagehomeid";
-	protected static final String NBTTAG_VILLAGE_HOMETYPE = "villagehometype";
-	protected static final String NBTTAG_VILLAGE_HOMEPOSITION = "villagehomeposition";
-	protected static final String NBTTAG_VILLAGE_HOMEVALID = "villagehomevalid";
-	protected static final String NBTTAG_VILLAGE_HOMEFLOORTILECOUNT = "villagehomefloortilecount";
-	protected static final String NBTTAG_VILLAGE_HOMETILESPERVILLAGER = "villagehometilespervillager";
-	protected static final String NBTTAG_VILLAGE_HOMEMAXBEDS = "villagehomemaxbeds";
-	protected static final String NBTTAG_VILLAGE_HOMERESIDENTS = "villagehomeresidents";
-	protected static final String NBTTAG_VILLAGE_HOMEBEDPOSITIONS = "villagehomebedpositions";
-	protected static final String NBTTAG_VILLAGE_HOMEBEDPOSITION = "villagehomebedposition";
+	protected static final String NBTTAG_VILLAGE_HOMEID = "id";
+	protected static final String NBTTAG_VILLAGE_HOMETYPE = "type";
+	protected static final String NBTTAG_VILLAGE_HOMEPOSITION = "pos";
+	protected static final String NBTTAG_VILLAGE_HOMEVALID = "valid";
+	protected static final String NBTTAG_VILLAGE_HOMEFLOORTILECOUNT = "tiles";
+	protected static final String NBTTAG_VILLAGE_HOMETILESPERVILLAGER = "tilesper";
+	protected static final String NBTTAG_VILLAGE_HOMEMAXBEDS = "maxbeds";
+	protected static final String NBTTAG_VILLAGE_HOMERESIDENTS = "residents";
+	protected static final String NBTTAG_VILLAGE_HOMEBEDPOSITIONS = "beds";
+	protected static final String NBTTAG_VILLAGE_HOMEBEDPOSITION = "bedpos";
 	
 	protected static final Random rand = new Random();
 	protected VillageData villageData;
@@ -296,10 +296,18 @@ public class HomeData {
 		if (this.framePosition != null) {
 			nbtTag.setLong(NBTTAG_VILLAGE_HOMEPOSITION, this.framePosition.toLong());
 		}
-		nbtTag.setBoolean(NBTTAG_VILLAGE_HOMEVALID, this.isValid);
-		nbtTag.setInteger(NBTTAG_VILLAGE_HOMEFLOORTILECOUNT, this.floorTileCount);
-		nbtTag.setInteger(NBTTAG_VILLAGE_HOMETILESPERVILLAGER, this.tilesPerVillager);
-		nbtTag.setInteger(NBTTAG_VILLAGE_HOMEMAXBEDS, this.maxBeds);
+		if (this.isValid) {
+			nbtTag.setBoolean(NBTTAG_VILLAGE_HOMEVALID, this.isValid);
+		}
+		if (this.floorTileCount > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_HOMEFLOORTILECOUNT, this.floorTileCount);
+		}
+		if (this.tilesPerVillager > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_HOMETILESPERVILLAGER, this.tilesPerVillager);
+		}
+		if (this.maxBeds > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_HOMEMAXBEDS, this.maxBeds);
+		}
 		
 		if (this.residents != null) {
 			NBTTagList nbtTagListResidents = new NBTTagList();
@@ -308,7 +316,9 @@ public class HomeData {
 				nbtTagListResidents.appendTag(new NBTTagInt(resident.getId()));
 			}
 			
-			nbtTag.setTag(NBTTAG_VILLAGE_HOMERESIDENTS, nbtTagListResidents);
+			if (!nbtTagListResidents.hasNoTags()) {
+				nbtTag.setTag(NBTTAG_VILLAGE_HOMERESIDENTS, nbtTagListResidents);
+			}
 		}
 		
 		if (this.bedPositions != null) {
@@ -323,7 +333,9 @@ public class HomeData {
 				}
 			}
 			
-			nbtTag.setTag(NBTTAG_VILLAGE_HOMEBEDPOSITIONS, nbtTagListBedPositions);
+			if (!nbtTagListBedPositions.hasNoTags()) {
+				nbtTag.setTag(NBTTAG_VILLAGE_HOMEBEDPOSITIONS, nbtTagListBedPositions);
+			}
 		}
 		
 		return nbtTag;

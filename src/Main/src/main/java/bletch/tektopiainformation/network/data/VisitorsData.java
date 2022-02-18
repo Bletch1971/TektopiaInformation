@@ -16,8 +16,8 @@ import net.tangotek.tektopia.entities.EntityVillagerTek;
 
 public class VisitorsData {
 	
-	protected static final String NBTTAG_VILLAGE_VISITORS = "villagevisitors";
-	protected static final String NBTTAG_VILLAGE_VISITORSLIST = "villagevisitorslist";
+	protected static final String NBTTAG_VILLAGE_VISITORS = "visitors";
+	protected static final String NBTTAG_VILLAGE_VISITORSLIST = "list";
 
 	protected VillageData villageData;
 	protected List<VisitorData> visitors;
@@ -112,17 +112,24 @@ public class VisitorsData {
 		
 		NBTTagCompound nbtVisitorsData = new NBTTagCompound();
 		
-		if (this.visitors != null) {
+		if (this.visitors != null && this.visitors.size() > 0) {
 			NBTTagList nbtTagListVisitors = new NBTTagList();
 			
 			for (VisitorData visitor : this.visitors) {
-				nbtTagListVisitors.appendTag(visitor.writeNBT(new NBTTagCompound()));
+				NBTTagCompound nbtTagVisitor = visitor.writeNBT(new NBTTagCompound());
+				if (!nbtTagVisitor.hasNoTags()) {
+					nbtTagListVisitors.appendTag(nbtTagVisitor);
+				}
 			}
 			
-			nbtVisitorsData.setTag(NBTTAG_VILLAGE_VISITORSLIST, nbtTagListVisitors);
+			if (!nbtTagListVisitors.hasNoTags()) {
+				nbtVisitorsData.setTag(NBTTAG_VILLAGE_VISITORSLIST, nbtTagListVisitors);
+			}
 		}
 
-		nbtTag.setTag(NBTTAG_VILLAGE_VISITORS, nbtVisitorsData);
+		if (!nbtVisitorsData.hasNoTags()) {
+			nbtTag.setTag(NBTTAG_VILLAGE_VISITORS, nbtVisitorsData);
+		}
 		
 		return nbtTag;
 	}

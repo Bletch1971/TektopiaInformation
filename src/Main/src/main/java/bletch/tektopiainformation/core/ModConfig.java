@@ -214,6 +214,11 @@ public class ModConfig {
 		@Config.LangKey("config.gui.enableGuiIntegration")
 		@Config.RequiresMcRestart
 		public boolean enableGuiIntegration = true;
+		
+		@Config.Comment("The maximum amount of bytes allowed to be transferred via the village NBT packet buffer.")
+		@Config.LangKey("config.gui.maxNBTReadSize")
+		@Config.RangeInt(min = 2000000, max = 10000000)
+		public int maxNBTReadSize = 5000000;
 
 		public static class TektopiaInformationBook {
 			
@@ -228,6 +233,11 @@ public class ModConfig {
 			@Config.Comment("If true, enemies will be shown in the book; otherwise the enemies section will be blank.")
 			@Config.LangKey("config.gui.tektopiaInformationBook.showEnemies")
 			public boolean showEnemies = true;
+			
+			@Config.Comment("The number of seconds to wait before the book can be reopened.")
+			@Config.LangKey("config.gui.tektopiaInformationBook.bookGracePeriod")
+			@Config.RangeInt(min = 0, max = 60)
+			public int bookGracePeriod = 0;
 			
 		}
 		

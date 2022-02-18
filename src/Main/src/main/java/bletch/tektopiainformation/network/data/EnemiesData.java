@@ -15,8 +15,8 @@ import net.tangotek.tektopia.entities.EntityVillageNavigator;
 
 public class EnemiesData {
 	
-	protected static final String NBTTAG_VILLAGE_ENEMIES = "villageenemies";
-	protected static final String NBTTAG_VILLAGE_ENEMIESLIST = "villageenemieslist";
+	protected static final String NBTTAG_VILLAGE_ENEMIES = "enemies";
+	protected static final String NBTTAG_VILLAGE_ENEMIESLIST = "list";
 	
 	protected VillageData villageData;
 	protected List<EnemyData> enemies;
@@ -107,17 +107,24 @@ public class EnemiesData {
 		
 		NBTTagCompound nbtEnemiesData = new NBTTagCompound();
 		
-		if (this.enemies != null) {
+		if (this.enemies != null && this.enemies.size() > 0) {
 			NBTTagList nbtTagListEnemies = new NBTTagList();
 			
 			for (EnemyData enemy : this.enemies) {
-				nbtTagListEnemies.appendTag(enemy.writeNBT(new NBTTagCompound()));
+				NBTTagCompound nbtTagEnemy = enemy.writeNBT(new NBTTagCompound());
+				if (!nbtTagEnemy.hasNoTags()) {
+					nbtTagListEnemies.appendTag(nbtTagEnemy);
+				}
 			}
 			
-			nbtEnemiesData.setTag(NBTTAG_VILLAGE_ENEMIESLIST, nbtTagListEnemies);
+			if (!nbtTagListEnemies.hasNoTags()) {
+				nbtEnemiesData.setTag(NBTTAG_VILLAGE_ENEMIESLIST, nbtTagListEnemies);
+			}
 		}
 
-		nbtTag.setTag(NBTTAG_VILLAGE_ENEMIES, nbtEnemiesData);
+		if (!nbtEnemiesData.hasNoTags()) {
+			nbtTag.setTag(NBTTAG_VILLAGE_ENEMIES, nbtEnemiesData);
+		}
 		
 		return nbtTag;
 	}

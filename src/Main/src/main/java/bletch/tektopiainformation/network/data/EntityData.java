@@ -19,26 +19,24 @@ import net.tangotek.tektopia.entities.EntityVillagerTek;
 
 public class EntityData {
 
-	protected static final String NBTTAG_VILLAGE_ENTITYID = "villageentityid";
-	protected static final String NBTTAG_VILLAGE_ENTITYCLASSNAME = "villageentityclassname";
-	protected static final String NBTTAG_VILLAGE_ENTITYMODID = "villageentitymodid";
-	protected static final String NBTTAG_VILLAGE_ENTITYMODNAME = "villageentitymodname";
-	protected static final String NBTTAG_VILLAGE_ENTITYNAME = "villageentityname";
-	protected static final String NBTTAG_VILLAGE_ENTITYLEVEL = "villageentitylevel";
-	protected static final String NBTTAG_VILLAGE_ENTITYHEALTH = "villageentityhealth";
-	protected static final String NBTTAG_VILLAGE_ENTITYMAXHEALTH = "villageentitymaxhealth";
-	protected static final String NBTTAG_VILLAGE_ENTITYHOMEPOSITION = "villageentityhomeposition";
-	protected static final String NBTTAG_VILLAGE_ENTITYCURRENTPOSITION = "villageentitycurrentposition";
-	protected static final String NBTTAG_VILLAGE_ENTITYTOTALARMOR = "villageentitytotalarmor";
-	protected static final String NBTTAG_VILLAGE_ENTITYARMOR = "villageentityarmor";
-	protected static final String NBTTAG_VILLAGE_ENTITYEQUIPMENT = "villageentityequipment";
+	protected static final String NBTTAG_VILLAGE_ENTITYID = "id";
+	protected static final String NBTTAG_VILLAGE_ENTITYCLASSNAME = "class";
+	protected static final String NBTTAG_VILLAGE_ENTITYMODID = "modid";
+	protected static final String NBTTAG_VILLAGE_ENTITYNAME = "name";
+	protected static final String NBTTAG_VILLAGE_ENTITYLEVEL = "lvl";
+	protected static final String NBTTAG_VILLAGE_ENTITYHEALTH = "health";
+	protected static final String NBTTAG_VILLAGE_ENTITYMAXHEALTH = "maxhealth";
+	protected static final String NBTTAG_VILLAGE_ENTITYHOMEPOSITION = "home";
+	protected static final String NBTTAG_VILLAGE_ENTITYCURRENTPOSITION = "pos";
+	protected static final String NBTTAG_VILLAGE_ENTITYTOTALARMOR = "armor";
+	protected static final String NBTTAG_VILLAGE_ENTITYARMOR = "armorlist";
+	protected static final String NBTTAG_VILLAGE_ENTITYEQUIPMENT = "equiplist";
 
 	protected static List<Entity> entityList = null;
 	
 	protected int id;
 	protected String className;
 	protected String modId;
-	protected String modName;
 	protected String name;
 	protected int level;
 	protected float health;
@@ -75,10 +73,6 @@ public class EntityData {
 	
 	public String getModId() {
 		return this.modId;
-	}
-	
-	public String getModName() {
-		return this.modName;
 	}
 	
 	public String getName() {
@@ -132,7 +126,6 @@ public class EntityData {
 		this.id = 0;
 		this.className = "";
 		this.modId = ModDetails.MOD_ID;
-		this.modName = "";
 		this.name = "";
 		this.level = 0;
 		this.health = 0;
@@ -151,7 +144,6 @@ public class EntityData {
 			this.id = entity.getEntityId();
 			this.className = entity.getClass().getSimpleName().toLowerCase();
 			this.modId = ModIdentification.getEntityModId(entity);
-			this.modName = ModIdentification.getEntityModName(entity);
 			this.level = 1;
 			this.name = entity.getName();
 			this.health = entity.getHealth();
@@ -180,7 +172,6 @@ public class EntityData {
 		this.id = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYID) ? nbtTag.getInteger(NBTTAG_VILLAGE_ENTITYID) : 0;
 		this.className = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYCLASSNAME) ? nbtTag.getString(NBTTAG_VILLAGE_ENTITYCLASSNAME) : "";
 		this.modId = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYMODID) ? nbtTag.getString(NBTTAG_VILLAGE_ENTITYMODID) : ModDetails.MOD_ID;
-		this.modName = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYMODNAME) ? nbtTag.getString(NBTTAG_VILLAGE_ENTITYMODNAME) : "";
 		this.name = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYNAME) ? nbtTag.getString(NBTTAG_VILLAGE_ENTITYNAME) : "";
 		this.level = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYLEVEL) ? nbtTag.getInteger(NBTTAG_VILLAGE_ENTITYLEVEL) : 0;
 		this.health = nbtTag.hasKey(NBTTAG_VILLAGE_ENTITYHEALTH) ? nbtTag.getFloat(NBTTAG_VILLAGE_ENTITYHEALTH) : 0;
@@ -194,7 +185,12 @@ public class EntityData {
 			this.armor = new ArrayList<>(nbtTagListArmor.tagCount());
 			
 			for (int index = 0; index < nbtTagListArmor.tagCount(); index++) {
-				this.armor.add(new ItemStack(nbtTagListArmor.getCompoundTagAt(index)));
+				NBTTagCompound nbtTagArmorItem = nbtTagListArmor.getCompoundTagAt(index);
+				if (nbtTagArmorItem.hasNoTags()) {
+					this.armor.add(ItemStack.EMPTY);
+				} else {
+					this.armor.add(new ItemStack(nbtTagArmorItem));
+				}
 			}
 			
 			Collections.reverse(this.armor);
@@ -218,29 +214,46 @@ public class EntityData {
 		nbtTag.setInteger(NBTTAG_VILLAGE_ENTITYID, this.id);
 		nbtTag.setString(NBTTAG_VILLAGE_ENTITYCLASSNAME, this.className);
 		nbtTag.setString(NBTTAG_VILLAGE_ENTITYMODID, this.modId);
-		nbtTag.setString(NBTTAG_VILLAGE_ENTITYMODNAME, this.modName);
 		nbtTag.setString(NBTTAG_VILLAGE_ENTITYNAME, this.name);
-		nbtTag.setInteger(NBTTAG_VILLAGE_ENTITYLEVEL, this.level);
-		nbtTag.setFloat(NBTTAG_VILLAGE_ENTITYHEALTH, this.health);
-		nbtTag.setFloat(NBTTAG_VILLAGE_ENTITYMAXHEALTH, this.maxHealth);
+		if (this.level > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_ENTITYLEVEL, this.level);
+		}
+		if (this.health > 0) {
+			nbtTag.setFloat(NBTTAG_VILLAGE_ENTITYHEALTH, this.health);
+		}
+		if (this.maxHealth > 0) {
+			nbtTag.setFloat(NBTTAG_VILLAGE_ENTITYMAXHEALTH, this.maxHealth);
+		}
 		if (this.homePosition != null) {
 			nbtTag.setLong(NBTTAG_VILLAGE_ENTITYHOMEPOSITION, this.homePosition.toLong());
 		}
 		if (this.currentPosition != null) {
 			nbtTag.setLong(NBTTAG_VILLAGE_ENTITYCURRENTPOSITION, this.currentPosition.toLong());
 		}
-		nbtTag.setInteger(NBTTAG_VILLAGE_ENTITYTOTALARMOR, this.totalArmorValue);
+		if (this.totalArmorValue > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_ENTITYTOTALARMOR, this.totalArmorValue);
+		}
 		
 		if (this.armor != null && this.armor.size() > 0) {
 			NBTTagList nbtTagListArmor = new NBTTagList();
 			
+			int emptyCount = 0;
+			
 			for (ItemStack itemStack : this.armor) {
 				if (itemStack != null) {
-					nbtTagListArmor.appendTag(itemStack.writeToNBT(new NBTTagCompound()));
+					if (itemStack.isEmpty()) {
+						nbtTagListArmor.appendTag(new NBTTagCompound());
+						emptyCount++;
+					} else {
+						NBTTagCompound nbtTagArmorItem = itemStack.writeToNBT(new NBTTagCompound());
+						nbtTagListArmor.appendTag(nbtTagArmorItem);
+					}
 				}
 			}
 			
-			nbtTag.setTag(NBTTAG_VILLAGE_ENTITYARMOR, nbtTagListArmor);
+			if (emptyCount != nbtTagListArmor.tagCount() && !nbtTagListArmor.hasNoTags()) {
+				nbtTag.setTag(NBTTAG_VILLAGE_ENTITYARMOR, nbtTagListArmor);
+			}
 		}
 		
 		if (this.equipment != null && this.equipment.size() > 0) {
@@ -248,11 +261,16 @@ public class EntityData {
 			
 			for (ItemStack itemStack : this.equipment) {
 				if (itemStack != null && !itemStack.isEmpty()) {
-					nbtTagListEquipment.appendTag(itemStack.writeToNBT(new NBTTagCompound()));
+					NBTTagCompound nbtTagEquipmentItem = itemStack.writeToNBT(new NBTTagCompound());
+					if (!nbtTagEquipmentItem.hasNoTags()) {
+						nbtTagListEquipment.appendTag(nbtTagEquipmentItem);
+					}
 				}
 			}
 			
-			nbtTag.setTag(NBTTAG_VILLAGE_ENTITYEQUIPMENT, nbtTagListEquipment);
+			if (!nbtTagListEquipment.hasNoTags()) {
+				nbtTag.setTag(NBTTAG_VILLAGE_ENTITYEQUIPMENT, nbtTagListEquipment);
+			}
 		}
 		
 		return nbtTag;

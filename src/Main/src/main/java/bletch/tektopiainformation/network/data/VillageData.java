@@ -1,11 +1,7 @@
 package bletch.tektopiainformation.network.data;
 
-import java.io.IOException;
-
 import bletch.tektopiainformation.core.ModConfig;
-import bletch.tektopiainformation.utils.LoggerUtils;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.tangotek.tektopia.Village;
 import net.tangotek.tektopia.entities.EntityVillageNavigator;
@@ -13,16 +9,16 @@ import net.tangotek.tektopia.entities.EntityVillageNavigator;
 public class VillageData {
 	public static final float MC_TICKS_PER_SECOND = 1000.0F / 60.0F / 60.0F;
 
-	protected static final String NBTTAG_VILLAGE_NAME = "villagename";
-	protected static final String NBTTAG_VILLAGE_ORIGIN = "villageorigin";
-	protected static final String NBTTAG_VILLAGE_SIZE = "villagesize";
-	protected static final String NBTTAG_VILLAGE_WORLDTIME = "villageworldtime";
+	protected static final String NBTTAG_VILLAGE_NAME = "name";
+	protected static final String NBTTAG_VILLAGE_ORIGIN = "origin";
+	protected static final String NBTTAG_VILLAGE_SIZE = "size";
+	protected static final String NBTTAG_VILLAGE_WORLDTIME = "time";
 
-	protected static final String NBTTAG_ENTITYID = "entityid";
-	protected static final String NBTTAG_BEDPOSITION = "bedposition";
-	protected static final String NBTTAG_FRAMEPOSITION = "frameposition";
+	protected static final String NBTTAG_ENTITYID = "sel_entity";
+	protected static final String NBTTAG_BEDPOSITION = "sel_bedpos";
+	protected static final String NBTTAG_FRAMEPOSITION = "sel_framepos";
 	
-	protected static final String NBTTAG_PLAYERPOSITION = "playerposition";
+	protected static final String NBTTAG_PLAYERPOSITION = "playerpos";
 	
 	protected String villageName;
 	protected BlockPos villageOrigin;
@@ -246,17 +242,6 @@ public class VillageData {
 			this.enemiesData.populateData(this, village);
 	}
 	
-	public void readBuffer(PacketBuffer buffer) throws IOException {
-		if (buffer == null) {
-			return;
-		}
-		
-		String logMessage = "VillageData - readBuffer called; buffer capacity=" + buffer.capacity() + "; buffer max capacity=" + buffer.maxCapacity();
-		LoggerUtils.instance.info(logMessage, true);
-		
-		readNBT(buffer.readCompoundTag());
-	}
-	
 	public void readNBT(NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
@@ -284,18 +269,6 @@ public class VillageData {
 		this.economyData.readNBT(this, nbtTag);
 	}
 	
-	public void writeBuffer(PacketBuffer buffer) {
-		if (buffer == null) {
-			return;
-		}
-		
-		NBTTagCompound nbtTag = writeNBT(new NBTTagCompound());
-		buffer.writeCompoundTag(nbtTag);
-		
-		String logMessage = "VillageData - writeBuffer called; buffer capacity=" + buffer.capacity() + "; buffer max capacity=" + buffer.maxCapacity();
-		LoggerUtils.instance.info(logMessage, true);
-	}
-	
 	public NBTTagCompound writeNBT(NBTTagCompound nbtTag) {
 		if (nbtTag == null) {
 			nbtTag = new NBTTagCompound();
@@ -308,7 +281,9 @@ public class VillageData {
 		nbtTag.setInteger(NBTTAG_VILLAGE_SIZE, this.villageSize);
 		nbtTag.setLong(NBTTAG_VILLAGE_WORLDTIME, this.worldTime);
 		
-		nbtTag.setInteger(NBTTAG_ENTITYID, this.entityId);
+		if (this.entityId > 0) {
+			nbtTag.setInteger(NBTTAG_ENTITYID, this.entityId);
+		}
 		if (this.bedPosition != null) {
 			nbtTag.setLong(NBTTAG_BEDPOSITION, this.bedPosition.toLong());
 		}

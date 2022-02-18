@@ -14,11 +14,11 @@ import net.tangotek.tektopia.structures.VillageStructureType;
 
 public class StructuresData {
 	
-	protected static final String NBTTAG_VILLAGE_STRUCTURES = "villagestructures";	
-	protected static final String NBTTAG_VILLAGE_STRUCTURESLIST = "villagestructureslist";
-	protected static final String NBTTAG_VILLAGE_STRUCTURETYPECOUNTS = "villagestructuretypecounts";
-	protected static final String NBTTAG_VILLAGE_STRUCTURETYPENAME = "villagestructuretypename";
-	protected static final String NBTTAG_VILLAGE_STRUCTURETYPECOUNT = "villagestructuretypecount";
+	protected static final String NBTTAG_VILLAGE_STRUCTURES = "structures";	
+	protected static final String NBTTAG_VILLAGE_STRUCTURESLIST = "list";
+	protected static final String NBTTAG_VILLAGE_STRUCTURETYPECOUNTS = "types";
+	protected static final String NBTTAG_VILLAGE_STRUCTURETYPENAME = "name";
+	protected static final String NBTTAG_VILLAGE_STRUCTURETYPECOUNT = "count";
 
 	protected VillageData villageData;
 	protected List<StructureData> structures;
@@ -173,7 +173,7 @@ public class StructuresData {
 		
 		NBTTagCompound nbtStructuresData = new NBTTagCompound();
 
-		if (this.structureTypeCounts != null) {
+		if (this.structureTypeCounts != null && this.structureTypeCounts.size() > 0) {
 			NBTTagList nbtTagListStructureCounts = new NBTTagList();
 			
 			for (Entry<VillageStructureType, Integer> structureType : this.structureTypeCounts.entrySet()) {
@@ -184,20 +184,29 @@ public class StructuresData {
 				nbtTagListStructureCounts.appendTag(nbtTagStructureCount);
 			}
 			
-			nbtStructuresData.setTag(NBTTAG_VILLAGE_STRUCTURETYPECOUNTS, nbtTagListStructureCounts);
+			if (!nbtTagListStructureCounts.hasNoTags()) {
+				nbtStructuresData.setTag(NBTTAG_VILLAGE_STRUCTURETYPECOUNTS, nbtTagListStructureCounts);
+			}
 		}
 		
-		if (this.structures != null) {
+		if (this.structures != null && this.structures.size() > 0) {
 			NBTTagList nbtTagListHomes = new NBTTagList();
 
 			for (StructureData structure : this.structures) {
-				nbtTagListHomes.appendTag(structure.writeNBT(new NBTTagCompound()));
+				NBTTagCompound nbtTagStructure = structure.writeNBT(new NBTTagCompound());
+				if (!nbtTagStructure.hasNoTags()) {
+					nbtTagListHomes.appendTag(nbtTagStructure);
+				}
 			}
 			
-			nbtStructuresData.setTag(NBTTAG_VILLAGE_STRUCTURESLIST, nbtTagListHomes);
+			if (!nbtTagListHomes.hasNoTags()) {
+				nbtStructuresData.setTag(NBTTAG_VILLAGE_STRUCTURESLIST, nbtTagListHomes);
+			}
 		}
 		
-		nbtTag.setTag(NBTTAG_VILLAGE_STRUCTURES, nbtStructuresData);
+		if (!nbtStructuresData.hasNoTags()) {
+			nbtTag.setTag(NBTTAG_VILLAGE_STRUCTURES, nbtStructuresData);
+		}
 		
 		return nbtTag;
 	}

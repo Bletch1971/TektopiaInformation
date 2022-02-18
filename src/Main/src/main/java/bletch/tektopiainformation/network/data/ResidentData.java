@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import bletch.common.utils.StringUtils;
 import bletch.common.utils.TektopiaUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.IMerchant;
@@ -32,41 +33,41 @@ import net.tangotek.tektopia.structures.VillageStructure;
 
 public class ResidentData extends EntityData {
 
-	protected static final String NBTTAG_VILLAGE_RESIDENTPROFESSIONTYPE = "villageresidentprofessiontype";
-	protected static final String NBTTAG_VILLAGE_RESIDENTMALE = "villageresidentmale";
-	protected static final String NBTTAG_VILLAGE_RESIDENTCHILD = "villageresidentchild";
-	protected static final String NBTTAG_VILLAGE_RESIDENTCAPTAIN = "villageresidentcaptain";
-	protected static final String NBTTAG_VILLAGE_RESIDENTVENDOR = "villageresidentvendor";
-	protected static final String NBTTAG_VILLAGE_RESIDENTVISITOR = "villageresidentvisitor";
-	protected static final String NBTTAG_VILLAGE_RESIDENTSLEEPING = "villageresidentsleeping";
-	protected static final String NBTTAG_VILLAGE_RESIDENTBASELEVEL = "villageresidentbaselevel";
-	protected static final String NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL = "villageresidentblessedlevel";
-	protected static final String NBTTAG_VILLAGE_RESIDENTDAYSALIVE = "villageresidentdaysAlive";
-	protected static final String NBTTAG_VILLAGE_RESIDENTHUNGER = "villageresidenthunger";
-	protected static final String NBTTAG_VILLAGE_RESIDENTMAXHUNGER = "villageresidentmaxhunger";
-	protected static final String NBTTAG_VILLAGE_RESIDENTHAPPY = "villageresidenthappy";
-	protected static final String NBTTAG_VILLAGE_RESIDENTMAXHAPPY = "villageresidentmaxhappy";
-	protected static final String NBTTAG_VILLAGE_RESIDENTINTELLIGENCE = "villageresidentintellegience";
-	protected static final String NBTTAG_VILLAGE_RESIDENTMAXINTELLIGENCE = "villageresidentmaxintellegience";
+	protected static final String NBTTAG_VILLAGE_RESIDENTPROFESSIONTYPE = "prof";
+	protected static final String NBTTAG_VILLAGE_RESIDENTMALE = "male";
+	protected static final String NBTTAG_VILLAGE_RESIDENTCHILD = "child";
+	protected static final String NBTTAG_VILLAGE_RESIDENTCAPTAIN = "captain";
+	protected static final String NBTTAG_VILLAGE_RESIDENTVENDOR = "vendor";
+	protected static final String NBTTAG_VILLAGE_RESIDENTVISITOR = "visitor";
+	protected static final String NBTTAG_VILLAGE_RESIDENTSLEEPING = "sleep";
+	protected static final String NBTTAG_VILLAGE_RESIDENTBASELEVEL = "baselvl";
+	protected static final String NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL = "blesslvl";
+	protected static final String NBTTAG_VILLAGE_RESIDENTDAYSALIVE = "days";
+	protected static final String NBTTAG_VILLAGE_RESIDENTHUNGER = "hunger";
+	protected static final String NBTTAG_VILLAGE_RESIDENTMAXHUNGER = "maxhunger";
+	protected static final String NBTTAG_VILLAGE_RESIDENTHAPPY = "happy";
+	protected static final String NBTTAG_VILLAGE_RESIDENTMAXHAPPY = "maxhappy";
+	protected static final String NBTTAG_VILLAGE_RESIDENTINTELLIGENCE = "intell";
+	protected static final String NBTTAG_VILLAGE_RESIDENTMAXINTELLIGENCE = "maxintell";
 
-	protected static final String NBTTAG_VILLAGE_RESIDENTWORKSTART = "villageresidentworkstart";
-	protected static final String NBTTAG_VILLAGE_RESIDENTWORKFINISH = "villageresidentworkfinish";
-	protected static final String NBTTAG_VILLAGE_RESIDENTSLEEPSTART = "villageresidentsleepstart";
-	protected static final String NBTTAG_VILLAGE_RESIDENTSLEEPFINISH = "villageresidentsleepfinish";
+	protected static final String NBTTAG_VILLAGE_RESIDENTWORKSTART = "work1";
+	protected static final String NBTTAG_VILLAGE_RESIDENTWORKFINISH = "work2";
+	protected static final String NBTTAG_VILLAGE_RESIDENTSLEEPSTART = "sleep1";
+	protected static final String NBTTAG_VILLAGE_RESIDENTSLEEPFINISH = "sleep2";
 	
-	protected static final String NBTTAG_VILLAGE_RESIDENTCANHAVEBED = "villageresidentcanhavebed";
-	protected static final String NBTTAG_VILLAGE_RESIDENTBEDPOSITION = "villageresidentbedposition";
-	protected static final String NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE = "villageresidentcurrentstructure";
-	protected static final String NBTTAG_VILLAGE_RESIDENTCURRENTTASK = "villageresidentcurrenttask";
-	protected static final String NBTTAG_VILLAGE_RESIDENTADDPROF = "villageresidentaddprof";
-	protected static final String NBTTAG_VILLAGE_RESIDENTADDPROFNAME = "villageresidentaddprofname";
-	protected static final String NBTTAG_VILLAGE_RESIDENTADDPROFLEVEL = "villageresidentaddproflevel";
-	protected static final String NBTTAG_VILLAGE_RESIDENTAIFILTER = "villageresidentaifilter";
-	protected static final String NBTTAG_VILLAGE_RESIDENTAIFILTERNAME = "villageresidentaifiltername";
-	protected static final String NBTTAG_VILLAGE_RESIDENTAIFILTERENABLED = "villageresidentaifilterenabled";
-	protected static final String NBTTAG_VILLAGE_RESIDENTRECIPES = "villageresidentrecipes";
-	protected static final String NBTTAG_VILLAGE_RESIDENTINVENTORY = "villageresidentinventory";
-	protected static final String NBTTAG_VILLAGE_RESIDENTRECENTEATS = "villageresidentrecenteats";
+	protected static final String NBTTAG_VILLAGE_RESIDENTCANHAVEBED = "havebed";
+	protected static final String NBTTAG_VILLAGE_RESIDENTBEDPOSITION = "bedpos";
+	protected static final String NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE = "struct";
+	protected static final String NBTTAG_VILLAGE_RESIDENTCURRENTTASK = "task";
+	protected static final String NBTTAG_VILLAGE_RESIDENTADDPROF = "addprof";
+	protected static final String NBTTAG_VILLAGE_RESIDENTADDPROFNAME = "name";
+	protected static final String NBTTAG_VILLAGE_RESIDENTADDPROFLEVEL = "level";
+	protected static final String NBTTAG_VILLAGE_RESIDENTAIFILTER = "aifilter";
+	protected static final String NBTTAG_VILLAGE_RESIDENTAIFILTERNAME = "name";
+	protected static final String NBTTAG_VILLAGE_RESIDENTAIFILTERENABLED = "on";
+	protected static final String NBTTAG_VILLAGE_RESIDENTRECIPES = "recipes";
+	protected static final String NBTTAG_VILLAGE_RESIDENTINVENTORY = "inv";
+	protected static final String NBTTAG_VILLAGE_RESIDENTRECENTEATS = "eaten";
 
 	@SuppressWarnings("rawtypes")
 	protected static final List<Class> toolItemClasses = Arrays.asList(ItemAxe.class, ItemHoe.class, ItemSword.class, ItemPickaxe.class, ItemShears.class);
@@ -312,7 +313,7 @@ public class ResidentData extends EntityData {
 		super.clearData();
 		
 		this.professionType = null;
-		this.isMale = true;
+		this.isMale = false;
 		this.isChild = false;
 		this.isCaptain = false;
 		this.isVendor = false;
@@ -332,7 +333,7 @@ public class ResidentData extends EntityData {
 		this.sleepStartTime = 0;
 		this.sleepFinishTime = 0;
 		
-		this.canHaveBed = true;
+		this.canHaveBed = false;
 		this.bedPosition = null;
 		this.currentStructure = null;
 		this.currentTask = null;
@@ -487,7 +488,7 @@ public class ResidentData extends EntityData {
 		super.readNBT(nbtTag);
 
 		this.professionType = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTPROFESSIONTYPE) ? nbtTag.getString(NBTTAG_VILLAGE_RESIDENTPROFESSIONTYPE) : null;
-		this.isMale = !nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTMALE) || nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTMALE);
+		this.isMale = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTMALE) && nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTMALE);
 		this.isChild = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCHILD) && nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCHILD);
 		this.isCaptain = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCAPTAIN) && nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCAPTAIN);
 		this.isVendor = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTVENDOR) && nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTVENDOR);
@@ -513,7 +514,7 @@ public class ResidentData extends EntityData {
 		this.currentTask = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCURRENTTASK) ? nbtTag.getString(NBTTAG_VILLAGE_RESIDENTCURRENTTASK) : null;
 		
 		ProfessionType originalProfessionType = null;
-		if (this.professionType != null && !this.professionType.trim().equals("")) {
+		if (!StringUtils.isNullOrWhitespace(this.professionType)) {
 			originalProfessionType = TektopiaUtils.getProfessionType(this.professionType);
 		}
 		
@@ -593,31 +594,71 @@ public class ResidentData extends EntityData {
 		}
 		
 		nbtTag = super.writeNBT(nbtTag);
-		
-		if (this.professionType != null && !this.professionType.trim().equals("")) {
+
+		if (!StringUtils.isNullOrWhitespace(this.professionType)) {
 			nbtTag.setString(NBTTAG_VILLAGE_RESIDENTPROFESSIONTYPE, this.professionType);
 		}
-		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTMALE, this.isMale);
-		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTCHILD, this.isChild);
-		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTCAPTAIN, this.isCaptain);
-		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTVENDOR, this.isVendor);
-		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTVISITOR, this.isVisitor);
-		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTSLEEPING, this.isSleeping);
-		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTBASELEVEL, this.baseLevel);
-		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL, this.blessedLevel);
-		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTDAYSALIVE, this.daysAlive);
-		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTHUNGER, this.hunger);
-		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTMAXHUNGER, this.maxHunger);
-		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTHAPPY, this.happy);
-		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTMAXHAPPY, this.maxHappy);
-		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTINTELLIGENCE, this.intelligence);
-		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTMAXINTELLIGENCE, this.maxIntelligence);
-		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTWORKSTART, this.workStartTime);
-		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTWORKFINISH, this.workFinishTime);
-		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTSLEEPSTART, this.sleepStartTime);
-		nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTSLEEPFINISH, this.sleepFinishTime);
+		if (this.isMale) {
+			nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTMALE, this.isMale);
+		}
+		if (this.isChild) {
+			nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTCHILD, this.isChild);
+		}
+		if (this.isCaptain) {
+			nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTCAPTAIN, this.isCaptain);
+		}
+		if (this.isVendor) {
+			nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTVENDOR, this.isVendor);
+		}
+		if (this.isVisitor) {
+			nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTVISITOR, this.isVisitor);
+		}
+		if (this.isSleeping) {
+			nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTSLEEPING, this.isSleeping);
+		}
+		if (this.baseLevel > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTBASELEVEL, this.baseLevel);
+		}
+		if (this.blessedLevel > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTBLESSEDLEVEL, this.blessedLevel);
+		}
+		if (this.daysAlive > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTDAYSALIVE, this.daysAlive);
+		}
+		if (this.hunger > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTHUNGER, this.hunger);
+		}
+		if (this.maxHunger > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTMAXHUNGER, this.maxHunger);
+		}
+		if (this.happy > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTHAPPY, this.happy);
+		}
+		if (this.maxHappy > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTMAXHAPPY, this.maxHappy);
+		}
+		if (this.intelligence > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTINTELLIGENCE, this.intelligence);
+		}
+		if (this.maxIntelligence > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTMAXINTELLIGENCE, this.maxIntelligence);
+		}
+		if (this.workStartTime > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTWORKSTART, this.workStartTime);
+		}
+		if (this.workFinishTime > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTWORKFINISH, this.workFinishTime);
+		}
+		if (this.sleepStartTime > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTSLEEPSTART, this.sleepStartTime);
+		}
+		if (this.sleepFinishTime > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_RESIDENTSLEEPFINISH, this.sleepFinishTime);
+		}
 		
-		nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTCANHAVEBED, this.canHaveBed);
+		if (this.canHaveBed) {
+			nbtTag.setBoolean(NBTTAG_VILLAGE_RESIDENTCANHAVEBED, this.canHaveBed);
+		}
 		if (this.bedPosition != null) {
 			nbtTag.setLong(NBTTAG_VILLAGE_RESIDENTBEDPOSITION, this.bedPosition.toLong());
 		}
@@ -641,7 +682,9 @@ public class ResidentData extends EntityData {
 				}
 			}
 			
-			nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTADDPROF, nbtTagListProfessions);
+			if (!nbtTagListProfessions.hasNoTags()) {
+				nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTADDPROF, nbtTagListProfessions);
+			}
 		}
 		
 		if (this.aiFilters != null && this.aiFilters.size() > 0) {
@@ -657,23 +700,33 @@ public class ResidentData extends EntityData {
 				}
 			}
 			
-			nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTAIFILTER, nbtTagListAIFilters);
+			if (!nbtTagListAIFilters.hasNoTags()) {
+				nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTAIFILTER, nbtTagListAIFilters);
+			}
 		}
 		
 		if (this.recipes != null && !this.recipes.isEmpty()) {
-			nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTRECIPES, this.recipes.getRecipiesAsTags());
+			NBTTagCompound nbtTagRecipies = this.recipes.getRecipiesAsTags();
+			if (!nbtTagRecipies.hasNoTags()) {
+				nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTRECIPES, nbtTagRecipies);
+			}
 		}
 		
 		if (this.inventory != null && !this.inventory.isEmpty()) {
 			NBTTagList nbtTagListInventory = new NBTTagList();
 			
 			for (ItemStack itemStack : this.inventory) {
-				if (itemStack != null && !itemStack.isEmpty()) {					
-					nbtTagListInventory.appendTag(itemStack.writeToNBT(new NBTTagCompound()));
+				if (itemStack != null && !itemStack.isEmpty()) {
+					NBTTagCompound nbtTagInventoryItem = itemStack.writeToNBT(new NBTTagCompound());
+					if (!nbtTagInventoryItem.hasNoTags()) {
+						nbtTagListInventory.appendTag(nbtTagInventoryItem);
+					}
 				}
 			}
 			
-			nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTINVENTORY, nbtTagListInventory);
+			if (!nbtTagListInventory.hasNoTags()) {
+				nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTINVENTORY, nbtTagListInventory);
+			}
 		}
 		
 		if (this.recentEats != null && !this.recentEats.isEmpty()) {
@@ -683,7 +736,9 @@ public class ResidentData extends EntityData {
 				nbtTagListRecentEats.appendTag(new NBTTagInt(itemId));
 			}
 			
-			nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTRECENTEATS, nbtTagListRecentEats);
+			if (!nbtTagListRecentEats.hasNoTags()) {
+				nbtTag.setTag(NBTTAG_VILLAGE_RESIDENTRECENTEATS, nbtTagListRecentEats);
+			}
 		}
 		
 		return nbtTag;

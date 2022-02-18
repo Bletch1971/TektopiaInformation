@@ -18,16 +18,16 @@ import net.tangotek.tektopia.structures.VillageStructureType;
 
 public class StructureData {
 	
-	protected static final String NBTTAG_VILLAGE_STRUCTUREID = "villagestructureid";
-	protected static final String NBTTAG_VILLAGE_STRUCTURETYPE = "villagestructuretype";
-	protected static final String NBTTAG_VILLAGE_STRUCTUREPOSITION = "villagestructureposition";
-	protected static final String NBTTAG_VILLAGE_STRUCTUREVALID = "villagestructurevalid";
-	protected static final String NBTTAG_VILLAGE_STRUCTUREFLOORTILECOUNT = "villagestructurefloortilecount";
-	protected static final String NBTTAG_VILLAGE_STRUCTURETILESPEROCCUPANT = "villagestructuretilesperoccupant";
-	protected static final String NBTTAG_VILLAGE_STRUCTUREOCCUPANTS = "villagestructureoccupants";
-	protected static final String NBTTAG_VILLAGE_STRUCTUREANIMALPEN = "villagestructureanimalpen";
-	protected static final String NBTTAG_VILLAGE_STRUCTUREANIMALCOUNT = "villagestructureanimalcount";
-	protected static final String NBTTAG_VILLAGE_STRUCTUREANIMALSIZE = "villagestructureanimalsize";
+	protected static final String NBTTAG_VILLAGE_STRUCTUREID = "id";
+	protected static final String NBTTAG_VILLAGE_STRUCTURETYPE = "type";
+	protected static final String NBTTAG_VILLAGE_STRUCTUREPOSITION = "pos";
+	protected static final String NBTTAG_VILLAGE_STRUCTUREVALID = "valid";
+	protected static final String NBTTAG_VILLAGE_STRUCTUREFLOORTILECOUNT = "tiles";
+	protected static final String NBTTAG_VILLAGE_STRUCTURETILESPEROCCUPANT = "tilesper";
+	protected static final String NBTTAG_VILLAGE_STRUCTUREOCCUPANTS = "occupants";
+	protected static final String NBTTAG_VILLAGE_STRUCTUREANIMALPEN = "pen";
+	protected static final String NBTTAG_VILLAGE_STRUCTUREANIMALCOUNT = "animalcount";
+	protected static final String NBTTAG_VILLAGE_STRUCTUREANIMALSIZE = "animalsize";
 	
 	protected static final Random rand = new Random();
 	protected VillageData villageData;
@@ -237,15 +237,23 @@ public class StructureData {
 		if (this.framePosition != null) {
 			nbtTag.setLong(NBTTAG_VILLAGE_STRUCTUREPOSITION, this.framePosition.toLong());
 		}
-		nbtTag.setBoolean(NBTTAG_VILLAGE_STRUCTUREVALID, this.isValid);
-		nbtTag.setInteger(NBTTAG_VILLAGE_STRUCTUREFLOORTILECOUNT, this.floorTileCount);
-		nbtTag.setInteger(NBTTAG_VILLAGE_STRUCTURETILESPEROCCUPANT, this.tilesPerOccupant);
+		if (this.isValid) {
+			nbtTag.setBoolean(NBTTAG_VILLAGE_STRUCTUREVALID, this.isValid);
+		}
+		if (this.floorTileCount > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_STRUCTUREFLOORTILECOUNT, this.floorTileCount);
+		}
+		if (this.tilesPerOccupant > 0) {
+			nbtTag.setInteger(NBTTAG_VILLAGE_STRUCTURETILESPEROCCUPANT, this.tilesPerOccupant);
+		}
 
-		nbtTag.setBoolean(NBTTAG_VILLAGE_STRUCTUREANIMALPEN, this.isAnimalPen);
-		nbtTag.setInteger(NBTTAG_VILLAGE_STRUCTUREANIMALCOUNT, this.animalCount);
-		nbtTag.setInteger(NBTTAG_VILLAGE_STRUCTUREANIMALSIZE, this.animalSize);
+		if (this.isAnimalPen) {
+			nbtTag.setBoolean(NBTTAG_VILLAGE_STRUCTUREANIMALPEN, this.isAnimalPen);
+			nbtTag.setInteger(NBTTAG_VILLAGE_STRUCTUREANIMALCOUNT, this.animalCount);
+			nbtTag.setInteger(NBTTAG_VILLAGE_STRUCTUREANIMALSIZE, this.animalSize);
+		}
 		
-		if (this.occupants != null) {
+		if (this.occupants != null && this.occupants.size() > 0) {
 			NBTTagList nbtTagListOccupants = new NBTTagList();
 			
 			for (ResidentData occupant : this.occupants) {

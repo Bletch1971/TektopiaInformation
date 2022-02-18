@@ -1,6 +1,7 @@
 package bletch.tektopiainformation.network.data;
 
 import bletch.common.Interfaces.IVillageEnemy;
+import bletch.common.utils.StringUtils;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.nbt.NBTTagCompound;
 import net.tangotek.tektopia.entities.EntityNecromancer;
@@ -8,8 +9,8 @@ import net.tangotek.tektopia.entities.EntityVillageNavigator;
 
 public class EnemyData extends EntityData {
 
-	protected static final String NBTTAG_VILLAGE_ENEMYTYPE = "villageenemytype";
-	protected static final String NBTTAG_VILLAGE_ENEMYCURRENTTASK = "villageenemycurrenttask";
+	protected static final String NBTTAG_VILLAGE_ENEMYTYPE = "type";
+	protected static final String NBTTAG_VILLAGE_ENEMYCURRENTTASK = "task";
 	
 	protected String enemyType;
 	protected String currentTask;
@@ -85,10 +86,10 @@ public class EnemyData extends EntityData {
 		
 		nbtTag = super.writeNBT(nbtTag);
 		
-		if (this.enemyType != null && !this.enemyType.trim().equals("")) {
+		if (!StringUtils.isNullOrWhitespace(this.enemyType)) {
 			nbtTag.setString(NBTTAG_VILLAGE_ENEMYTYPE, this.enemyType);
 		}
-		if (this.currentTask != null) {
+		if (!StringUtils.isNullOrWhitespace(this.currentTask)) {
 			nbtTag.setString(NBTTAG_VILLAGE_ENEMYCURRENTTASK, this.currentTask);
 		}
 		

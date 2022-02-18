@@ -1,5 +1,11 @@
 package bletch.tektopiainformation.network.handlers;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import bletch.tektopiainformation.TektopiaInformation;
 import bletch.tektopiainformation.core.ModConfig;
 import bletch.tektopiainformation.network.data.VillageData;
@@ -12,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -24,6 +31,8 @@ import net.tangotek.tektopia.entities.EntityVillageNavigator;
  * http://maven.thiakil.com/forge-1.12-javadoc/net/minecraftforge/event/entity/player/PlayerInteractEvent.html
  */
 public class PlayerInteractHandler {
+	
+	private static Map<UUID, Long> playerTimeouts = new HashMap<UUID, Long>();
 	
 	/*
 	 * This event is fired on both sides when the player right clicks an entity.
@@ -60,16 +69,8 @@ public class PlayerInteractHandler {
 					        }
 					        
 							EntityPlayerMP player = (EntityPlayerMP)event.getEntityPlayer();
-							
-							// create the village data
-							VillageData villageData = new VillageData(village, player.getPosition());
-							villageData.setEntity(villageEntity);
-							
-							// create the message to be sent to the client
-							VillageMessageToClient message = new VillageMessageToClient(villageData);
-							
-							// send the message containing the village data to the client player
-							TektopiaInformation.NETWORK.sendTo(message, player);
+					        
+							SendMessage(player, village, null, null, villageEntity);
 				        }
 			        }
 		        }
@@ -97,15 +98,7 @@ public class PlayerInteractHandler {
 					        
 							EntityPlayerMP player = (EntityPlayerMP)event.getEntityPlayer();
 					        
-							// create the village data
-							VillageData villageData = new VillageData(village, player.getPosition());
-							villageData.setFramePosition(event.getPos());
-							
-							// create the message to be sent to the client
-							VillageMessageToClient message = new VillageMessageToClient(villageData);
-							
-							// send the message containing the village data to the client player
-							TektopiaInformation.NETWORK.sendTo(message, player);
+							SendMessage(player, village, event.getPos(), null, null);
 				        }
 			        }
 				}
@@ -169,15 +162,7 @@ public class PlayerInteractHandler {
 					        
 							EntityPlayerMP player = (EntityPlayerMP)event.getEntityPlayer();
 					        
-							// create the village data
-							VillageData villageData = new VillageData(village, player.getPosition());
-							villageData.setBedPosition(event.getPos());
-							
-							// create the message to be sent to the client
-							VillageMessageToClient message = new VillageMessageToClient(villageData);
-							
-							// send the message containing the village data to the client player
-							TektopiaInformation.NETWORK.sendTo(message, player);
+							SendMessage(player, village, null, event.getPos(), null);
 				        }
 			        }
 		        }
@@ -199,6 +184,38 @@ public class PlayerInteractHandler {
 	@SubscribeEvent
 	public void onPlayerInteract(PlayerInteractEvent.RightClickItem event) {
 
+	}
+	
+	private void SendMessage(EntityPlayerMP player, Village village, BlockPos framePosition, BlockPos bedPosition, EntityVillageNavigator entity) {	
+		
+		long previousSeconds = playerTimeouts.getOrDefault(player.getUniqueID(), 0L);
+		long currentSeconds = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+									
+		if (previousSeconds + ModConfig.gui.tektopiaInformationBook.bookGracePeriod > currentSeconds) {
+			return;
+		}
+	    
+		// create the village data
+		VillageData villageData = new VillageData(village, player.getPosition());
+		
+		if (framePosition != null) {
+			villageData.setFramePosition(framePosition);
+		}
+		if (bedPosition != null) {
+			villageData.setBedPosition(bedPosition);
+		}
+		if (entity != null) {
+			villageData.setEntity(entity);
+		}
+		
+		// create the message to be sent to the client
+		VillageMessageToClient message = new VillageMessageToClient(villageData);
+		
+		// send the message containing the village data to the client player
+		TektopiaInformation.NETWORK.sendTo(message, player);
+		
+		playerTimeouts.put(player.getUniqueID(), currentSeconds);
+		
 	}
 	
 }

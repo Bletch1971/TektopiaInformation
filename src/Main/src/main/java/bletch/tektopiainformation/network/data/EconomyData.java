@@ -13,10 +13,10 @@ import net.tangotek.tektopia.caps.IVillageData;
 
 public class EconomyData {
 	
-	protected static final String NBTTAG_VILLAGE_ECONOMY = "villageeconomy";
-	protected static final String NBTTAG_VILLAGE_PROFESSIONSALES = "villageprofessionsales";
-	protected static final String NBTTAG_VILLAGE_MERCHANTSALES = "villagemerchantsales";
-	protected static final String NBTTAG_VILLAGE_SALESHISTORY = "villagesaleshistory";
+	protected static final String NBTTAG_VILLAGE_ECONOMY = "economy";
+	protected static final String NBTTAG_VILLAGE_PROFESSIONSALES = "psales";
+	protected static final String NBTTAG_VILLAGE_MERCHANTSALES = "msales";
+	protected static final String NBTTAG_VILLAGE_SALESHISTORY = "hist";
 
 	protected VillageData villageData;
 	protected int professionSales;
@@ -111,8 +111,14 @@ public class EconomyData {
 		
 		NBTTagCompound nbtEconomyData = new NBTTagCompound();
 
-		nbtEconomyData.setInteger(NBTTAG_VILLAGE_PROFESSIONSALES, this.getProfessionSales());
-		nbtEconomyData.setInteger(NBTTAG_VILLAGE_MERCHANTSALES, this.getMerchantSales());
+		int professionSales = this.getProfessionSales();
+		if (professionSales > 0) {
+			nbtEconomyData.setInteger(NBTTAG_VILLAGE_PROFESSIONSALES, professionSales);
+		}
+		int merchantSales = this.getMerchantSales();
+		if (merchantSales > 0) {
+			nbtEconomyData.setInteger(NBTTAG_VILLAGE_MERCHANTSALES, merchantSales);
+		}
 		
 		if (this.salesHistory != null && this.salesHistory.size() > 0) {
 			NBTTagList nbtTagListSalesHistory = new NBTTagList();
@@ -123,10 +129,14 @@ public class EconomyData {
 				}
 			}
 			
-			nbtEconomyData.setTag(NBTTAG_VILLAGE_SALESHISTORY, nbtTagListSalesHistory);
+			if (!nbtTagListSalesHistory.hasNoTags()) {
+				nbtEconomyData.setTag(NBTTAG_VILLAGE_SALESHISTORY, nbtTagListSalesHistory);
+			}
 		}
 
-		nbtTag.setTag(NBTTAG_VILLAGE_ECONOMY, nbtEconomyData);
+		if (!nbtEconomyData.hasNoTags()) {
+			nbtTag.setTag(NBTTAG_VILLAGE_ECONOMY, nbtEconomyData);
+		}
 		
 		return nbtTag;
 	}
