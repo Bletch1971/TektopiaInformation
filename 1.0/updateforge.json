@@ -1,8 +1,8 @@
 {
   "homepage": "https://minecraft.curseforge.com/projects/tektopia-information",
   "promos": {
-    "1.12.2-latest": "1.10.0",
-    "1.12.2-recommended": "1.10.0"
+    "1.12.2-latest": "1.11.0",
+    "1.12.2-recommended": "1.11.0"
   },
   "1.12.2":{
     "0.1.1": "Initial alpha release.",
@@ -17,6 +17,7 @@
     "1.7.0": "Added coordinate links to open the map.\nAdded additional options to the map.\nFixed Visitor link on Structure detail page.\nAdded current structure to Visitor page.\nAdded tile information to Home detail page.\nChanged tooltip text when link is for the Home page, not a Structure page.\nMore clean-up of the books pages.",
     "1.8.0": "Added work and sleep times to the resident and visitor details page.\nAdded task name to the Enemy list.\nAdded config option to prevent enemies showing in the book.\nAdded days and time to book village summary.\nAdded config option to pause game when open in singleplayer.",
     "1.9.0": "Added new AI Filters section.\nAdded inventory button to resident page, to display the resident's inventory.\nAdded keyboard navigation to the book.",
-    "1.10.0": "Added animal details to the structure details of animal pens.\nAdded level tooltip to enemies section.\nAdded level to the tooltip for enemies on the map."
+    "1.10.0": "Added animal details to the structure details of animal pens.\nAdded level tooltip to enemies section.\nAdded level to the tooltip for enemies on the map.",
+    "1.11.0": "Reduced the size of the NBT packet data sent between the server and the client.\nAdded config option to set the second between each book opening.\nAdded config option to set the amount of NBT packet data bytes that can be sent between the server and client."
   }	
 }
