@@ -29,29 +29,28 @@ minecraft {
 
 repositories {  
     maven {
-        // The repo from which to get jei
         name = "jei"
         url = "http://dvs1.progwml6.com/files/maven"
     }
     maven {
-    	// The repo from which to get hwyla
-        name "hwyla"
-    	url "https://maven.tehnut.info"
-	}
+    	name = "ModMaven (jei fallback)"
+    	url = "https://modmaven.dev"
+    }
+    
     maven {
-    	// The repo from which to get the one probe
-        name 'top'
-        url "https://maven.tterrag.com/"
+        name = "CurseForge"
+        url = "https://www.cursemaven.com"
     }
 }
 
 dependencies {
     deobfCompile "mezz.jei:jei_1.12.2:${project.jei_version}"
-    deobfCompile "mcp.mobius.waila:Hwyla:${project.hwyla_version}"
-    deobfCompile "mcjty.theoneprobe:TheOneProbe-1.12:${project.top_version}"
-	
-    compile files('../../../../JavaWorkspaces/_craftstudio/CraftStudioAPI-1.0.0.93-mc1.12-alpha-dev.jar')
-	compile files('../../../../JavaWorkspaces/tektopia/Tektopia-1.12.2-1.1.0-deobf.jar')
+
+	deobfCompile("curse.maven:hwyla-253449:${project.hwyla_version_id}")
+	deobfCompile("curse.maven:the-one-probe-245211:${project.top_version_id}")
+
+	deobfCompile("curse.maven:craftstudio-api-268704:${project.craftstudio_version_id}")
+	deobfCompile("curse.maven:tektopia-333029:${project.tektopia_version_id}")
 }
 
 //Creates a compiled de-obfuscated jar
