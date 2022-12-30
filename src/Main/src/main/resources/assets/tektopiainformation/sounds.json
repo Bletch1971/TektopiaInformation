@@ -1,9 +1,0 @@
-{
-  "book_page_turn": {
-    "category": "master",
-    "subtitle": "tektopiainformation.subtitle.book_page_turn",
-    "sounds": [
-      "tektopiainformation:book_page_turn"
-    ]
-  }
-}
