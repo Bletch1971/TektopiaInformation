@@ -91,7 +91,7 @@ processResources {
 sourceSets {
     main {
         java {
-            srcDir '../../../TektopiaCommon/src/main/java'
+            srcDir '../../TektopiaCommon/src/main/java'
         }
     }
 }
