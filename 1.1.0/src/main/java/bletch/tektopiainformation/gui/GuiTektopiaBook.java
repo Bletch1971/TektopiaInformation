@@ -2,6 +2,7 @@ package bletch.tektopiainformation.gui;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -15,6 +16,7 @@ import bletch.common.utils.RenderUtils;
 import bletch.common.utils.StringUtils;
 import bletch.common.utils.TektopiaUtils;
 import bletch.common.utils.TextUtils;
+import bletch.tektopiainformation.TektopiaInformation;
 import bletch.tektopiainformation.core.ModConfig;
 import bletch.tektopiainformation.core.ModDetails;
 import bletch.tektopiainformation.core.ModSounds;
@@ -471,6 +473,8 @@ public class GuiTektopiaBook extends GuiScreen {
 				movePreviousPageHistory();
 			}
 			break;
+		case Keyboard.KEY_F5:
+			outputVillageDetails();
 		}
 
 		if (!this.keyHandled)
@@ -8545,6 +8549,69 @@ public class GuiTektopiaBook extends GuiScreen {
 			setSubPage(null);
 			setLeftPageIndex(popPageHistory());
 			this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BOOK_PAGE_TURN, 1.0F));
+		}
+	}
+
+	protected void outputVillageDetails() {
+
+		String outputFilename = ModDetails.FILE_VILLAGEOUTPUT
+				.replace("{datetime}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")));
+		
+		LoggerUtils logger = new LoggerUtils();
+		logger.Initialise(TektopiaInformation.proxy.getMinecraftDirectory() + outputFilename);
+		
+		logger.output("Resident Details");
+		logger.output("Name,isMale,isChild,level,daysAlive,health,hunger,happy,intelligence,profession");
+		
+		ResidentsData residentsData = this.villageData.getResidentsData();
+		for (ResidentData resident : residentsData.getResidents()) {
+			String output = new String();
+			
+			output += resident.getName();
+			output += "," + resident.isMale();
+			output += "," + resident.isChild();
+			output += "," + resident.getBaseLevel();
+			output += "," + resident.getDaysAlive();
+			output += "," + resident.getHealth();
+			output += "," + resident.getHunger();
+			output += "," + resident.getHappy();
+			output += "," + resident.getIntelligence();
+			output += "," + resident.getProfessionType();
+			
+			logger.output(output);
+		}
+		
+		logger.output("");
+		logger.output("Profession Details");
+		logger.output("professionType,count");
+		
+		Map<String, Integer> professionTypeCounts = residentsData != null ? residentsData.getProfessionTypeCountsAll() : null;
+		professionTypeCounts.forEach((key, value) -> {
+			String output = new String();
+			
+			output += getTypeName(key);
+			output += "," + value;
+			
+			logger.output(output);
+		});
+		
+		logger.output("");
+		logger.output("Structure Details");
+		logger.output("type,x,y,z,floorTileCount,isAnimalPen,animalCount");
+		
+		StructuresData structuresData = this.villageData.getStructuresData();
+		for (StructureData structure : structuresData.getStructures()) {
+			String output = new String();
+			
+			output += structure.getStructureTypeName();
+			output += "," + structure.getFramePosition().getX();
+			output += "," + structure.getFramePosition().getY();
+			output += "," + structure.getFramePosition().getZ();
+			output += "," + structure.getFloorTileCount();
+			output += "," + structure.isAnimalPen();
+			output += "," + structure.getAnimalCount();
+			
+			logger.output(output);
 		}
 	}
 }

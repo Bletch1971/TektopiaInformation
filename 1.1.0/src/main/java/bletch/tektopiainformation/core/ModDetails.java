@@ -23,6 +23,7 @@ public class ModDetails extends CommonDetails {
 	
 	public static final String PATH_DEBUG = "/debug";
 	public static final String FILE_DEBUGLOG = PATH_DEBUG + "/" + MOD_ID + ".txt"; 
+	public static final String FILE_VILLAGEOUTPUT = PATH_DEBUG + "/" + MOD_ID + "_{datetime}.csv"; 
 	
 	public static final byte MESSAGE_ID_VILLAGE = 63;
 }
