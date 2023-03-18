@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import bletch.common.utils.TektopiaUtils;
+import bletch.tektopiainformation.utils.LoggerUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -258,6 +259,7 @@ public class ResidentsData {
 				Boolean found = this.residents.stream()
 					.anyMatch(r -> r.getId() == resident.getEntityId());
 				if (found) {
+					LoggerUtils.instance.writeLine("Duplicate resident found with id:" + resident.getEntityId() + "; name:" + resident.getName(), false);
 					continue;
 				}
 					
