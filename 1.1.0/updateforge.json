@@ -1,8 +1,8 @@
 {
   "homepage": "https://minecraft.curseforge.com/projects/tektopia-information",
   "promos": {
-    "1.12.2-latest": "1.11.0",
-    "1.12.2-recommended": "1.11.0"
+    "1.12.2-latest": "1.12.0",
+    "1.12.2-recommended": "1.12.0"
   },
   "1.12.2":{
     "0.1.1": "Initial alpha release.",
@@ -19,5 +19,6 @@
     "1.9.0": "Added new AI Filters section.\nAdded inventory button to resident page, to display the resident's inventory.\nAdded keyboard navigation to the book.",
     "1.10.0": "Added animal details to the structure details of animal pens.\nAdded level tooltip to enemies section.\nAdded level to the tooltip for enemies on the map.",
     "1.11.0": "Reduced the size of the NBT packet data sent between the server and the client.\nAdded config option to set the second between each book opening.\nAdded config option to set the amount of NBT packet data bytes that can be sent between the server and client."
+    "1.12.0": "Fixed HasBed and Slept stats for Tradesman and Architect.\nAdded id value to resident, visitor and enemy details (when debug enabled).\nAdded resident id check when populating resident list."
   }	
 }

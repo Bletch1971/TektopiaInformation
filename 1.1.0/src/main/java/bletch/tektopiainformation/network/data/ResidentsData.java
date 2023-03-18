@@ -255,6 +255,12 @@ public class ResidentsData {
 					continue;
 				}
 				
+				Boolean found = this.residents.stream()
+					.anyMatch(r -> r.getId() == resident.getEntityId());
+				if (found) {
+					continue;
+				}
+					
 				this.residents.add(new ResidentData(resident));
 				
 				ProfessionType professionType = resident.getProfessionType();

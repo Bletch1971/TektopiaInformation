@@ -71,7 +71,7 @@ public class ResidentData extends EntityData {
 
 	@SuppressWarnings("rawtypes")
 	protected static final List<Class> toolItemClasses = Arrays.asList(ItemAxe.class, ItemHoe.class, ItemSword.class, ItemPickaxe.class, ItemShears.class);
-	
+
 	protected String professionType;
 	protected boolean isMale;
 	protected boolean isChild;
@@ -312,6 +312,7 @@ public class ResidentData extends EntityData {
 	protected void clearData() {
 		super.clearData();
 		
+		this.id = 0;
 		this.professionType = null;
 		this.isMale = false;
 		this.isChild = false;
@@ -423,6 +424,7 @@ public class ResidentData extends EntityData {
 				}
 			}
 			
+			this.canHaveBed = true;			
 			if (villager instanceof EntityArchitect) {
 				this.name = villager.getName();
 				this.professionType = TektopiaUtils.PROFESSIONTYPE_ARCHITECT;
@@ -508,7 +510,7 @@ public class ResidentData extends EntityData {
 		this.sleepStartTime = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTSLEEPSTART) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTSLEEPSTART) : 0;
 		this.sleepFinishTime = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTSLEEPFINISH) ? nbtTag.getInteger(NBTTAG_VILLAGE_RESIDENTSLEEPFINISH) : 0;
 		
-		this.canHaveBed = !nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCANHAVEBED) || nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCANHAVEBED);
+		this.canHaveBed = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCANHAVEBED) && nbtTag.getBoolean(NBTTAG_VILLAGE_RESIDENTCANHAVEBED);
 		this.bedPosition = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTBEDPOSITION) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_RESIDENTBEDPOSITION)) : null;
 		this.currentStructure = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE) ? BlockPos.fromLong(nbtTag.getLong(NBTTAG_VILLAGE_RESIDENTCURRENTSTRUCTURE)) : null;
 		this.currentTask = nbtTag.hasKey(NBTTAG_VILLAGE_RESIDENTCURRENTTASK) ? nbtTag.getString(NBTTAG_VILLAGE_RESIDENTCURRENTTASK) : null;

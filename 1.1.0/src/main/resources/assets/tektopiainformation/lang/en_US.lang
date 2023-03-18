@@ -244,6 +244,7 @@ bookmark.visitors.information=Information relating to all the visitors in the vi
 
 tektopiaBook.continued=(cont.)
 tektopiaBook.empty=<empty>
+tektopiaBook.id=id:
 tektopiaBook.missing=<missing>
 tektopiaBook.nobed=No Bed
 tektopiaBook.summary=Summary
