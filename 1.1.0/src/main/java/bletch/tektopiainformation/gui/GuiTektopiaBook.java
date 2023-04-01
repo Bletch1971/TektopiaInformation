@@ -8561,13 +8561,14 @@ public class GuiTektopiaBook extends GuiScreen {
 		logger.Initialise(TektopiaInformation.proxy.getMinecraftDirectory() + outputFilename);
 		
 		logger.output("Resident Details");
-		logger.output("Name,isMale,isChild,level,daysAlive,health,hunger,happy,intelligence,profession");
+		logger.output("id,Name,isMale,isChild,level,daysAlive,health,hunger,happy,intelligence,profession");
 		
 		ResidentsData residentsData = this.villageData.getResidentsData();
 		for (ResidentData resident : residentsData.getResidents()) {
 			String output = new String();
 			
-			output += resident.getName();
+			output += resident.getId();
+			output += "," + resident.getName();
 			output += "," + resident.isMale();
 			output += "," + resident.isChild();
 			output += "," + resident.getBaseLevel();
